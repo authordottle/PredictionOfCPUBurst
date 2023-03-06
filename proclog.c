@@ -139,6 +139,7 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops log_file_fops = {
 	.proc_open = procfile_open,
+	.proc_write = procfile_write,
 	.proc_read = seq_read,
 	.proc_lseek = seq_lseek,
 	.proc_release = seq_release};

@@ -1,0 +1,7 @@
+	*.cmd
+	Module.symvers
+	modules.order
+	*.ko
+	proclog.mod
+	proclog.mod.c
+	*.o
