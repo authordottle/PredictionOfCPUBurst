@@ -127,6 +127,8 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 	}
 
 	// write data to buffer
+printk("Process Info: %s", (procfs_buffer + (procfs_buffer_size - count)));
+
 	if (copy_from_user(procfs_buffer + (procfs_buffer_size - count), buffer, count))
 	{
 		return -EFAULT;
