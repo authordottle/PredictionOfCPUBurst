@@ -7,13 +7,15 @@
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 #include <linux/uaccess.h>
+#include <linux/sched/signal.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("JH");
+MODULE_DESCRIPTION("Kernel module to log records of process time");
 
 #ifndef __KERNEL__
 #define __KERNEL__
 #endif
-
-MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("Kernel module to log process times");
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
 #define HAVE_PROC_OPS
@@ -155,7 +157,14 @@ static const struct file_operations log_file_fops = {
 	.release = seq_release};
 #endif
 
-int __init init_MyKernelModule(void)
+static void log_processes(void) {
+    struct task_struct *task;
+    for_each_process(task) {
+        printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
+    }
+}
+
+static int __init init_MyKernelModule(void)
 {
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
@@ -164,16 +173,21 @@ int __init init_MyKernelModule(void)
 	{
 		return -ENOMEM;
 	}
-	printk("kernel module initialized");
 	endflag = 0;
+
+	printk(KERN_INFO "Process logger module loaded\n");
+	
+	// test
+	log_processes();
+
 	return 0;
 }
 
-void __exit exit_MyKernelModule(void)
+static void __exit exit_MyKernelModule(void)
 {
 
 	remove_proc_entry("timing_log", NULL);
-	printk("exiting kernel module");
+	printk(KERN_INFO "Process logger module unloaded\n");
 	return;
 }
 
