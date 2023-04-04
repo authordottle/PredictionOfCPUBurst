@@ -174,11 +174,20 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 // 	};
 // #endif
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+static struct proc_ops proc_file_fops = {
+        .proc_read     = procfile_read,
+        .proc_write    = procfile_write,
+};
+#else
 static const struct file_operations proc_file_fops = {
  .owner = THIS_MODULE,
  .read  = procfile_read,
  .write  = procfile_write,
 };
+#endif
+
+
 
 static void log_processes(void)
 {
