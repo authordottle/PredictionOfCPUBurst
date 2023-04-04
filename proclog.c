@@ -34,7 +34,7 @@ static unsigned long procfs_buffer_size = 0;
 static char *buff_ptr;
 
 // struct to hold info about proc file
-struct proc_dir_entry *log_file;
+static struct proc_dir_entry *log_file;
 
 static int endflag;
 
