@@ -174,7 +174,7 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 // 	};
 // #endif
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+#ifdef HAVE_PROC_OPS
 static struct proc_ops proc_file_fops = {
         .proc_read     = procfile_read,
         .proc_write    = procfile_write,
