@@ -24,6 +24,8 @@ MODULE_DESCRIPTION("Kernel module to log records of process time");
 // size of buffer ~32Kb
 #define PROCFS_MAX_SIZE 32768
 
+#define PROCFS_NAME "timing_log"
+
 // buffer to hold information from log
 static char procfs_buffer[PROCFS_MAX_SIZE];
 
@@ -138,7 +140,7 @@ int procfile_read(char *buffer,
 // }
 
 // function to write to proc file
-static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
+int procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
 {
 	// get buffer size 
 	procfs_buffer_size = count;
@@ -174,8 +176,8 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 
 static const struct file_operations proc_file_fops = {
  .owner = THIS_MODULE,
- .read_proc  = procfile_read,
- .write_proc  = procfile_write,
+ .read  = procfile_read,
+ .write  = procfile_write,
 };
 
 static void log_processes(void)
