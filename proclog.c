@@ -131,11 +131,11 @@ int procfile_read(char *buffer,
 	return ret;
 }
 
-static int procfile_open(struct inode *inode, struct file *file)
-{
-	printk("open procfile");
-	return seq_open(file, &proc_seq_ops);
-}
+// static int procfile_open(struct inode *inode, struct file *file)
+// {
+// 	printk("open procfile");
+// 	return seq_open(file, &proc_seq_ops);
+// }
 
 // function to write to proc file
 static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
@@ -167,7 +167,6 @@ static const struct proc_ops log_file_fops = {
 #else
 static const struct file_operations log_file_fops = {
 	.owner = THIS_MODULE,
-	.open = procfile_open,
 	.read = procfile_read,
 	.write = procfile_write,
 	};
@@ -191,6 +190,7 @@ static int __init init_MyKernelModule(void)
 	{
 		return -ENOMEM;
 	}
+	
 	endflag = 0;
 
 	printk(KERN_INFO "Process logger module loaded\n");
