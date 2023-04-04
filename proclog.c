@@ -172,6 +172,12 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 // 	};
 // #endif
 
+static const struct file_operations proc_file_fops = {
+ .owner = THIS_MODULE,
+ .read_proc  = procfile_read,
+ .write_proc  = procfile_write,
+};
+
 static void log_processes(void)
 {
 	struct task_struct *task;
@@ -185,19 +191,16 @@ static int __init init_MyKernelModule(void)
 {	
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
-	log_file = create_proc_entry("timing_log", 0, NULL,);
+	log_file = proc_create("timing_log", 0, NULL, &proc_file_fops);
 	if (log_file == NULL)
 	{
 		return -ENOMEM;
 	}
 	
-	log_file->read_proc  = procfile_read;
-	log_file->write_proc = procfile_write;
-	log_file->owner 	  = THIS_MODULE;
-	log_file->mode 	  = S_IFREG | S_IRUGO;
-	log_file->uid 	  = 0;
-	log_file->gid 	  = 0;
-	log_file->size 	  = 37;
+	// log_file->mode 	  = S_IFREG | S_IRUGO;
+	// log_file->uid 	  = 0;
+	// log_file->gid 	  = 0;
+	// log_file->size 	  = 37;
 
 	endflag = 0;
 
