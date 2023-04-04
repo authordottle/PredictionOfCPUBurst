@@ -156,21 +156,21 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 }
 
 // struct that holds what functions run for different aspects of log file
-#ifdef HAVE_PROC_OPS
-static const struct proc_ops log_file_fops = {
-	.proc_open = procfile_open,
-	.proc_write = procfile_write,
-	.proc_read = seq_read,
-	.proc_lseek = seq_lseek,
-	.proc_release = seq_release
-	};
-#else
-static const struct file_operations log_file_fops = {
-	.owner = THIS_MODULE,
-	.read = procfile_read,
-	.write = procfile_write,
-	};
-#endif
+// #ifdef HAVE_PROC_OPS
+// static const struct proc_ops log_file_fops = {
+// 	.proc_open = procfile_open,
+// 	.proc_write = procfile_write,
+// 	.proc_read = seq_read,
+// 	.proc_lseek = seq_lseek,
+// 	.proc_release = seq_release
+// 	};
+// #else
+// static const struct file_operations log_file_fops = {
+// 	.owner = THIS_MODULE,
+// 	.read = procfile_read,
+// 	.write = procfile_write,
+// 	};
+// #endif
 
 static void log_processes(void)
 {
@@ -182,7 +182,7 @@ static void log_processes(void)
 }
 
 static int __init init_MyKernelModule(void)
-{
+{	
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
 	log_file = proc_create("timing_log", 0, NULL, &log_file_fops);
@@ -191,6 +191,14 @@ static int __init init_MyKernelModule(void)
 		return -ENOMEM;
 	}
 	
+	log_file->read_proc  = procfile_read;
+	log_file->write_proc = procfile_write;
+	log_file->owner 	  = THIS_MODULE;
+	log_file->mode 	  = S_IFREG | S_IRUGO;
+	log_file->uid 	  = 0;
+	log_file->gid 	  = 0;
+	log_file->size 	  = 37;
+
 	endflag = 0;
 
 	printk(KERN_INFO "Process logger module loaded\n");
