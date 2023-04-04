@@ -117,7 +117,7 @@ static ssize_t procfile_read(char *buffer,
 	      char **buffer_location,
 	      off_t offset, int buffer_length, int *eof, void *data)
 {
-	int ret;
+	ssize_t ret;
 	
 	printk(KERN_INFO "procfile_read (/proc/%s) called\n", PROCFS_NAME);
 	
@@ -154,7 +154,7 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 		return -EFAULT;
 	}
 	
-	return procfs_buffer_size;
+	return (ssize_t)procfs_buffer_size;
 }
 
 // struct that holds what functions run for different aspects of log file
