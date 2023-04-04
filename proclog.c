@@ -185,7 +185,7 @@ static int __init init_MyKernelModule(void)
 {	
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
-	log_file = proc_create("timing_log", 0, NULL, &log_file_fops);
+	log_file = create_proc_entry("timing_log", 0, NULL,);
 	if (log_file == NULL)
 	{
 		return -ENOMEM;
