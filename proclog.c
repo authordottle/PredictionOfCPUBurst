@@ -54,7 +54,7 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 	// printk("Place in buffer is: %Ld\n", (*pos));
 
 	// return buff_ptr;
-	return null;
+	return NULL;
 }
 
 static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
@@ -78,7 +78,7 @@ static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 	// endflag = (*pos);
 	// printk("position is %Ld\n", (*pos));
 	// return temp;
-	return null;
+	return NULL;
 }
 
 static void proc_seq_stop(struct seq_file *s, void *v)
@@ -107,8 +107,7 @@ static struct seq_operations proc_seq_ops = {
 	.start = proc_seq_start,
 	.next = proc_seq_next,
 	.stop = proc_seq_stop,
-	.show = proc_seq_show
-};
+	.show = proc_seq_show};
 
 static int procfile_open(struct inode *inode, struct file *file)
 {
@@ -132,26 +131,25 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 	// 	printk("Buffer size updated to: %lu", procfs_buffer_size);
 	// }
 
-// 	// write data to buffer
-// 	printk("Process Info: %s", (procfs_buffer + (procfs_buffer_size - count)));
+	// 	// write data to buffer
+	// 	printk("Process Info: %s", (procfs_buffer + (procfs_buffer_size - count)));
 
-// 	if (copy_from_user(procfs_buffer + (procfs_buffer_size - count), buffer, count))
-// 	{
-// 		return -EFAULT;
-// 	}
+	// 	if (copy_from_user(procfs_buffer + (procfs_buffer_size - count), buffer, count))
+	// 	{
+	// 		return -EFAULT;
+	// 	}
 
-// 	return count;
-return 1;
+	// 	return count;
+	return 1;
 }
 
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
 	.proc_open = procfile_open,
-	.proc_write = procfile_write,
+	// .proc_write = procfile_write,
 	.proc_read = seq_read,
 	.proc_lseek = seq_lseek,
-	.proc_release = seq_release
-	};
+	.proc_release = seq_release};
 #else
 static const struct file_operations proc_file_fops = {
 	.owner = THIS_MODULE,
@@ -159,8 +157,7 @@ static const struct file_operations proc_file_fops = {
 	// .write = procfile_write,
 	.read = seq_read,
 	.llseek = seq_lseek,
-	.release = seq_release
-	};
+	.release = seq_release};
 #endif
 
 static void log_processes(void)
@@ -173,7 +170,7 @@ static void log_processes(void)
 }
 
 static int __init init_kernel_module(void)
-{	
+{
 	printk(KERN_INFO "Process logger module loaded\n");
 
 	// initialize
