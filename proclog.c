@@ -103,12 +103,6 @@ static int endflag;
 // 	return 0;
 // }
 
-// static struct seq_operations proc_seq_ops = {
-// 	.start = proc_seq_start,
-// 	.next = proc_seq_next,
-// 	.stop = proc_seq_stop,
-// 	.show = proc_seq_show};
-
 /** 
  * This function is called then the /proc file is read
  *
@@ -134,21 +128,21 @@ static int endflag;
 // 	return ret;
 // }
 
-// static int procfile_open(struct inode *inode, struct file *file)
-// {
-// 	printk("open procfile");
-// 	return seq_open(file, &proc_seq_ops);
+static int procfile_open(struct inode *inode, struct file *file)
+{
+	printk("open procfile");
+	return seq_open(file, &proc_seq_ops);
+}
+
+// static int procfile_show(struct seq_file *m, void *v) {
+// here:
+//   seq_printf(m, "Procfile location: 0x%lx\n", (unsigned long)&&here);
+//   return 0;
 // }
 
-static int procfile_show(struct seq_file *m, void *v) {
-here:
-  seq_printf(m, "Procfile location: 0x%lx\n", (unsigned long)&&here);
-  return 0;
-}
-
-static int procfile_open(struct inode *inode, struct  file *file) {
-  return single_open(file, procfile_show, NULL);
-}
+// static int procfile_open(struct inode *inode, struct  file *file) {
+//   return single_open(file, procfile_show, NULL);
+// }
 
 // function to write to proc file
 static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
@@ -190,7 +184,7 @@ static void log_processes(void)
 	}
 }
 
-static int __init init_MyKernelModule(void)
+static int __init init_module(void)
 {	
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
@@ -214,12 +208,12 @@ static int __init init_MyKernelModule(void)
 	return 0;
 }
 
-static void __exit exit_MyKernelModule(void)
+static void __exit exit_module(void)
 {
 	remove_proc_entry("timing_log", NULL);
 	printk(KERN_INFO "Process logger module unloaded\n");
 	return;
 }
 
-module_init(init_MyKernelModule);
-module_exit(exit_MyKernelModule);
+module_init(init_module);
+module_exit(exit_module);
