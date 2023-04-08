@@ -138,7 +138,7 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 // 	}
 
 // 	return count;
-// }
+}
 
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
