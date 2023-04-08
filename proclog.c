@@ -122,18 +122,13 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
-	.owner = THIS_MODULE,
-	.open = procfile_open,
-	.read = seq_read,
-	.llseek = seq_lseek,
-	.release = seq_release};
+	.proc_open = procfile_open,
+};
 #else
 static const struct file_operations proc_file_fops = {
 	.owner = THIS_MODULE,
 	.open = procfile_open,
-	.read = seq_read,
-	.llseek = seq_lseek,
-	.release = seq_release};
+};
 #endif
 
 static void log_processes(void)
