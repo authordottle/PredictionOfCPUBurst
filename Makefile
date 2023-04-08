@@ -1,7 +1,8 @@
 ifneq ($(KERNELRELEASE),) 
 obj-m := proclog.o
+$(error error is here)
 else 
-
+$(warning warning is here)
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build 
 
 PWD := $(shell pwd)
