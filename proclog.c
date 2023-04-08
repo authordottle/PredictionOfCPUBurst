@@ -167,7 +167,7 @@ static int endflag;
 // 	}
 // }
 
-static int __init init_module(void)
+static int __init init_kernel_module(void)
 {	
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
@@ -186,11 +186,11 @@ static int __init init_module(void)
 	return 0;
 }
 
-static void __exit exit_module(void)
+static void __exit exit_kernel_module(void)
 {
 	// remove_proc_entry("timing_log", NULL);
 	printk(KERN_INFO "Process logger module unloaded\n");
 }
 
-module_init(init_module);
-module_exit(exit_module);
+module_init(init_kernel_module);
+module_exit(exit_kernel_module);
