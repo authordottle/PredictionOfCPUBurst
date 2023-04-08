@@ -158,14 +158,14 @@ static int endflag;
 // 	};
 // #endif
 
-// static void log_processes(void)
-// {
-// 	struct task_struct *task;
-// 	for_each_process(task)
-// 	{
-// 		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
-// 	}
-// }
+static void log_processes(void)
+{
+	struct task_struct *task;
+	for_each_process(task)
+	{
+		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
+	}
+}
 
 static int __init init_kernel_module(void)
 {	
@@ -181,7 +181,7 @@ static int __init init_kernel_module(void)
 
 	printk(KERN_INFO "Process logger module loaded\n");
 
-	// log_processes();
+	log_processes();
 
 	return 0;
 }
