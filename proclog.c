@@ -110,11 +110,11 @@ static struct seq_operations proc_seq_ops = {
 
 static int uptime_proc_show(struct seq_file *m, void *v)
 {
-    struct timespec uptime;
+    // struct timespec uptime;
 
-    get_monotonic_boottime(&uptime);
+    // get_monotonic_boottime(&uptime);
 
-    seq_printf(m, "%ld.%09ld\n", uptime.tv_sec, uptime.tv_nsec);
+    // seq_printf(m, "%ld.%09ld\n", uptime.tv_sec, uptime.tv_nsec);
 
     return 0;
 }
