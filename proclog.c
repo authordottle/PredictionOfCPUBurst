@@ -113,11 +113,13 @@ static int endflag;
  * This function is called then the /proc file is read
  *
  */
-static ssize_t procfile_read(char *buffer,
+static int procfile_read (char *page, char **start, off_t offset, int count, int *eof, void *data);
+
+static int procfile_read(char *buffer,
 	      char **buffer_location,
 	      off_t offset, int buffer_length, int *eof, void *data)
 {
-	ssize_t ret;
+	int ret;
 	
 	printk(KERN_INFO "procfile_read (/proc/%s) called\n", PROCFS_NAME);
 	
@@ -127,7 +129,8 @@ static ssize_t procfile_read(char *buffer,
 	} else {
 		// fill the buffer, return the buffer size 
 		memcpy(buffer, procfs_buffer, procfs_buffer_size);
-		ret = procfs_buffer_size;
+		ret = sprintf(page, "Hello world\n");
+		// ret = procfs_buffer_size;
 	}
 
 	return ret;
