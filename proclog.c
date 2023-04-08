@@ -107,11 +107,28 @@ static struct seq_operations proc_seq_ops = {
 	.stop = proc_seq_stop,
 	.show = proc_seq_show};
 
+
+static int uptime_proc_show(struct seq_file *m, void *v)
+{
+    struct timespec uptime;
+
+    get_monotonic_boottime(&uptime);
+
+    seq_printf(m, "%ld.%09ld\n", uptime.tv_sec, uptime.tv_nsec);
+
+    return 0;
+}
+
 static int procfile_open(struct inode *inode, struct file *file)
 {
-	printk("Hit procfile_open");
-	return 1;
+    return single_open(file, uptime_proc_show, NULL);
 }
+
+// static int procfile_open(struct inode *inode, struct file *file)
+// {
+// 	printk("Hit procfile_open");
+// 	return seq_open(file, &proc_seq_ops);
+// }
 
 // function to write to proc file
 static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
