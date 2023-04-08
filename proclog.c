@@ -122,10 +122,11 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
-	.proc_open = procfile_open,
-	.proc_read = seq_read,
-	.proc_lseek = seq_lseek,
-	.proc_release = seq_release};
+	.owner = THIS_MODULE,
+	.open = procfile_open,
+	.read = seq_read,
+	.llseek = seq_lseek,
+	.release = seq_release};
 #else
 static const struct file_operations proc_file_fops = {
 	.owner = THIS_MODULE,
@@ -152,12 +153,12 @@ static int __init init_kernel_module(void)
 	endflag = 0;
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
-	// log_file = proc_create("timing_log", 0, NULL, &proc_file_fops);
-	// if (log_file == NULL)
-	// {
-	// 	// return an error of "OUT OF MEMORY SPACE"
-	// 	return -ENOMEM;
-	// }
+	log_file = proc_create("timing_log", 0, NULL, &proc_file_fops);
+	if (log_file == NULL)
+	{
+		// return an error of "OUT OF MEMORY SPACE"
+		return -ENOMEM;
+	}
 
 	// // loop processes
 	// log_processes();
