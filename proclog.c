@@ -113,8 +113,6 @@ static int endflag;
  * This function is called then the /proc file is read
  *
  */
-static int procfile_read (char *page, char **start, off_t offset, int count, int *eof, void *data);
-
 static int procfile_read(char *buffer,
 	      char **buffer_location,
 	      off_t offset, int buffer_length, int *eof, void *data)
@@ -142,6 +140,16 @@ static int procfile_read(char *buffer,
 // 	return seq_open(file, &proc_seq_ops);
 // }
 
+static int procfile_show(struct seq_file *m, void *v) {
+here:
+  seq_printf(m, "Procfile location: 0x%lx\n", (unsigned long)&&here);
+  return 0;
+}
+
+static int procfile_open(struct inode *inode, struct  file *file) {
+  return single_open(file, procfile_show, NULL);
+}
+
 // function to write to proc file
 static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
 {
@@ -161,26 +169,9 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 }
 
 // struct that holds what functions run for different aspects of log file
-// #ifdef HAVE_PROC_OPS
-// static const struct proc_ops log_file_fops = {
-// 	.proc_open = procfile_open,
-// 	.proc_write = procfile_write,
-// 	.proc_read = seq_read,
-// 	.proc_lseek = seq_lseek,
-// 	.proc_release = seq_release
-// 	};
-// #else
-// static const struct file_operations log_file_fops = {
-// 	.owner = THIS_MODULE,
-// 	.read = procfile_read,
-// 	.write = procfile_write,
-// 	};
-// #endif
-
 #ifdef HAVE_PROC_OPS
-static struct proc_ops proc_file_fops = {
-        .proc_read     = procfile_read,
-        .proc_write    = procfile_write,
+static const struct proc_ops proc_file_fops = {
+  .proc_read = procfile_read,
 };
 #else
 static const struct file_operations proc_file_fops = {
@@ -189,8 +180,6 @@ static const struct file_operations proc_file_fops = {
  .write  = procfile_write,
 };
 #endif
-
-
 
 static void log_processes(void)
 {
