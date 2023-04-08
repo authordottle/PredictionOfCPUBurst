@@ -124,8 +124,6 @@ static struct seq_operations proc_seq_ops = {
 //     return single_open(file, uptime_proc_show, NULL);
 // }
 
-static int procfile_open(struct inode *inode, struct  file *file);
-
 static int procfile_open(struct inode *inode, struct file *file)
 {
 	printk("Hit procfile_open");
@@ -171,12 +169,12 @@ static int __init init_kernel_module(void)
 	endflag = 0;
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
-	log_file = proc_create("timing_log", 0, NULL, &proc_file_fops);
-	if (log_file == NULL)
-	{
-		// return an error of "OUT OF MEMORY SPACE"
-		return -ENOMEM;
-	}
+	// log_file = proc_create("timing_log", 0, NULL, &proc_file_fops);
+	// if (log_file == NULL)
+	// {
+	// 	// return an error of "OUT OF MEMORY SPACE"
+	// 	return -ENOMEM;
+	// }
 
 	// // loop processes
 	// log_processes();
