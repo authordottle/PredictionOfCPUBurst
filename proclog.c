@@ -128,21 +128,15 @@ static int endflag;
 // 	return ret;
 // }
 
-static int procfile_open(struct inode *inode, struct file *file)
-{
-	printk("open procfile");
-	return seq_open(file, &proc_seq_ops);
+static int procfile_show(struct seq_file *m, void *v) {
+here:
+  seq_printf(m, "Procfile location: 0x%lx\n", (unsigned long)&&here);
+  return 0;
 }
 
-// static int procfile_show(struct seq_file *m, void *v) {
-// here:
-//   seq_printf(m, "Procfile location: 0x%lx\n", (unsigned long)&&here);
-//   return 0;
-// }
-
-// static int procfile_open(struct inode *inode, struct  file *file) {
-//   return single_open(file, procfile_show, NULL);
-// }
+static int procfile_open(struct inode *inode, struct  file *file) {
+  return single_open(file, procfile_show, NULL);
+}
 
 // function to write to proc file
 static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
@@ -165,7 +159,10 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 // struct that holds what functions run for different aspects of log file
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
+  .proc_open = procfile_open,
   .proc_read = seq_read,
+  .proc_lseek = seq_lseek,
+  .proc_release = single_release,
 };
 #else
 static const struct file_operations proc_file_fops = {
