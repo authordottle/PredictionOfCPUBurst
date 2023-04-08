@@ -106,26 +106,28 @@ static int endflag;
 // 	.show = proc_seq_show
 // 	};
 
-// static int procfile_open(struct inode *inode, struct file *file)
-// {
-// 	printk("open procfile");
-// 	return seq_open(file, &proc_seq_ops);
-// }
+static int procfile_open(struct inode *inode, struct file *file)
+{
+	printk("Hit procfile_open");
+	return 0;
+	// return seq_open(file, &proc_seq_ops);
+}
 
-// // function to write to proc file
-// static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
-// {
-// 	// set buffer size
-// 	procfs_buffer_size += count;
-// 	if (procfs_buffer_size > PROCFS_MAX_SIZE)
-// 	{
-// 		procfs_buffer_size = PROCFS_MAX_SIZE;
-// 		printk("Proc file buffer overflow");
-// 	}
-// 	else
-// 	{
-// 		printk("Buffer size updated to: %lu", procfs_buffer_size);
-// 	}
+// function to write to proc file
+static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
+{
+	printk("Hit procfile_write");
+	// // set buffer size
+	// procfs_buffer_size += count;
+	// if (procfs_buffer_size > PROCFS_MAX_SIZE)
+	// {
+	// 	procfs_buffer_size = PROCFS_MAX_SIZE;
+	// 	printk("Proc file buffer overflow");
+	// }
+	// else
+	// {
+	// 	printk("Buffer size updated to: %lu", procfs_buffer_size);
+	// }
 
 // 	// write data to buffer
 // 	printk("Process Info: %s", (procfs_buffer + (procfs_buffer_size - count)));
@@ -138,25 +140,24 @@ static int endflag;
 // 	return count;
 // }
 
-// // struct that holds what functions run for different aspects of log file
-// #ifdef HAVE_PROC_OPS
-// static const struct proc_ops log_file_fops = {
-// 	.proc_open = procfile_open,
-// 	.proc_write = procfile_write,
-// 	.proc_read = seq_read,
-// 	.proc_lseek = seq_lseek,
-// 	.proc_release = seq_release
-// 	};
-// #else
-// static const struct file_operations log_file_fops = {
-// 	.owner = THIS_MODULE,
-// 	.open = procfile_open,
-// 	.read = seq_read,
-// 	.write = procfile_write,
-// 	.llseek = seq_lseek,
-// 	.release = seq_release
-// 	};
-// #endif
+#ifdef HAVE_PROC_OPS
+static const struct proc_ops proc_file_fops = {
+	.proc_open = procfile_open,
+	.proc_write = procfile_write,
+	.proc_read = seq_read,
+	.proc_lseek = seq_lseek,
+	.proc_release = seq_release
+	};
+#else
+static const struct file_operations proc_file_fops = {
+	.owner = THIS_MODULE,
+	.open = procfile_open,
+	.write = procfile_write,
+	.read = seq_read,
+	.llseek = seq_lseek,
+	.release = seq_release
+	};
+#endif
 
 static void log_processes(void)
 {
