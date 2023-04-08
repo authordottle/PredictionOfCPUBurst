@@ -83,9 +83,7 @@ static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 
 static void proc_seq_stop(struct seq_file *s, void *v)
 {
-	// printk("Sequence stop!");
 	// buff_ptr = NULL;
-	// printk("Sequence stop 2: electric bugaloo");
 	printk("Hit proc_seq_stop");
 }
 
@@ -119,34 +117,12 @@ static int procfile_open(struct inode *inode, struct file *file)
 static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
 {
 	printk("Hit procfile_write");
-	// // set buffer size
-	// procfs_buffer_size += count;
-	// if (procfs_buffer_size > PROCFS_MAX_SIZE)
-	// {
-	// 	procfs_buffer_size = PROCFS_MAX_SIZE;
-	// 	printk("Proc file buffer overflow");
-	// }
-	// else
-	// {
-	// 	printk("Buffer size updated to: %lu", procfs_buffer_size);
-	// }
-
-	// 	// write data to buffer
-	// 	printk("Process Info: %s", (procfs_buffer + (procfs_buffer_size - count)));
-
-	// 	if (copy_from_user(procfs_buffer + (procfs_buffer_size - count), buffer, count))
-	// 	{
-	// 		return -EFAULT;
-	// 	}
-
-	// 	return count;
 	return 1;
 }
 
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
 	.proc_open = procfile_open,
-	// .proc_write = procfile_write,
 	.proc_read = seq_read,
 	.proc_lseek = seq_lseek,
 	.proc_release = seq_release};
@@ -154,7 +130,6 @@ static const struct proc_ops proc_file_fops = {
 static const struct file_operations proc_file_fops = {
 	.owner = THIS_MODULE,
 	.open = procfile_open,
-	// .write = procfile_write,
 	.read = seq_read,
 	.llseek = seq_lseek,
 	.release = seq_release};

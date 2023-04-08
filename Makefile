@@ -1,3 +1,9 @@
+ifneq ($(shell cat /proc/sys/kernel/dmesg_restrict),0)
+$(error dmesg access is restricted. Please set kernel.dmesg_restrict=0. )
+else
+	sudo sysctl kernel.dmesg_restrict=0
+endif
+
 ifneq ($(KERNELRELEASE),) 
 obj-m := proclog.o
 else 
