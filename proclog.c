@@ -129,8 +129,7 @@ static int endflag;
 // }
 
 static int procfile_show(struct seq_file *m, void *v) {
-here:
-  seq_printf(m, "Procfile location: 0x%lx\n", (unsigned long)&&here);
+  seq_printf(m, "Procfile location: 0x%lx\n");
   return 0;
 }
 
