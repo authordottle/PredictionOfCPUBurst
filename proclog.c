@@ -169,18 +169,20 @@ static void log_processes(void)
 
 static int __init init_kernel_module(void)
 {	
-	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
-	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
-	// log_file = proc_create("timing_log", 0, NULL, &proc_file_fops);
-	// if (log_file == NULL)
-	// {
-	// 	return -ENOMEM;
-	// }
-
-	// endflag = 0;
-
 	printk(KERN_INFO "Process logger module loaded\n");
 
+	// initialize
+	endflag = 0;
+	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
+	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
+	log_file = proc_create("timing_log", 0, NULL, &proc_file_fops);
+	if (log_file == NULL)
+	{
+		// return an error of "OUT OF MEMORY SPACE"
+		return -ENOMEM;
+	}
+
+	// loop processes
 	log_processes();
 
 	return 0;
