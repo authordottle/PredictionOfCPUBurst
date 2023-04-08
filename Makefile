@@ -1,17 +1,23 @@
-ifneq ($(KERNELRELEASE),) 
-obj-m := proclog.o
-else 
-KERNELDIR ?= /lib/modules/$(shell uname -r)/build 
+# ifneq ($(KERNELRELEASE),) 
+# obj-m := proclog.o
+# else 
+# KERNELDIR ?= /lib/modules/$(shell uname -r)/build 
 
-PWD := $(shell pwd)
+# PWD := $(shell pwd)
 
-default: 
-	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules  
-endif 
+# default: 
+# 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules  
+# endif 
 
+# clean:
+# 	$(MAKE) -C $(KERNELDIR) M=$(PWD) clean
+
+obj-m += proclog.o
+
+all:
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 clean:
-	$(MAKE) -C $(KERNELDIR) M=$(PWD) clean
-
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 test:
   	# We put a — in front of the rmmod command to tell make to ignore
   	# an error in case the module isn’t loaded.
