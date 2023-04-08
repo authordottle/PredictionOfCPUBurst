@@ -124,6 +124,8 @@ static struct seq_operations proc_seq_ops = {
 //     return single_open(file, uptime_proc_show, NULL);
 // }
 
+static int procfile_open(struct inode *inode, struct  file *file);
+
 static int procfile_open(struct inode *inode, struct file *file)
 {
 	printk("Hit procfile_open");
@@ -137,20 +139,20 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 	return 1;
 }
 
-// #ifdef HAVE_PROC_OPS
-// static const struct proc_ops proc_file_fops = {
-// 	.proc_open = procfile_open,
-// 	.proc_read = seq_read,
-// 	.proc_lseek = seq_lseek,
-// 	.proc_release = seq_release};
-// #else
+#ifdef HAVE_PROC_OPS
+static const struct proc_ops proc_file_fops = {
+	.proc_open = procfile_open,
+	.proc_read = seq_read,
+	.proc_lseek = seq_lseek,
+	.proc_release = seq_release};
+#else
 static const struct file_operations proc_file_fops = {
 	.owner = THIS_MODULE,
 	.open = procfile_open,
 	.read = seq_read,
 	.llseek = seq_lseek,
 	.release = seq_release};
-// #endif
+#endif
 
 static void log_processes(void)
 {
