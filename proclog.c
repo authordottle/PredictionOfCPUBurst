@@ -98,7 +98,7 @@ elapsed_nsec = (long)uptime * 1000000000 - start_time;
 	// long usage_msec = utime_msec + stime_msec;
 	// cpu_usage = usage_msec * 100 / elapsed_msec;
 
-	return cpu_usage;
+	return usage_nsec;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
