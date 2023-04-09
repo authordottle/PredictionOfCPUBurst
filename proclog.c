@@ -59,17 +59,17 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 }
 
 /* Function to get CPU usage for a process */
-static double get_process_cpu_usage(struct task_struct *task)
+static float get_process_cpu_usage(struct task_struct *task)
 {
 	clock_t start_time, end_time;
-    double elapsed_time, cpu_usage;
+    float elapsed_time, cpu_usage;
 
     start_time = clock();
     // Perform some work here (e.g., execute a loop or a system call).
     end_time = clock();
 
-    elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
-    cpu_usage = ((double)(end_time - start_time) / CLOCKS_PER_SEC) / elapsed_time * 100.0;
+    elapsed_time = (float)(end_time - start_time) / CLOCKS_PER_SEC;
+    cpu_usage = ((float)(end_time - start_time) / CLOCKS_PER_SEC) / elapsed_time * 100.0;
 
 	// long utime, stime, total_time;
 	// long long starttime;
@@ -103,7 +103,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 
 		/* Get CPU usage for the process */
-		double cpu_usage = get_process_cpu_usage(task);
+		float cpu_usage = get_process_cpu_usage(task);
 
 		seq_printf(s,
 				   "%d\t %s\t %d\t %d\t %p\t %p\t\n ",
