@@ -15,7 +15,7 @@ clean:
 	$(info Hit clean)
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) clean
 
-test:
+exec:
 	$(info Hit test)
   	# We put a — in front of the rmmod command to tell make to ignore
   	# an error in case the module isn’t loaded.
