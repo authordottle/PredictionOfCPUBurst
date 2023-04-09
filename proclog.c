@@ -105,15 +105,15 @@ static long get_process_cpu_usage(struct task_struct *task)
 	// uptime
 	long uptime = kstrtol(buf, 10, NULL);
 
-	long utime_sec = utime / clk_tck;
-	long stime_sec = stime / clk_tck;
-	long start_time_sec = start_time / clk_tck;
+	// long utime_sec = utime / clk_tck;
+	// long stime_sec = stime / clk_tck;
+	// long start_time_sec = start_time / clk_tck;
 
-	long elapsed_sec = uptime - start_time_sec;
-	long usage_sec = utime_sec + stime_sec;
-	cpu_usage = usage_sec * 100 / elapsed_sec;
+	// long elapsed_sec = uptime - start_time_sec;
+	// long usage_sec = utime_sec + stime_sec;
+	// cpu_usage = usage_sec * 100 / elapsed_sec;
 
-	return cpu_usage;
+	return uptime;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
