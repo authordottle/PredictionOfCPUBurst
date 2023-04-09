@@ -93,6 +93,11 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 
 static int proc_seq_show(struct seq_file *s, void *v)
 {
+	struct task_struct *task;
+    seq_printf(m, "PID\tNAME\n");
+    for_each_process(task) {
+        seq_printf(m, "%d\t%s\n", task->pid, task->comm);
+    }
 	// printk("Showing value");
 	// char *temp = (char *)v;
 	// do
@@ -172,9 +177,8 @@ static int __init init_kernel_module(void)
 #ifdef HAVE_PROC_CREATE_SINGLE
 	proc_create_single("log_file", 0, NULL, procfile_show);
 #else
-	// proc_create("log_file", 0, NULL, &proc_file_fops);
-	struct task_struct *task;
-	proc_create_data("log_file", 0644, NULL, &proc_file_fops, task);
+	proc_create("log_file", 0, NULL, &proc_file_fops);
+	// proc_create_data("log_file", 0644, NULL, &proc_file_fops, NULL);
 #endif
 
 	// // loop processes
