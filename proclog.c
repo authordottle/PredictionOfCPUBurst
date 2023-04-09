@@ -67,20 +67,13 @@ static long get_process_cpu_usage(struct task_struct *task)
 {
 	unsigned long long utime, stime, total_time, start_time;
 	long cpu_usage = 0;
-	unsigned long clk_tck = 100;
+	int clk_tck = 100;
 
 	if (task == NULL)
 	{
 		return -EINVAL;
 	}
 
-	// utime, stime, and starttime are in units called clock ticks
-	utime = task->utime;
-	stime = task->stime;
-	start_time = task->start_time;
-
-	return utime / 100;
-	
 	struct file *filp;
 	char buf[64];
 	int len;
@@ -106,16 +99,21 @@ static long get_process_cpu_usage(struct task_struct *task)
 	// uptime
 	long uptime = kstrtol(buf, 10, NULL);
 
+	// utime, stime, and starttime are in units called clock ticks
+	utime = task->utime;
+	stime = task->stime;
+	start_time = task->start_time;
+
 	long utime_sec = utime / clk_tck;
 
 	return utime / 100;	
 
-	// long stime_sec = stime / clk_tck;
-	// long start_time_sec = start_time / clk_tck;
+	long stime_sec = stime / clk_tck;
+	long start_time_sec = start_time / clk_tck;
 
-	// long elapsed_sec = uptime - start_time_sec;
-	// long usage_sec = utime_sec + stime_sec;
-	// cpu_usage = usage_sec * 100 / elapsed_sec;
+	long elapsed_sec = uptime - start_time_sec;
+	long usage_sec = utime_sec + stime_sec;
+	cpu_usage = usage_sec * 100 / elapsed_sec;
 
 	return uptime;
 }
