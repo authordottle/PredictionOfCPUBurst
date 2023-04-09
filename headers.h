@@ -29,4 +29,5 @@ static unsigned long procfs_buffer_size = 0;
 // pointer for buffer location in read
 static char *buff_ptr;
 
+// /proc/uptime #1 uptime of the system (seconds)
 s64 uptime;

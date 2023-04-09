@@ -60,7 +60,14 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 
 static long get_process_cpu_usage(struct task_struct *task)
 {
-	unsigned long long utime, stime, start_time;
+	// adapted from https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat
+	// /proc/[PID]/stat
+	// #14 utime - CPU time spent in user code, measured in clock ticks
+	// #15 stime - CPU time spent in kernel code, measured in clock ticks
+	// #16 cutime - Waited-for children's CPU time spent in user code (in clock ticks)
+	// #17 cstime - Waited-for children's CPU time spent in kernel code (in clock ticks)
+	// #22 starttime - Time when the process started, measured in clock ticks
+	unsigned long long utime, stime, cutime, cstime, start_time;
 	unsigned long long utime_sec, stime_sec, start_time_sec;
 	unsigned long long utime_msec, stime_msec, start_time_msec;
 	long long cpu_usage = 0;
@@ -81,43 +88,6 @@ static long get_process_cpu_usage(struct task_struct *task)
 	utime_sec = utime / clk_tck;
 	stime_sec = stime / clk_tck;
 	start_time_sec = start_time / clk_tck;
-
-	// need to convert /proc/uptime into human readable format
- 	struct file *f;
-    char buf[128];
-    int len;
-
-    // Open the /proc/uptime file for reading
-    f = filp_open("/proc/uptime", O_RDONLY, 0);
-    if (!f) {
-        printk(KERN_ERR "Error opening /proc/uptime\n");
-        return 123;
-    }
-
-    // Read the contents of the file into a buffer
-    len = kernel_read(f, buf, sizeof(buf), 0);
-    if (len <= 0) {
-        printk(KERN_ERR "Error reading /proc/uptime\n");
-        return 234;
-    }
-
-	// Convert the uptime value from a string to a long
-    long uptime;
-    sscanf(buf, "%ld", &uptime);
-
-	return uptime;
-
-
-    // // Calculate the number of days, hours, minutes, and seconds in the uptime value
-    // int days = uptime / 86400;
-    // int hours = (uptime / 3600) % 24;
-    // int mins = (uptime / 60) % 60;
-    // int secs = (int) uptime % 60;
-
-    // // Print the uptime in a human-readable format
-    // printk(KERN_INFO "Uptime: %d days, %02d:%02d:%02d\n", days, hours, mins, secs);
-
-	// return uptime;
 
 	uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 

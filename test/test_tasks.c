@@ -47,6 +47,8 @@ void print_tasks()
 
 int main()
 {
+	long clock_ticks = sysconf(_SC_CLK_TCK) ;
+	printf("%ld\n", clock_ticks);
 	print_tasks();
 	return 0;
 }
