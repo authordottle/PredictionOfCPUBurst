@@ -59,13 +59,14 @@ struct Process
         -checks if the given pointer has been allocated successfully and exits if it did not
 */
 
-void check_alloc(void* ptr)
+static int check_alloc(void* ptr)
 {
     if (!ptr)
     {
-        printf("Allocation error!\n");
-        exit(1);
+        printk("Allocation error!\n");
+		return 0;
     }
+	return 1;
 }
 
 /*
@@ -76,8 +77,10 @@ struct Process *create_new_process(float process_burst_time, pid_t pid)
 {
     struct Process *new_process = NULL;
 
-    new_process = (struct Process *)malloc(sizeof(struct Process));
-    check_alloc(new_process);
+    new_process = (struct Process *)kmalloc(sizeof(struct Process));
+    if (check_alloc(new_process) == 0) {
+		return -ENOMEM;
+	}
 
     new_process->burst_time = process_burst_time;
     new_process->next = NULL;
