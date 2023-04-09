@@ -82,6 +82,29 @@ static long get_process_cpu_usage(struct task_struct *task)
 	stime_sec = stime / clk_tck;
 	start_time_sec = start_time / clk_tck;
 
+	// need to convert /proc/uptime into human readable format
+ 	struct file *f;
+    char buf[128];
+    int len;
+
+    // Open the /proc/uptime file for reading
+    f = filp_open("/proc/uptime", O_RDONLY, 0);
+    if (!f) {
+        printk(KERN_ERR "Error opening /proc/uptime\n");
+        return 123;
+    }
+
+    // Read the contents of the file into a buffer
+    len = kernel_read(f, buf, sizeof(buf), 0);
+    if (len <= 0) {
+        printk(KERN_ERR "Error reading /proc/uptime\n");
+        return 234;
+    }
+
+	return len;
+
+
+	
 	uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
 	elapsed_sec = (long)uptime - start_time_sec;
