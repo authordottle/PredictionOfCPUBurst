@@ -67,7 +67,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 {
 	unsigned long long utime, stime, total_time, start_time;
 	long cpu_usage = 0;
-	long clk_tck = 100;
+	unsigned long clk_tck = 100;
 
 	if (task == NULL)
 	{
@@ -78,8 +78,6 @@ static long get_process_cpu_usage(struct task_struct *task)
 	utime = task->utime;
 	stime = task->stime;
 	start_time = task->start_time;
-
-	return utime / 100;
 
 	struct file *filp;
 	char buf[64];
@@ -108,7 +106,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 
 	long utime_sec = utime / clk_tck;
 
-		
+	return utime_sec;	
 
 	// long stime_sec = stime / clk_tck;
 	// long start_time_sec = start_time / clk_tck;
