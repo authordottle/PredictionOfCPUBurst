@@ -58,35 +58,33 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 	printk("Hit proc_seq_stop");
 }
 
-/* Function to get CPU usage for a process */
-static unsigned long get_process_cpu_usage(struct task_struct *task)
-{
-	double start_time, end_time;
-    unsigned long elapsed_time, cpu_usage;
+#include <linux/jiffies.h>
 
-    start_time = (double)clock();
-    // Perform some work here (e.g., execute a loop or a system call).
-    end_time = (double)clock();
+static long get_process_cpu_usage(pid_t pid) {
+    struct task_struct *task;
+    unsigned long utime, stime, total_time;
+    unsigned long start_time, now, delta_time;
+    long cpu_usage = 0;
 
-    elapsed_time = (unsigned long)(end_time - start_time) / CLOCKS_PER_SEC;
-    cpu_usage = (unsigned long)((end_time - start_time) / CLOCKS_PER_SEC) / elapsed_time * 100.0;
+    rcu_read_lock();
+    task = pid_task(find_vpid(pid), PIDTYPE_PID);
+    if (task == NULL) {
+        rcu_read_unlock();
+        return -EINVAL;
+    }
 
-	// long utime, stime, total_time;
-	// long long starttime;
+    utime = task->utime;
+    stime = task->stime;
+    total_time = utime + stime;
+    start_time = task->start_time;
+    now = jiffies;
+    rcu_read_unlock();
 
-	// utime = task->utime;
-	// stime = task->stime;
-	// starttime = task->start_time;
+    delta_time = (now - start_time) * HZ / jiffies_64;
+    if (delta_time)
+        cpu_usage = total_time * 100 / delta_time;
 
-	// total_time = utime + stime;
-
-	// /* Calculate the elapsed time since the process started */
-	// long long elapsed = (ktime_get_ns() - starttime) / NSEC_PER_SEC;
-
-	// /* Calculate CPU usage as a percentage */
-	// long cpu_usage = total_time * 100 / elapsed;
-
-	return cpu_usage;
+    return cpu_usage;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
@@ -103,10 +101,10 @@ static int proc_seq_show(struct seq_file *s, void *v)
 		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 
 		/* Get CPU usage for the process */
-		unsigned long cpu_usage = get_process_cpu_usage(task);
+		long cpu_usage = get_process_cpu_usage(task);
 
 		seq_printf(s,
-				   "%d\t %s\t %lu\t %d\t %p\t %p\t\n ",
+				   "%d\t %s\t %ld\t %d\t %p\t %p\t\n ",
 				   task->pid,
 				   task->comm,
 				   cpu_usage,
