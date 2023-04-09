@@ -63,31 +63,22 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 #include <linux/seq_file.h>
 #include <linux/kernel.h>
 
-static unsigned long get_process_cpu_usage(struct task_struct *task)
+static long get_process_cpu_usage(struct task_struct *task)
 {
-	unsigned long utime, stime, total_time;
-	unsigned long start_time, now, delta_time;
-	unsigned long cpu_usage = 0;
-	unsigned long clk_tck = 100;
+	long utime, stime, total_time;
+	long start_time, now, delta_time;
+	long cpu_usage = 0;
+	long clk_tck = 100;
 
-	rcu_read_lock();
 	if (task == NULL)
 	{
-		rcu_read_unlock();
 		return -EINVAL;
 	}
 
 	// utime, stime, and starttime are in units called clock ticks
 	utime = task->utime;
 	stime = task->stime;
-	total_time = utime + stime;
 	start_time = task->start_time;
-	now = jiffies;
-	rcu_read_unlock();
-
-	unsigned long utime_sec = utime / clk_tck;
-	unsigned long stime_sec = stime / clk_tck;
-	unsigned long start_time_sec = start_time / clk_tck;
 
 	struct file *filp;
 	char buf[64];
@@ -110,10 +101,16 @@ static unsigned long get_process_cpu_usage(struct task_struct *task)
 	}
 
 	buf[len] = '\0';
+
+	// uptime
 	long uptime = kstrtol(buf, 10, NULL);
 
-	unsigned long elapsed_sec = (unsigned long)uptime - start_time_sec;
-	unsigned long usage_sec = utime_sec + stime_sec;
+	long utime_sec = utime / clk_tck;
+	long stime_sec = stime / clk_tck;
+	long start_time_sec = start_time / clk_tck;
+
+	long elapsed_sec = uptime - start_time_sec;
+	long usage_sec = utime_sec + stime_sec;
 	cpu_usage = usage_sec * 100 / elapsed_sec;
 
 	return cpu_usage;
