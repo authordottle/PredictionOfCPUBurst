@@ -82,15 +82,17 @@ static long get_process_cpu_usage(struct task_struct *task)
 	stime = task->stime;
 	start_time = task->start_time;
 
-	utime_sec = utime / 100;
-	stime_sec = stime / 100;
-	start_time_sec = start_time / 100;
+	utime_sec = utime / clk_tck;
+	stime_sec = stime / clk_tck;
+	start_time_sec = start_time / clk_tck;
+
+	uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
 	elapsed_sec = (long)uptime - start_time_sec;
 	usage_sec = utime_sec + stime_sec;
 	cpu_usage = usage_sec * 100 / elapsed_sec;
 
-	return HZ;
+	return start_time_sec;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
@@ -100,8 +102,6 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	loff_t *spos = (loff_t *)v;
 
 	struct task_struct *task;
-
-	uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
 	seq_printf(s,
 			   "PID\t NAME\t CPU_USAGE\t start_time\t stime\t utime\t\n");
