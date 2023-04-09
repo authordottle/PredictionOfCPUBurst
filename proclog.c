@@ -61,29 +61,29 @@ static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 
 static void proc_seq_stop(struct seq_file *s, void *v)
 {
-	// buff_ptr = NULL;
 	printk("Hit proc_seq_stop");
+	buff_ptr = NULL;
 }
 
 /* Function to get CPU usage for a process */
 static unsigned long get_process_cpu_usage(struct task_struct *task)
 {
-    unsigned long utime, stime, total_time;
-    unsigned long long starttime;
+	unsigned long utime, stime, total_time;
+	unsigned long long starttime;
 
-    utime = task->utime;
-    stime = task->stime;
-    starttime = task->start_time;
+	utime = task->utime;
+	stime = task->stime;
+	starttime = task->start_time;
 
-    total_time = utime + stime;
+	total_time = utime + stime;
 
-    /* Calculate the elapsed time since the process started */
-    unsigned long long elapsed = (ktime_get_ns() - starttime) / NSEC_PER_SEC;
+	/* Calculate the elapsed time since the process started */
+	unsigned long long elapsed = (ktime_get_ns() - starttime) / NSEC_PER_SEC;
 
-    /* Calculate CPU usage as a percentage */
-    unsigned long cpu_usage = total_time * 100 / elapsed;
+	/* Calculate CPU usage as a percentage */
+	unsigned long cpu_usage = total_time * 100 / elapsed;
 
-    return cpu_usage;
+	return cpu_usage;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
