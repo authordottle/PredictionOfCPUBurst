@@ -19,6 +19,7 @@ MODULE_DESCRIPTION("Kernel module to log process times");
 #define HAVE_PROC_OPS
 #endif
 
+// NOT APPLICABLE IN THIS CASE
 // #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 18, 0)
 // #define HAVE_PROC_CREATE_SINGLE
 // #endif
@@ -34,9 +35,6 @@ static unsigned long procfs_buffer_size = 0;
 
 // pointer for buffer location in read
 static char *buff_ptr;
-
-// struct to hold info about proc file
-struct proc_dir_entry *log_file;
 
 static int endflag;
 
@@ -58,12 +56,12 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 	// printk("Place in buffer is: %Ld\n", (*pos));
 
 	// return buff_ptr;
-	
+
 	static unsigned long counter = 0;
 
-	/* beginning a new sequence ? */	
-	if ( *pos == 0 )
-	{	
+	/* beginning a new sequence ? */
+	if (*pos == 0)
+	{
 		/* yes => return a non null value to begin the sequence */
 		return &counter;
 	}
@@ -78,29 +76,29 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
 	printk("Hit proc_seq_next");
-	
-	unsigned long *tmp_v = (unsigned long *)v;
-	(*tmp_v)++;
+
+	// unsigned long *tmp_v = (unsigned long *)v;
+	// (*tmp_v)++;
+	char *temp = (char *)v;
+	temp++;
+	printk("Temp increased.");
 	(*pos)++;
+	printk("Position increased.");
+	printk("Position is %Ld\n", (*pos));
 	return NULL;
 
-	// printk("Sequence Next!");
 	// char *temp = (char *)v;
 	// while ((*temp) != '\n')
 	// {
-
 	// 	(*pos)++;
-	// 	printk("position increased");
 	// 	if ((*pos) >= procfs_buffer_size)
 	// 	{
 	// 		return NULL;
 	// 	}
 	// 	temp++;
-	// 	printk("temp increased");
 	// }
 	// temp++;
 	// endflag = (*pos);
-	// printk("position is %Ld\n", (*pos));
 	// return temp;
 }
 
@@ -114,14 +112,17 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 static int proc_seq_show(struct seq_file *s, void *v)
 {
 	printk("Hit proc_seq_show");
-	
-	loff_t *spos = (loff_t *) v;
+
+	loff_t *spos = (loff_t *)v;
 
 	struct task_struct *task;
-    seq_printf(s, "PID\tNAME\n");
-    for_each_process(task) {
-        seq_printf(s, "%d\t%s\n", task->pid, task->comm);
-    }
+	for_each_process(task)
+		seq_printf(s, "PID\tNAME\n");
+	for_each_process(task)
+	{
+		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
+		seq_printf(s, "%d\t%s\n", task->pid, task->comm);
+	}
 
 	seq_printf(s, "%Ld\n", *spos);
 	return 0;
@@ -184,21 +185,14 @@ static const struct file_operations proc_file_fops = {
 	.release = seq_release};
 #endif
 
-static void log_processes(void)
-{
-	struct task_struct *task;
-	for_each_process(task)
-	{
-		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
-	}
-}
-
 static int __init init_kernel_module(void)
 {
 	printk(KERN_INFO "Process logger module loaded\n");
 
-	// initialize
+	// initialize: 1. struct to hold info about proc file 2. other variables
+	struct proc_dir_entry *log_file;
 	endflag = 0;
+
 // adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 // fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
 #ifdef HAVE_PROC_CREATE_SINGLE
@@ -207,9 +201,6 @@ static int __init init_kernel_module(void)
 	proc_create("log_file", 0, NULL, &proc_file_fops);
 	// proc_create_data("log_file", 0644, NULL, &proc_file_fops, NULL);
 #endif
-
-	// // loop processes
-	// log_processes();
 
 	return 0;
 }
