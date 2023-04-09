@@ -118,7 +118,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	struct task_struct *task;
 
 	seq_printf(s,
-			   "PID\t NAME\t CPU_USAGE\t utime\t stime\t uptime\t\n");
+			   "PID\t NAME\t CPU_USAGE\t utime\t stime\t start_time\t uptime\t\n");
 	for_each_process(task)
 	{
 		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
@@ -127,12 +127,13 @@ static int proc_seq_show(struct seq_file *s, void *v)
 		long cpu_usage = get_process_cpu_usage(task);
 
 		seq_printf(s,
-				   "%d\t %s\t %lld\t %lld\t %lld\t %lld\t\n ",
+				   "%d\t %s\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
 				   task->pid,
 				   task->comm,
 				   cpu_usage,
 				   task->utime,
 				   task->stime,
+				   task->start_time,
 					ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
 		//    task->start_time,
 		//    task->stime,
