@@ -106,7 +106,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 	elapsed_sec = (long)uptime * 1000000000 - start_time_sec;
 	cpu_usage = total_time / elapsed_sec * 100;
 
-	return elapsed_sec;
+	return cpu_usage;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
