@@ -21,5 +21,5 @@ let PROCESS_ELAPSED_SEC="$SYSTEM_UPTIME_SEC - $PROCESS_STARTTIME_SEC"
 let PROCESS_USAGE_SEC="$PROCESS_UTIME_SEC + $PROCESS_STIME_SEC"
 let PROCESS_USAGE="$PROCESS_USAGE_SEC * 100 / $PROCESS_ELAPSED_SEC"
 
-echo The PID $PID has spent ${PROCESS_UTIME_SEC}s (${PROCESS_UTIME}clock ticks) in user mode and ${PROCESS_STIME_SEC}s (${PROCESS_STIME}clock ticks) in kernel mode. 
+echo The PID $PID has spent ${PROCESS_UTIME_SEC}s aka ${PROCESS_UTIME}clock ticks in user mode and ${PROCESS_STIME_SEC}s aka ${PROCESS_STIME}clock ticks in kernel mode. 
 echo Total CPU usage is ${PROCESS_USAGE_SEC}s. The process has been running for ${PROCESS_ELAPSED_SEC}s. So the process has used ${PROCESS_USAGE}% of CPU.
