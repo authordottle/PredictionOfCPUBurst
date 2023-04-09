@@ -70,6 +70,8 @@ static long get_process_cpu_usage(struct task_struct *task)
 	long cpu_usage = 0;
 	long clk_tck = 100;
 
+	return 100;
+
 	if (task == NULL)
 	{
 		return -EINVAL;
@@ -133,13 +135,13 @@ static int proc_seq_show(struct seq_file *s, void *v)
 		long cpu_usage = get_process_cpu_usage(task);
 
 		seq_printf(s,
-				   "%d\t %s\t %ld\t %d\t %d\t %d\t\n ",
+				   "%d\t %s\t %ld\t %d\t \n ",
 				   task->pid,
 				   task->comm,
-				   cpu_usage,
-				   task->start_time,
-				   task->stime,
-				   task->utime);
+				   cpu_usage,);
+				//    task->start_time,
+				//    task->stime,
+				//   task->utime);
 	}
 
 	seq_printf(s, "%Ld\n", *spos);
