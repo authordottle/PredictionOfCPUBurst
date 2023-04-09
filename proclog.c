@@ -84,14 +84,18 @@ static long get_process_cpu_usage(struct task_struct *task)
 	stime = task->stime;
 	start_time = task->start_time;
 
-	// (msec)
-	utime_msec = utime / 1000000;
-	stime_msec = stime / 1000000;
-	start_time_msec = start_time / 1000000;
+long elapsed_nsec = (long)uptime * 1000000000 - start_time;
+	long usage_nsec = utime + stime;
+	cpu_usage = usage_nsec * 100 / elapsed_nsec;
 
-	long elapsed_msec = (long)uptime * 1000 - start_time_msec;
-	long usage_msec = utime_msec + stime_msec;
-	cpu_usage = usage_msec * 100 / elapsed_msec;
+	// // (msec)
+	// utime_msec = utime / 1000000;
+	// stime_msec = stime / 1000000;
+	// start_time_msec = start_time / 1000000;
+
+	// long elapsed_msec = (long)uptime * 1000 - start_time_msec;
+	// long usage_msec = utime_msec + stime_msec;
+	// cpu_usage = usage_msec * 100 / elapsed_msec;
 
 	return start_time_msec;
 }
