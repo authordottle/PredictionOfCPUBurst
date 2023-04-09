@@ -19,9 +19,9 @@ MODULE_DESCRIPTION("Kernel module to log process times");
 #define HAVE_PROC_OPS
 #endif
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 18, 0)
-#define HAVE_PROC_CREATE_SINGLE
-#endif
+// #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 18, 0)
+// #define HAVE_PROC_CREATE_SINGLE
+// #endif
 
 // size of buffer ~32Kb
 #define PROCFS_MAX_SIZE 32768
