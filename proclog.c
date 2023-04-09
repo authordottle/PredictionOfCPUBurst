@@ -73,7 +73,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 	long long cpu_usage = 0;
 	long long elapsed_nsec, usage_nsec;
 	long long elapsed_sec, usage_sec;
-	int clk_tck = 100;
+	int clk_tck = 100; // constants
 	int number_of_cpu = 2;
 
 	if (task == NULL)
@@ -83,19 +83,26 @@ static long get_process_cpu_usage(struct task_struct *task)
 
 	utime = task->utime;
 	stime = task->stime;
+	cutime = task->cutime;
+	cstime = task->cstime;
 	start_time = task->start_time;
 
-	utime_sec = utime / clk_tck;
-	stime_sec = stime / clk_tck;
+	total_time = utime + stime;
+	if (cutime != 0) {
+		total_time += cutime;
+	}
+	if (cstime != 0) {
+		total_time += cstime;
+	}
+
 	start_time_sec = start_time / clk_tck;
 
 	uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
 	elapsed_sec = (long)uptime - start_time_sec;
-	usage_sec = utime_sec + stime_sec;
-	cpu_usage = usage_sec * 100 / elapsed_sec;
+	cpu_usage = total_time / clk_tck / elapsed_sec * 100;
 
-	return uptime;
+	return elapsed_sec;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
