@@ -58,31 +58,72 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 	printk("Hit proc_seq_stop");
 }
 
-#include <linux/jiffies.h>
+#include <linux/fs.h>
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h>
+#include <linux/kernel.h>
 
-static long get_process_cpu_usage(struct task_struct *task) {
-    unsigned long utime, stime, total_time;
-    unsigned long start_time, now, delta_time;
-    long cpu_usage = 0;
+static double get_uptime() {
+    struct file *filp;
+    char buf[64];
+    int len;
 
-    rcu_read_lock();
-    if (task == NULL) {
-        rcu_read_unlock();
-        return -EINVAL;
+    filp = filp_open("/proc/uptime", O_RDONLY, 0);
+    if (IS_ERR(filp)) {
+        printk(KERN_ERR "Failed to open /proc/uptime\n");
+        return -ENOENT;
     }
 
-    utime = task->utime;
-    stime = task->stime;
-    total_time = utime + stime;
-    start_time = task->start_time;
-    now = jiffies;
-    rcu_read_unlock();
+    len = kernel_read(filp, 0, buf, sizeof(buf) - 1);
+    filp_close(filp, NULL);
 
-    delta_time = (now - start_time) * HZ / jiffies_64;
-    if (delta_time)
-        cpu_usage = total_time * 100 / delta_time;
+    if (len <= 0) {
+        printk(KERN_ERR "Failed to read /proc/uptime\n");
+        return -EFAULT;
+    }
 
-    return cpu_usage;
+    buf[len] = '\0';
+    double uptime = strtod(buf, NULL);
+
+    return uptime;
+}
+
+static unsigned long get_process_cpu_usage(struct task_struct *task)
+{
+	unsigned int clk_tck = sysconf(_SC_CLK_TCK);
+
+	unsigned long utime, stime, total_time;
+	unsigned long start_time, now, delta_time;
+	long cpu_usage = 0;
+
+	rcu_read_lock();
+	if (task == NULL)
+	{
+		rcu_read_unlock();
+		return -EINVAL;
+	}
+
+	// utime, stime, and starttime are in units called clock ticks
+	utime = task->utime;
+	stime = task->stime;
+	total_time = utime + stime;
+	start_time = task->start_time;
+	now = jiffies;
+	rcu_read_unlock();
+
+	unsigned long utime_sec = utime / clk_tck;
+	unsigned long stime_sec = stime / clk_tck;
+	unsigned long start_time_sec = start_time / clk_tck;
+
+	unsigned long elapsed_sec = (unsigned long)get_uptime() - start_time_sec;
+	unsigned long usage_sec = utime_sec + stime_sec;
+	unsigned long cpu_usage = usage_sec * 100 / elapsed_sec;
+
+	// delta_time = (now - start_time) * HZ / jiffies_64;
+	// if (delta_time)
+	//     cpu_usage = total_time * 100 / delta_time;
+
+	return cpu_usage;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)

@@ -8,6 +8,9 @@
 #include <linux/uaccess.h>
 #include <linux/sched.h>
 #include <linux/time.h>
+#include <linux/jiffies.h>
+#include <linux/syscalls.h>
+#include <linux/unistd.h>
 
 static int endflag;
 
