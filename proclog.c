@@ -63,31 +63,6 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 #include <linux/seq_file.h>
 #include <linux/kernel.h>
 
-static double get_uptime() {
-    struct file *filp;
-    char buf[64];
-    int len;
-
-    filp = filp_open("/proc/uptime", O_RDONLY, 0);
-    if (IS_ERR(filp)) {
-        printk(KERN_ERR "Failed to open /proc/uptime\n");
-        return -ENOENT;
-    }
-
-    len = kernel_read(filp, 0, buf, sizeof(buf) - 1);
-    filp_close(filp, NULL);
-
-    if (len <= 0) {
-        printk(KERN_ERR "Failed to read /proc/uptime\n");
-        return -EFAULT;
-    }
-
-    buf[len] = '\0';
-    double uptime = strtod(buf, NULL);
-
-    return uptime;
-}
-
 static unsigned long get_process_cpu_usage(struct task_struct *task)
 {
 	unsigned int clk_tck = sysconf(_SC_CLK_TCK);
@@ -115,7 +90,28 @@ static unsigned long get_process_cpu_usage(struct task_struct *task)
 	unsigned long stime_sec = stime / clk_tck;
 	unsigned long start_time_sec = start_time / clk_tck;
 
-	unsigned long elapsed_sec = (unsigned long)get_uptime() - start_time_sec;
+	struct file *filp;
+    char buf[64];
+    int len;
+
+    filp = filp_open("/proc/uptime", O_RDONLY, 0);
+    if (IS_ERR(filp)) {
+        printk(KERN_ERR "Failed to open /proc/uptime\n");
+        return -ENOENT;
+    }
+
+    len = kernel_read(filp, 0, buf, sizeof(buf) - 1);
+    filp_close(filp, NULL);
+
+    if (len <= 0) {
+        printk(KERN_ERR "Failed to read /proc/uptime\n");
+        return -EFAULT;
+    }
+
+    buf[len] = '\0';
+    double uptime = strtod(buf, NULL);
+
+	unsigned long elapsed_sec = (unsigned long)uptime - start_time_sec;
 	unsigned long usage_sec = utime_sec + stime_sec;
 	unsigned long cpu_usage = usage_sec * 100 / elapsed_sec;
 
