@@ -82,8 +82,8 @@ static long get_process_elapsed_time(struct task_struct *task)
 		return -EINVAL;
 	}
 
-	// The reason for this is that the utime value in the /proc/[pid]/stat file is measured in clock ticks, 
-	// whereas the utime field in the task_struct is measured in nanoseconds. 
+	// The reason for this is that the utime value in the /proc/[pid]/stat file is measured in clock ticks,
+	// whereas the utime field in the task_struct is measured in nanoseconds.
 	start_time = task->start_time;
 
 	// kernel system timer
@@ -100,7 +100,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 
 	loff_t *spos = (loff_t *)v;
 
-unsigned long long utime, stime, cutime, cstime, start_time;
+	unsigned long long utime, stime, cutime, cstime, start_time;
 	unsigned long long total_time;
 	struct task_struct *task;
 
@@ -110,10 +110,10 @@ unsigned long long utime, stime, cutime, cstime, start_time;
 	{
 		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 
-utime = task->utime;
-	stime = task->stime;
+		utime = task->utime;
+		stime = task->stime;
 
-	total_time = utime + stime;
+		total_time = utime + stime;
 		/* Get CPU usage for the process */
 		long elapsed_time = get_process_elapsed_time(task);
 
@@ -122,11 +122,11 @@ utime = task->utime;
 				   task->pid,
 				   task->comm,
 				   elapsed_time,
-					total_time,
+				   total_time,
 				   task->utime,
 				   task->stime,
 				   task->start_time,
-					ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
+				   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
 		//    task->start_time,
 		//    task->stime,
 		//   task->utime);
