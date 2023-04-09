@@ -71,41 +71,12 @@ static long get_process_cpu_usage(struct task_struct *task)
 
 	if (task == NULL)
 	{
-		return "123";
 		return -EINVAL;
 	}
 
-	// struct file *filp;
-	// char buf[64];
-	// int len;
-
-	// filp = filp_open("/proc/uptime", O_RDONLY, 0);
-	// if (IS_ERR(filp))
-	// {
-	// 	return "234";
-	// 	printk(KERN_ERR "Failed to open /proc/uptime\n");
-	// 	return -ENOENT;
-	// }
-
-	// len = kernel_read(filp, 0, buf, sizeof(buf) - 1);
-	// filp_close(filp, NULL);
-
+	// uptime
     s64  uptime;
     uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
-
-	return (long)uptime;
-
-	// if (len <= 0)
-	// {
-	// 	return "345";
-	// 	printk(KERN_ERR "Failed to read /proc/uptime\n");
-	// 	return -EFAULT;
-	// }
-
-	// buf[len] = '\0';
-
-	// // uptime
-	// long uptime = kstrtol(buf, 10, NULL);
 
 	// utime, stime, and starttime are in units called clock ticks
 	utime = task->utime;
@@ -116,7 +87,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 	long stime_sec = stime / clk_tck;
 	long start_time_sec = start_time / clk_tck;
 
-	long elapsed_sec = uptime - start_time_sec;
+	long elapsed_sec = (long)uptime - start_time_sec;
 	long usage_sec = utime_sec + stime_sec;
 	cpu_usage = usage_sec * 100 / elapsed_sec;
 
