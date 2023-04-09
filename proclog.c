@@ -117,15 +117,14 @@ static int proc_seq_show(struct seq_file *s, void *v)
 
 	struct task_struct *task;
 	seq_printf(s,
-			   "PID\t NAME\t STATE\t PERV_CPUTIME\t MEMORY_MANAGER\t FILES\t\n");
+			   "PID\t NAME\t PERV_CPUTIME\t MEMORY_MANAGER\t FILES\t\n");
 	for_each_process(task)
 	{
 		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 		seq_printf(s,
-				   "%d\t %s\t %ld\t %d\t %d\t %p\t %p\t\n ",
+				   "%d\t %s\t %d\t %d\t %p\t %p\t\n ",
 				   task->pid,
 				   task->comm,
-				   task->state,
 				   task->prev_cputime,
 				   task->mm,
 				   task->files);
