@@ -79,7 +79,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 	// uptime (sec)
     uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
-	// utime, stime, and starttime (clock ticks)
+	// utime, stime, and starttime (nsec) based on https://lkml.org/lkml/2017/1/29/223
 	utime = task->utime;
 	stime = task->stime;
 	start_time = task->start_time;
@@ -93,7 +93,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 	long usage_msec = utime_msec + stime_msec;
 	cpu_usage = usage_msec * 100 / elapsed_msec;
 
-	return cpu_usage;
+	return start_time_msec;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
