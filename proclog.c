@@ -61,15 +61,15 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 /* Function to get CPU usage for a process */
 static unsigned long get_process_cpu_usage(struct task_struct *task)
 {
-	clock_t start_time, end_time;
+	double start_time, end_time;
     unsigned long elapsed_time, cpu_usage;
 
-    start_time = clock();
+    start_time = (double)clock();
     // Perform some work here (e.g., execute a loop or a system call).
-    end_time = clock();
+    end_time = (double)clock();
 
     elapsed_time = (unsigned long)(end_time - start_time) / CLOCKS_PER_SEC;
-    cpu_usage = ((unsigned long)(end_time - start_time) / CLOCKS_PER_SEC) / elapsed_time * 100.0;
+    cpu_usage = (unsigned long)((end_time - start_time) / CLOCKS_PER_SEC) / elapsed_time * 100.0;
 
 	// long utime, stime, total_time;
 	// long long starttime;
