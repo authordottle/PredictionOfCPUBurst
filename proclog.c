@@ -2,6 +2,7 @@
 // Logger that creates a proc file
 // idea from tldp.org/LDP/lkmpg/2.6/html/index.html
 #include "headers.h"
+#include "process.c"
 
 #ifndef __KERNEL__
 #define __KERNEL__
