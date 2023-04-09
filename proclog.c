@@ -105,6 +105,9 @@ static long get_process_cpu_usage(struct task_struct *task)
     float uptime;
     sscanf(buf, "%f", &uptime);
 
+	return 888;
+
+	
     // Calculate the number of days, hours, minutes, and seconds in the uptime value
     int days = uptime / 86400;
     int hours = (uptime / 3600) % 24;
