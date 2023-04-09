@@ -70,13 +70,14 @@ static unsigned long get_process_cpu_usage(struct task_struct *task)
 
 	total_time = utime + stime;
 
-	/* Calculate the elapsed time since the process started */
-	unsigned long long elapsed = (ktime_get_ns() - starttime) / NSEC_PER_SEC;
+	// /* Calculate the elapsed time since the process started */
+	// unsigned long long elapsed = (ktime_get_ns() - starttime) / NSEC_PER_SEC;
 
-	/* Calculate CPU usage as a percentage */
-	unsigned long cpu_usage = total_time * 100 / elapsed;
+	// /* Calculate CPU usage as a percentage */
+	// unsigned long cpu_usage = total_time * 100 / elapsed;
 
-	return cpu_usage;
+// test
+	return total_time;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
