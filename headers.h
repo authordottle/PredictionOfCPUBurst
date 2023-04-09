@@ -11,9 +11,9 @@
 #include <linux/jiffies.h>
 #include <linux/syscalls.h>
 #include <linux/unistd.h>
-#include <linux/fs.h>
 #include <linux/ktime.h>
 #include <linux/types.h>
+#include <linux/fs.h>
 
 static int endflag;
 

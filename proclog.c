@@ -58,11 +58,6 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 	printk("Hit proc_seq_stop");
 }
 
-#include <linux/fs.h>
-#include <linux/proc_fs.h>
-#include <linux/seq_file.h>
-#include <linux/kernel.h>
-
 static long get_process_cpu_usage(struct task_struct *task)
 {
 	unsigned long long utime, stime, start_time;
