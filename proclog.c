@@ -116,12 +116,16 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	loff_t *spos = (loff_t *)v;
 
 	struct task_struct *task;
-	for_each_process(task)
-		seq_printf(s, "PID\tNAME\n");
+	seq_printf(s, "PID\tNAME\tSTATE\tPER_CPU_UTIME\tPER_CPU_STIME\n");
 	for_each_process(task)
 	{
 		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
-		seq_printf(s, "%d\t%s\n", task->pid, task->comm);
+		seq_printf(s, "%d\t%s\t%d\t%d\t%d\t\n", 
+		task->pid, 
+		task->comm, 
+		task->state, 
+		task->per_cpu_utime,
+		task->per_cpu_stime);
 	}
 
 	seq_printf(s, "%Ld\n", *spos);
