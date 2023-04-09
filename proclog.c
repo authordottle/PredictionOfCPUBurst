@@ -60,14 +60,12 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 
 #include <linux/jiffies.h>
 
-static long get_process_cpu_usage(pid_t pid) {
-    struct task_struct *task;
+static long get_process_cpu_usage(struct task_struct *task) {
     unsigned long utime, stime, total_time;
     unsigned long start_time, now, delta_time;
     long cpu_usage = 0;
 
     rcu_read_lock();
-    task = pid_task(find_vpid(pid), PIDTYPE_PID);
     if (task == NULL) {
         rcu_read_unlock();
         return -EINVAL;
