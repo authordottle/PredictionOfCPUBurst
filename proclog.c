@@ -142,8 +142,7 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 
 static int procfile_show(struct seq_file *m, void *v)
 {
-here:
-	seq_printf(m, "Skynet location: 0x%lx\n", (unsigned long)&&here);
+	printk("Hit procfile_show");
 	return 0;
 }
 
@@ -180,8 +179,7 @@ static int __init init_kernel_module(void)
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
 	#ifdef HAVE_PROC_CREATE_SINGLE
-	printk( "here\n");
-		// log_file = proc_create_single("timing_log", 0, NULL, procfile_show);
+		proc_create_single("timing_log", 0, NULL, procfile_show);
 	#else
 	printk( "here2\n");
 		// log_file = proc_create("timing_log", 0, NULL, &proc_file_fops);
