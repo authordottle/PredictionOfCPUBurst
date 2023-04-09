@@ -92,7 +92,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 	usage_sec = utime_sec + stime_sec;
 	cpu_usage = usage_sec * 100 / elapsed_sec;
 
-	return start_time;
+	return task->pid;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
