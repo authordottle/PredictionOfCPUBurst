@@ -59,10 +59,10 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 }
 
 /* Function to get CPU usage for a process */
-static unsigned long get_process_cpu_usage(struct task_struct *task)
+static long get_process_cpu_usage(struct task_struct *task)
 {
-	unsigned long utime, stime, total_time;
-	unsigned long long starttime;
+	long utime, stime, total_time;
+	long long starttime;
 
 	utime = task->utime;
 	stime = task->stime;
@@ -94,7 +94,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 
 		/* Get CPU usage for the process */
-		unsigned long cpu_usage = get_process_cpu_usage(task);
+		long cpu_usage = get_process_cpu_usage(task);
 
 		seq_printf(s,
 				   "%d\t %s\t %ld\t %d\t %p\t %p\t\n ",
