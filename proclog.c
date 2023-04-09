@@ -58,12 +58,32 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 	// printk("Place in buffer is: %Ld\n", (*pos));
 
 	// return buff_ptr;
-	return NULL;
+	
+	static unsigned long counter = 0;
+
+	/* beginning a new sequence ? */	
+	if ( *pos == 0 )
+	{	
+		/* yes => return a non null value to begin the sequence */
+		return &counter;
+	}
+	else
+	{
+		/* no => it's the end of the sequence, return end to stop reading */
+		*pos = 0;
+		return NULL;
+	}
 }
 
 static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
 	printk("Hit proc_seq_next");
+	
+	unsigned long *tmp_v = (unsigned long *)v;
+	(*tmp_v)++;
+	(*pos)++;
+	return NULL;
+
 	// printk("Sequence Next!");
 	// char *temp = (char *)v;
 	// while ((*temp) != '\n')
@@ -82,22 +102,30 @@ static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 	// endflag = (*pos);
 	// printk("position is %Ld\n", (*pos));
 	// return temp;
-	return NULL;
 }
 
 static void proc_seq_stop(struct seq_file *s, void *v)
 {
 	// buff_ptr = NULL;
 	printk("Hit proc_seq_stop");
+	/* nothing to do, we use a static value in start() */
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
 {
+	printk("Hit proc_seq_show");
+	
+	loff_t *spos = (loff_t *) v;
+
 	struct task_struct *task;
     seq_printf(s, "PID\tNAME\n");
     for_each_process(task) {
         seq_printf(s, "%d\t%s\n", task->pid, task->comm);
     }
+
+	seq_printf(s, "%Ld\n", *spos);
+	return 0;
+
 	// printk("Showing value");
 	// char *temp = (char *)v;
 	// do
@@ -106,8 +134,6 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	// 	temp++;
 	// } while (*temp != '\n');
 	// seq_putc(s, '\n');
-	printk("Hit proc_seq_show");
-	return 0;
 }
 
 static struct seq_operations proc_seq_ops = {
@@ -124,8 +150,8 @@ static struct seq_operations proc_seq_ops = {
 static int procfile_open(struct inode *inode, struct file *file)
 {
 	printk("Hit procfile_open");
-	 return single_open(file, proc_seq_show, NULL);
-	// return seq_open(file, &proc_seq_ops);
+	// return single_open(file, proc_seq_show, NULL);
+	return seq_open(file, &proc_seq_ops);
 }
 
 // function to write to proc file
