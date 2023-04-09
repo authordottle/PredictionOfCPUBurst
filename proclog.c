@@ -51,21 +51,12 @@ static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 	printk("Hit proc_seq_next");
 
 	char *temp = (char *)v;
-	while ((*temp) != '\n')
-	{
-		(*pos)++;
-		printk("Position increased.");
-		if ((*pos) >= procfs_buffer_size)
-		{
-			return NULL;
-		}
-		temp++;
-		printk("Temp increased.");
-	}
 	temp++;
-	endflag = (*pos);
+	printk("Temp increased.");
+	(*pos)++;
+	printk("Position increased.");
 	printk("Position is %Ld\n", (*pos));
-	return temp;
+	return NULL;
 }
 
 static void proc_seq_stop(struct seq_file *s, void *v)
