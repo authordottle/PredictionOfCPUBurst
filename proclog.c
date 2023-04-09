@@ -65,8 +65,7 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 
 static long get_process_cpu_usage(struct task_struct *task)
 {
-	long utime, stime, total_time;
-	long start_time, now, delta_time;
+	unsigned long long utime, stime, total_time, start_time;
 	long cpu_usage = 0;
 	long clk_tck = 100;
 
@@ -77,12 +76,11 @@ static long get_process_cpu_usage(struct task_struct *task)
 
 	// utime, stime, and starttime are in units called clock ticks
 	utime = task->utime;
-
-	return utime;
-	
 	stime = task->stime;
 	start_time = task->start_time;
 
+	return utime - stime;
+	
 	struct file *filp;
 	char buf[64];
 	int len;
