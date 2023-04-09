@@ -30,17 +30,19 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 
 	buff_ptr = procfs_buffer + ((*pos) * sizeof(char));
 
-	/* continue on current sequence ? */
-	if ((*pos) >= procfs_buffer_size - 1 || *buff_ptr == '\0')
+	static unsigned long counter = 0;
+
+	/* beginning a new sequence ? */
+	if (*pos == 0)
 	{
-		/* no => it's the end of the sequence, return end to stop reading */
-		printk("End proc_seq_read. \n");
-		return NULL;
+		/* yes => return a non null value to begin the sequence */
+		return &counter;
 	}
 	else
 	{
-		/* yes => return a non null value to begin the sequence */
-		return buff_ptr;
+		/* no => it's the end of the sequence, return end to stop reading */
+		*pos = 0;
+		return NULL;
 	}
 }
 
