@@ -103,7 +103,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 
 	// Convert the uptime value from a string to a long
     long uptime;
-    sscanf(buf, "%f", &uptime);
+    sscanf(buf, "%ld", &uptime);
 
 	return uptime;
 
