@@ -106,7 +106,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 
 	long utime_sec = utime / clk_tck;
 
-	return utime_sec;	
+	return utime / 100;	
 
 	// long stime_sec = stime / clk_tck;
 	// long start_time_sec = start_time / clk_tck;
