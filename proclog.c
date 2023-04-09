@@ -113,7 +113,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 		long cpu_usage = get_process_cpu_usage(task);
 
 		seq_printf(s,
-				   "%d\t %s\t %ld\t %d\t \n ",
+				   "%d\t %s\t %lld\t %d\t \n ",
 				   task->pid,
 				   task->comm,
 				   cpu_usage);
