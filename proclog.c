@@ -84,50 +84,63 @@ static long get_process_cpu_usage(struct task_struct *task)
 
 	utime = task->utime;
 	stime = task->stime;
-	// cutime = task->cutime;
-	// cstime = task->cstime;
+	cutime = task->cutime;
+	cstime = task->cstime;
 	start_time = task->start_time;
 
 	total_time = utime + stime;
-	// if (cutime != 0) {
-	// 	total_time += cutime;
-	// }
-	// if (cstime != 0) {
-	// 	total_time += cstime;
-	// }
+	if (cutime != 0) {
+		total_time += cutime;
+	}
+	if (cstime != 0) {
+		total_time += cstime;
+	}
 
 	start_time_sec = start_time / clk_tck;
 
+	// kernel system timer
 	uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
 	elapsed_sec = (long)uptime - start_time_sec;
 	cpu_usage = total_time / clk_tck / elapsed_sec * 100;
 
-	return elapsed_sec;
+	return cpu_usage;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
 {
 	printk("Hit proc_seq_show");
 
-	loff_t *spos = (loff_t *)v;
+ struct task_struct *task;
+    unsigned long long cpu_usecs;
+    clock_t process_ticks, total_ticks = jiffies - idle_cpu_ticks;
 
-	struct task_struct *task;
+    seq_printf(m, "PID\tCPU Usage\n");
+    for_each_process(task) {
+        cpu_usecs = get_cpu_usecs(task);
+        process_ticks = jiffies_to_clock_t(jiffies_to_usecs(cpu_usecs));
+        seq_printf(m, "%d\t%d%%\n", task->pid, (int)(process_ticks * 100 / total_ticks));
+    }
 
-	seq_printf(s,
-			   "PID\t NAME\t CPU_USAGE\t start_time\t stime\t utime\t\n");
-	for_each_process(task)
-	{
-		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
+	return 0;
+	// loff_t *spos = (loff_t *)v;
 
-		/* Get CPU usage for the process */
-		long cpu_usage = get_process_cpu_usage(task);
+	// struct task_struct *task;
 
-		seq_printf(s,
-				   "%d\t %s\t %lld\t %d\t \n ",
-				   task->pid,
-				   task->comm,
-				   cpu_usage);
+	// seq_printf(s,
+	// 		   "PID\t NAME\t CPU_USAGE\t start_time\t stime\t utime\t\n");
+	// for_each_process(task)
+	// {
+	// 	printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
+
+	// 	/* Get CPU usage for the process */
+	// 	long cpu_usage = get_process_cpu_usage(task);
+
+	// 	seq_printf(s,
+	// 			   "%d\t %s\t %lld\t %d\t \n ",
+	// 			   task->pid,
+	// 			   task->comm,
+	// 			   cpu_usage);
 		//    task->start_time,
 		//    task->stime,
 		//   task->utime);
