@@ -191,7 +191,7 @@ static int __init init_kernel_module(void)
 #ifdef HAVE_PROC_CREATE_SINGLE
 	proc_create_single("log_file", 0, NULL, procfile_show);
 #else
-	proc_create_data("log_file", 0, NULL, &proc_file_fops, NULL);
+	proc_create("log_file", 0, NULL, &proc_file_fops);
 #endif
 
 	return 0;
