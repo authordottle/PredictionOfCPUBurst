@@ -70,12 +70,12 @@ static long get_process_cpu_usage(struct task_struct *task)
 	long cpu_usage = 0;
 	long clk_tck = 100;
 
-	return 100;
-
 	if (task == NULL)
 	{
 		return -EINVAL;
 	}
+
+	return 100;
 
 	// utime, stime, and starttime are in units called clock ticks
 	utime = task->utime;
