@@ -111,17 +111,6 @@ static struct seq_operations proc_seq_ops = {
 	.stop = proc_seq_stop,
 	.show = proc_seq_show};
 
-// static int uptime_proc_show(struct seq_file *m, void *v)
-// {
-//     // struct timespec uptime;
-
-//     // get_monotonic_boottime(&uptime);
-
-//     // seq_printf(m, "%ld.%09ld\n", uptime.tv_sec, uptime.tv_nsec);
-
-//     return 0;
-// }
-
 // static int procfile_open(struct inode *inode, struct file *file)
 // {
 //     return single_open(file, uptime_proc_show, NULL);
@@ -181,10 +170,10 @@ static int __init init_kernel_module(void)
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
 	#ifdef HAVE_PROC_CREATE_SINGLE
-		proc_create_single("log_file", 0, NULL, procfile_show);
+		proc_create_single("timing_log", 0, NULL, procfile_show);
 	#else
-		// proc_create("log_file", 0, NULL, &proc_file_fops);
-		proc_create_data("log_file", 0644, NULL, &proc_file_fops, NULL);
+		// proc_create("timing_log", 0, NULL, &proc_file_fops);
+		proc_create_data("timing_log", 0644, NULL, &proc_file_fops, NULL);
 	#endif
 
 	// // loop processes
@@ -195,7 +184,7 @@ static int __init init_kernel_module(void)
 
 static void __exit exit_kernel_module(void)
 {
-	remove_proc_entry("log_file", NULL);
+	remove_proc_entry("timing_log", NULL);
 	printk(KERN_INFO "Process logger module unloaded\n");
 }
 
