@@ -24,12 +24,6 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
 	printk("Hit proc_seq_start");
 
-	(*pos) = endflag;
-
-	printk("Place in buffer is: %Ld\n", (*pos));
-
-	buff_ptr = procfs_buffer + ((*pos) * sizeof(char));
-
 	static unsigned long counter = 0;
 
 	/* beginning a new sequence ? */
@@ -62,7 +56,6 @@ static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 static void proc_seq_stop(struct seq_file *s, void *v)
 {
 	printk("Hit proc_seq_stop");
-	buff_ptr = NULL;
 }
 
 /* Function to get CPU usage for a process */
@@ -103,7 +96,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 		unsigned long cpu_usage = get_process_cpu_usage(task);
 
 		seq_printf(s,
-				   "%d\t %s\t %d\t %d\t %p\t %p\t\n ",
+				   "%d\t %s\t %ld\t %d\t %p\t %p\t\n ",
 				   task->pid,
 				   task->comm,
 				   cpu_usage,
