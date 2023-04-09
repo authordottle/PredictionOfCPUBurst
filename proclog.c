@@ -82,6 +82,8 @@ static long get_process_cpu_usage(struct task_struct *task)
 		return -EINVAL;
 	}
 
+	// The reason for this is that the utime value in the /proc/[pid]/stat file is measured in clock ticks, 
+	// whereas the utime field in the task_struct is measured in nanoseconds. 
 	utime = task->utime;
 	stime = task->stime;
 	// cutime = task->cutime;
@@ -96,15 +98,15 @@ static long get_process_cpu_usage(struct task_struct *task)
 	// 	total_time += cstime;
 	// }
 
-	start_time_sec = start_time / clk_tck;
+	start_time_sec = start_time;
 
 	// kernel system timer
 	uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
-	elapsed_sec = (long)uptime - start_time_sec;
-	cpu_usage = total_time / clk_tck / elapsed_sec * 100;
+	elapsed_sec = (long)uptime * 1000000000 - start_time_sec;
+	cpu_usage = total_time / elapsed_sec * 100;
 
-	return utime;
+	return elapsed_sec;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
