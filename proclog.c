@@ -101,10 +101,21 @@ static long get_process_cpu_usage(struct task_struct *task)
         return 234;
     }
 
-	return len;
+	// Convert the uptime value from a string to a float
+    float uptime;
+    sscanf(buf, "%f", &uptime);
 
+    // Calculate the number of days, hours, minutes, and seconds in the uptime value
+    int days = uptime / 86400;
+    int hours = (uptime / 3600) % 24;
+    int mins = (uptime / 60) % 60;
+    int secs = (int) uptime % 60;
 
-	
+    // Print the uptime in a human-readable format
+    printk(KERN_INFO "Uptime: %d days, %02d:%02d:%02d\n", days, hours, mins, secs);
+
+	return uptime;
+
 	uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
 	elapsed_sec = (long)uptime - start_time_sec;
