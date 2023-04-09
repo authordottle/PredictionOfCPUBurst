@@ -2,11 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <linux/proc_fs.h>
 
 int main(){
-	remove_proc_entry("/proc/timing_log", NULL);
-
 	printf("t1 executes. \n");
 
 	FILE *proc;

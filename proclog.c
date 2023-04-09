@@ -163,6 +163,7 @@ static void log_processes(void)
 
 static int __init init_kernel_module(void)
 {
+		remove_proc_entry("timing_log", NULL);
 	printk(KERN_INFO "Process logger module loaded\n");
 
 	// initialize
