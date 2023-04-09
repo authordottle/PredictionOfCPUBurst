@@ -70,6 +70,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 	unsigned long long utime_msec, stime_msec, start_time_msec;
 	long long cpu_usage = 0;
 	long long elapsed_nsec,  usage_nsec;
+	long long elapsed_sec,  usage_sec;
 	int clk_tck = 100;
 	s64  uptime;
 
@@ -92,7 +93,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 	usage_sec = utime_sec + stime_sec;
 	cpu_usage = usage_sec * 100 / elapsed_sec;
 
-	return usage_nsec;
+	return cpu_usage;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
