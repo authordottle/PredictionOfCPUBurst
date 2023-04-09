@@ -38,10 +38,10 @@ static int check_alloc(void* ptr)
 }
 
 /*
-    struct Process* create_new_process(float process_burst_time, pid_t pid)
+    struct Process* create_new_process(int process_burst_time, pid_t pid)
         -creates a pointer to a Process struct
 */
-struct Process *create_new_process(float process_burst_time, pid_t pid)
+struct Process *create_new_process(int process_burst_time, pid_t pid)
 {
     struct Process *new_process = NULL;
 
