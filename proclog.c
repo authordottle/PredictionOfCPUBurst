@@ -20,52 +20,27 @@ MODULE_DESCRIPTION("Kernel module to log process times");
 // #define HAVE_PROC_CREATE_SINGLE
 // #endif
 
-// // size of buffer ~32Kb
-// #define PROCFS_MAX_SIZE 32768
-
-// // buffer to hold information from log
-// static char procfs_buffer[PROCFS_MAX_SIZE];
-
-// // size of buffer
-// static unsigned long procfs_buffer_size = 0;
-
-// // pointer for buffer location in read
-// static char *buff_ptr;
-
-// static int endflag;
-
 static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
 	printk("Hit proc_seq_start");
 
-	// (*pos) = endflag;
+	(*pos) = endflag;
 
-	// buff_ptr = procfs_buffer + ((*pos) * sizeof(char));
+	printk("Place in buffer is: %Ld\n", (*pos));
 
-	// // if pos is greater than or equal to buffer size then leave sequence read
-	// if ((*pos) >= procfs_buffer_size - 1 || *buff_ptr == '\0')
-	// {
-	// 	printk("End sequence read\n");
-	// 	return NULL;
-	// }
+	buff_ptr = procfs_buffer + ((*pos) * sizeof(char));
 
-	// printk("Place in buffer is: %Ld\n", (*pos));
-
-	// return buff_ptr;
-
-	static unsigned long counter = 0;
-
-	/* beginning a new sequence ? */
-	if (*pos == 0)
+	/* continue on current sequence ? */
+	if ((*pos) >= procfs_buffer_size - 1 || *buff_ptr == '\0')
 	{
-		/* yes => return a non null value to begin the sequence */
-		return &counter;
+		/* no => it's the end of the sequence, return end to stop reading */
+		printk("End proc_seq_read. \n");
+		return NULL;
 	}
 	else
 	{
-		/* no => it's the end of the sequence, return end to stop reading */
-		*pos = 0;
-		return NULL;
+		/* yes => return a non null value to begin the sequence */
+		return buff_ptr;
 	}
 }
 
@@ -73,36 +48,49 @@ static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
 	printk("Hit proc_seq_next");
 
-	// unsigned long *tmp_v = (unsigned long *)v;
-	// (*tmp_v)++;
 	char *temp = (char *)v;
+	while ((*temp) != '\n')
+	{
+		(*pos)++;
+		printk("Position increased.");
+		if ((*pos) >= procfs_buffer_size)
+		{
+			return NULL;
+		}
+		temp++;
+		printk("Temp increased.");
+	}
 	temp++;
-	printk("Temp increased.");
-	(*pos)++;
-	printk("Position increased.");
+	endflag = (*pos);
 	printk("Position is %Ld\n", (*pos));
-	return NULL;
-
-	// char *temp = (char *)v;
-	// while ((*temp) != '\n')
-	// {
-	// 	(*pos)++;
-	// 	if ((*pos) >= procfs_buffer_size)
-	// 	{
-	// 		return NULL;
-	// 	}
-	// 	temp++;
-	// }
-	// temp++;
-	// endflag = (*pos);
-	// return temp;
+	return temp;
 }
 
 static void proc_seq_stop(struct seq_file *s, void *v)
 {
 	// buff_ptr = NULL;
 	printk("Hit proc_seq_stop");
-	/* nothing to do, we use a static value in start() */
+}
+
+/* Function to get CPU usage for a process */
+static unsigned long get_process_cpu_usage(struct task_struct *task)
+{
+    unsigned long utime, stime, total_time;
+    unsigned long long starttime;
+
+    utime = task->utime;
+    stime = task->stime;
+    starttime = task->start_time;
+
+    total_time = utime + stime;
+
+    /* Calculate the elapsed time since the process started */
+    unsigned long long elapsed = (ktime_get_ns() - starttime) / NSEC_PER_SEC;
+
+    /* Calculate CPU usage as a percentage */
+    unsigned long cpu_usage = total_time * 100 / elapsed;
+
+    return cpu_usage;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
@@ -113,25 +101,25 @@ static int proc_seq_show(struct seq_file *s, void *v)
 
 	struct task_struct *task;
 	seq_printf(s,
-			   "PID\t NAME\t PERV_CPUTIME\t MEMORY_MANAGER\t FILES\t\n");
+			   "PID\t NAME\t CPU_USAGE\t MEMORY_MANAGER\t FILES\t\n");
 	for_each_process(task)
 	{
 		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
-		// todo:
-		// float CPU_usage = ((utime2 + stime2) - (utime1 + stime1)) / (total_time2 - total_time1);
+
+		/* Get CPU usage for the process */
+		unsigned long cpu_usage = get_process_cpu_usage(task);
+
 		seq_printf(s,
 				   "%d\t %s\t %d\t %d\t %p\t %p\t\n ",
 				   task->pid,
 				   task->comm,
-				   task->prev_cputime,
+				   cpu_usage,
 				   task->mm,
 				   task->files);
 	}
 
 	seq_printf(s, "%Ld\n", *spos);
-	return 0;
 
-	// printk("Showing value");
 	// char *temp = (char *)v;
 	// do
 	// {
@@ -139,6 +127,8 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	// 	temp++;
 	// } while (*temp != '\n');
 	// seq_putc(s, '\n');
+
+	return 0;
 }
 
 static struct seq_operations proc_seq_ops = {
@@ -149,17 +139,16 @@ static struct seq_operations proc_seq_ops = {
 
 // static int procfile_open(struct inode *inode, struct file *file)
 // {
-//     return single_open(file, uptime_proc_show, NULL);
+// 	printk("Hit procfile_open");
+//     return single_open(file, proc_seq_show, NULL);
 // }
 
 static int procfile_open(struct inode *inode, struct file *file)
 {
 	printk("Hit procfile_open");
-	// return single_open(file, proc_seq_show, NULL);
 	return seq_open(file, &proc_seq_ops);
 }
 
-// function to write to proc file
 static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
 {
 	printk("Hit procfile_write");
@@ -195,15 +184,14 @@ static int __init init_kernel_module(void)
 
 	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;
-	// endflag = 0;
+	endflag = 0;
 
 // adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 // fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
 #ifdef HAVE_PROC_CREATE_SINGLE
 	proc_create_single("log_file", 0, NULL, procfile_show);
 #else
-	proc_create("log_file", 0, NULL, &proc_file_fops);
-	// proc_create_data("log_file", 0644, NULL, &proc_file_fops, NULL);
+	proc_create_data("log_file", 0, NULL, &proc_file_fops, NULL);
 #endif
 
 	return 0;
