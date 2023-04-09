@@ -163,19 +163,18 @@ static void log_processes(void)
 
 static int __init init_kernel_module(void)
 {
-		remove_proc_entry("timing_log", NULL);
 	printk(KERN_INFO "Process logger module loaded\n");
 
 	// initialize
 	endflag = 0;
-	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
-	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
-	#ifdef HAVE_PROC_CREATE_SINGLE
-		proc_create_single("timing_log", 0, NULL, procfile_show);
-	#else
-		// proc_create("timing_log", 0, NULL, &proc_file_fops);
-		proc_create_data("timing_log", 0644, NULL, &proc_file_fops, NULL);
-	#endif
+// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
+// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
+#ifdef HAVE_PROC_CREATE_SINGLE
+	proc_create_single("log_file", 0, NULL, procfile_show);
+#else
+	// proc_create("log_file", 0, NULL, &proc_file_fops);
+	proc_create_data("log_file", 0644, NULL, &proc_file_fops, NULL);
+#endif
 
 	// // loop processes
 	// log_processes();
@@ -185,7 +184,7 @@ static int __init init_kernel_module(void)
 
 static void __exit exit_kernel_module(void)
 {
-	remove_proc_entry("timing_log", NULL);
+	remove_proc_entry("log_file", NULL);
 	printk(KERN_INFO "Process logger module unloaded\n");
 }
 
