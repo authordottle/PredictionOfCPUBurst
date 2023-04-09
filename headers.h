@@ -13,6 +13,7 @@
 #include <linux/unistd.h>
 #include <linux/fs.h>
 #include <linux/ktime.h>
+#include <linux/types.h>
 
 static int endflag;
 
