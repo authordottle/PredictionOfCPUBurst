@@ -94,9 +94,9 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 static int proc_seq_show(struct seq_file *s, void *v)
 {
 	struct task_struct *task;
-    seq_printf(m, "PID\tNAME\n");
+    seq_printf(s, "PID\tNAME\n");
     for_each_process(task) {
-        seq_printf(m, "%d\t%s\n", task->pid, task->comm);
+        seq_printf(s, "%d\t%s\n", task->pid, task->comm);
     }
 	// printk("Showing value");
 	// char *temp = (char *)v;
