@@ -1,12 +1,7 @@
+/********* proclog.c ***********/
 // Logger that creates a proc file
 // idea from tldp.org/LDP/lkmpg/2.6/html/index.html
-#include <linux/version.h>
-#include <linux/module.h>
-#include <linux/kernel.h>
-#include <linux/init.h>
-#include <linux/proc_fs.h>
-#include <linux/seq_file.h> // seq_read, ...
-#include <linux/uaccess.h>
+#include "headers.h"
 
 #ifndef __KERNEL__
 #define __KERNEL__
