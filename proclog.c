@@ -75,34 +75,37 @@ static long get_process_cpu_usage(struct task_struct *task)
 		return -EINVAL;
 	}
 
-	struct file *filp;
-	char buf[64];
-	int len;
+	// struct file *filp;
+	// char buf[64];
+	// int len;
 
-	filp = filp_open("/proc/uptime", O_RDONLY, 0);
-	if (IS_ERR(filp))
-	{
-		return "234";
-		printk(KERN_ERR "Failed to open /proc/uptime\n");
-		return -ENOENT;
-	}
+	// filp = filp_open("/proc/uptime", O_RDONLY, 0);
+	// if (IS_ERR(filp))
+	// {
+	// 	return "234";
+	// 	printk(KERN_ERR "Failed to open /proc/uptime\n");
+	// 	return -ENOENT;
+	// }
 
-	len = kernel_read(filp, 0, buf, sizeof(buf) - 1);
-	filp_close(filp, NULL);
+	// len = kernel_read(filp, 0, buf, sizeof(buf) - 1);
+	// filp_close(filp, NULL);
 
-	return len;
+    s64  uptime;
+    uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
-	if (len <= 0)
-	{
-		return "345";
-		printk(KERN_ERR "Failed to read /proc/uptime\n");
-		return -EFAULT;
-	}
+	return (long)uptime;
 
-	buf[len] = '\0';
+	// if (len <= 0)
+	// {
+	// 	return "345";
+	// 	printk(KERN_ERR "Failed to read /proc/uptime\n");
+	// 	return -EFAULT;
+	// }
 
-	// uptime
-	long uptime = kstrtol(buf, 10, NULL);
+	// buf[len] = '\0';
+
+	// // uptime
+	// long uptime = kstrtol(buf, 10, NULL);
 
 	// utime, stime, and starttime are in units called clock ticks
 	utime = task->utime;
