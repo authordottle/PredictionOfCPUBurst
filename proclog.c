@@ -66,6 +66,7 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 static long get_process_cpu_usage(struct task_struct *task)
 {
 	unsigned long long utime, stime, start_time;
+	unsigned long long utime_sec, stime_sec, start_time_sec;
 	unsigned long long utime_msec, stime_msec, start_time_msec;
 	long long cpu_usage = 0;
 	long long elapsed_nsec,  usage_nsec;
@@ -77,26 +78,19 @@ static long get_process_cpu_usage(struct task_struct *task)
 		return -EINVAL;
 	}
 
-	// uptime (sec)
     uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
-	// utime, stime, and starttime (nsec) based on https://lkml.org/lkml/2017/1/29/223
 	utime = task->utime;
 	stime = task->stime;
 	start_time = task->start_time;
 
-elapsed_nsec = (long)uptime * 1000000000 - start_time;
-	usage_nsec = utime + stime;
-	cpu_usage = usage_nsec * 100 / elapsed_nsec;
+	utime_sec = utime / 100;
+	stime_sec = stime / 100;
+	start_time_sec = start_time / 100;
 
-	// // (msec)
-	// utime_msec = utime / 1000000;
-	// stime_msec = stime / 1000000;
-	// start_time_msec = start_time / 1000000;
-
-	// long elapsed_msec = (long)uptime * 1000 - start_time_msec;
-	// long usage_msec = utime_msec + stime_msec;
-	// cpu_usage = usage_msec * 100 / elapsed_msec;
+	elapsed_sec = (long)uptime - start_time_sec;
+	usage_sec = utime_sec + stime_sec;
+	cpu_usage = usage_sec * 100 / elapsed_sec;
 
 	return usage_nsec;
 }
