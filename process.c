@@ -2,6 +2,20 @@
 #include "headers.h"
 
 /*
+    struct Process
+        -burst_time: given, time it takes for the process to complete
+        -next:      generated, next process in queue
+        -previous:  generated, process before self in queue
+*/
+struct Process
+{
+    double burst_time;
+    pid_t proc_pid;
+    struct Process *next;
+    struct Process *previous;
+};
+
+/*
     static int check_alloc()
         -checks if the given pointer has been allocated successfully and exits if it did not
 */
