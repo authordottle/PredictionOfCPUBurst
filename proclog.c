@@ -173,7 +173,8 @@ static int __init init_kernel_module(void)
 	proc_create_single("log_file", 0, NULL, procfile_show);
 #else
 	// proc_create("log_file", 0, NULL, &proc_file_fops);
-	proc_create_data("log_file", 0644, NULL, &proc_file_fops, NULL);
+	struct task_struct *task;
+	proc_create_data("log_file", 0644, NULL, &proc_file_fops, task);
 #endif
 
 	// // loop processes
