@@ -192,7 +192,7 @@ static int __init init_kernel_module(void)
 
 static void __exit exit_kernel_module(void)
 {
-	// remove_proc_entry("timing_log", NULL);
+	remove_proc_entry("timing_log", NULL);
 	printk(KERN_INFO "Process logger module unloaded\n");
 }
 
