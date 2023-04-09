@@ -71,7 +71,6 @@ static long get_process_cpu_usage(struct task_struct *task)
 
 	if (task == NULL)
 	{
-		return 1;
 		return -EINVAL;
 	}
 
@@ -82,7 +81,6 @@ static long get_process_cpu_usage(struct task_struct *task)
 	filp = filp_open("/proc/uptime", O_RDONLY, 0);
 	if (IS_ERR(filp))
 	{
-		return 2;
 		printk(KERN_ERR "Failed to open /proc/uptime\n");
 		return -ENOENT;
 	}
@@ -90,9 +88,10 @@ static long get_process_cpu_usage(struct task_struct *task)
 	len = kernel_read(filp, 0, buf, sizeof(buf) - 1);
 	filp_close(filp, NULL);
 
+	return len;
+
 	if (len <= 0)
 	{
-		return 3;
 		printk(KERN_ERR "Failed to read /proc/uptime\n");
 		return -EFAULT;
 	}
