@@ -138,7 +138,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 				   "%d\t %s\t %ld\t %d\t \n ",
 				   task->pid,
 				   task->comm,
-				   cpu_usage,);
+				   cpu_usage);
 				//    task->start_time,
 				//    task->stime,
 				//   task->utime);
