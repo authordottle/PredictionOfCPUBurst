@@ -70,6 +70,7 @@ static long get_process_cpu_usage(struct task_struct *task)
 	unsigned long long utime, stime, cutime, cstime, start_time;
 	unsigned long long utime_sec, stime_sec, start_time_sec;
 	unsigned long long utime_msec, stime_msec, start_time_msec;
+	unsigned long long total_time;
 	long long cpu_usage = 0;
 	long long elapsed_nsec, usage_nsec;
 	long long elapsed_sec, usage_sec;
