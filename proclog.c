@@ -111,7 +111,7 @@ static unsigned long get_process_cpu_usage(struct task_struct *task)
 	}
 
 	buf[len] = '\0';
-	long uptime = kstrtol(buf, NULL);
+	long uptime = kstrtol(buf, 10, NULL);
 
 	unsigned long elapsed_sec = (unsigned long)uptime - start_time_sec;
 	unsigned long usage_sec = utime_sec + stime_sec;
