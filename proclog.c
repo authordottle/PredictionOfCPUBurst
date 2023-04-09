@@ -181,7 +181,7 @@ static int __init init_kernel_module(void)
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
 	#ifdef HAVE_PROC_CREATE_SINGLE
-		proc_create_single("log_file", 0, NULL, &proc_file_fops);
+		proc_create_single("log_file", 0, NULL, procfile_show);
 	#else
 		proc_create("log_file", 0, NULL, &proc_file_fops);
 	#endif
