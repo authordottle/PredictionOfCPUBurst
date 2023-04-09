@@ -8,18 +8,16 @@
 
 int main(){
 	FILE *proc;
-	//char test[50] = "This is a test string";
-	int test = 5;
+	int test = 321;
 
-	proc = fopen("/proc/timing_log", "w");
+	proc = fopen("/proc/log_file", "w");
 	if(proc == NULL){
 		printf("Could not open log file\n");
 		return 0;
 	}
 
-	fprintf(proc,"This is test output\n");
-	//fprintf(proc, "%d\n", test);
+	fprintf(proc, "This is test output\n");
+	fprintf(proc, "%d\n", test);
 
 	fclose(proc);
-
 }
