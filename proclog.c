@@ -1,18 +1,6 @@
 /********* proclog.c ***********/
 // Logger that creates a proc file
 // idea from tldp.org/LDP/lkmpg/2.6/html/index.html
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <sys/types.h>
-#include <signal.h>
-#include <unistd.h>
-
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <string.h>
-
 #include <linux/version.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
