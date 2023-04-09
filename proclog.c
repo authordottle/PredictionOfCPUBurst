@@ -104,43 +104,32 @@ static long get_process_cpu_usage(struct task_struct *task)
 	elapsed_sec = (long)uptime - start_time_sec;
 	cpu_usage = total_time / clk_tck / elapsed_sec * 100;
 
-	return cpu_usage;
+	return utime;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
 {
 	printk("Hit proc_seq_show");
 
- struct task_struct *task;
-    unsigned long long cpu_usecs;
-    clock_t process_ticks, total_ticks = jiffies - idle_cpu_ticks;
+	loff_t *spos = (loff_t *)v;
 
-    seq_printf(m, "PID\tCPU Usage\n");
-    for_each_process(task) {
-        cpu_usecs = get_cpu_usecs(task);
-        process_ticks = jiffies_to_clock_t(jiffies_to_usecs(cpu_usecs));
-        seq_printf(m, "%d\t%d%%\n", task->pid, (int)(process_ticks * 100 / total_ticks));
-    }
+	struct task_struct *task;
 
-	return 0;
-	// loff_t *spos = (loff_t *)v;
+	seq_printf(s,
+			   "PID\t NAME\t CPU_USAGE\t start_time\t stime\t utime\t\n");
+	for_each_process(task)
+	{
+		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 
-	// struct task_struct *task;
+		/* Get CPU usage for the process */
+		long cpu_usage = get_process_cpu_usage(task);
 
-	// seq_printf(s,
-	// 		   "PID\t NAME\t CPU_USAGE\t start_time\t stime\t utime\t\n");
-	// for_each_process(task)
-	// {
-	// 	printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
-
-	// 	/* Get CPU usage for the process */
-	// 	long cpu_usage = get_process_cpu_usage(task);
-
-	// 	seq_printf(s,
-	// 			   "%d\t %s\t %lld\t %d\t \n ",
-	// 			   task->pid,
-	// 			   task->comm,
-	// 			   cpu_usage);
+		seq_printf(s,
+				   "%d\t %s\t %lld\t %lld\t \n ",
+				   task->pid,
+				   task->comm,
+				   cpu_usage,
+				   task->utime);
 		//    task->start_time,
 		//    task->stime,
 		//   task->utime);
