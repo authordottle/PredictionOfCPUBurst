@@ -65,33 +65,34 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 
 static long get_process_cpu_usage(struct task_struct *task)
 {
-	unsigned long long utime, stime, total_time, start_time;
+	unsigned long long utime, stime, start_time, utime_msec, stime_msec, start_time_msec;
 	long cpu_usage = 0;
 	int clk_tck = 100;
+	s64  uptime;
 
 	if (task == NULL)
 	{
 		return -EINVAL;
 	}
 
-	// uptime
-    s64  uptime;
+	// uptime (sec)
     uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
-	// utime, stime, and starttime are in units called clock ticks
+	// utime, stime, and starttime (clock ticks)
 	utime = task->utime;
 	stime = task->stime;
 	start_time = task->start_time;
 
-	long utime_msec = utime / clk_tck;
-	long stime_msec = stime / clk_tck;
-	long start_time_msec = start_time / clk_tck;
+	// (msec)
+	utime_msec = utime / clk_tck;
+	stime_msec = stime / clk_tck;
+	start_time_msec = start_time / clk_tck;
 
 	long elapsed_msec = (long)uptime * 1000 - start_time_msec;
 	long usage_msec = utime_msec + stime_msec;
 	cpu_usage = usage_msec * 100 / elapsed_msec;
 
-	return cpu_usage;
+	return elapsed_msec;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
