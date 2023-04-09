@@ -84,17 +84,17 @@ static long get_process_cpu_usage(struct task_struct *task)
 
 	utime = task->utime;
 	stime = task->stime;
-	cutime = task->cutime;
-	cstime = task->cstime;
+	// cutime = task->cutime;
+	// cstime = task->cstime;
 	start_time = task->start_time;
 
 	total_time = utime + stime;
-	if (cutime != 0) {
-		total_time += cutime;
-	}
-	if (cstime != 0) {
-		total_time += cstime;
-	}
+	// if (cutime != 0) {
+	// 	total_time += cutime;
+	// }
+	// if (cstime != 0) {
+	// 	total_time += cstime;
+	// }
 
 	start_time_sec = start_time / clk_tck;
 
