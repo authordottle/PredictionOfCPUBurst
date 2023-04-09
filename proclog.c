@@ -91,25 +91,27 @@ static unsigned long get_process_cpu_usage(struct task_struct *task)
 	unsigned long start_time_sec = start_time / clk_tck;
 
 	struct file *filp;
-    char buf[64];
-    int len;
+	char buf[64];
+	int len;
 
-    filp = filp_open("/proc/uptime", O_RDONLY, 0);
-    if (IS_ERR(filp)) {
-        printk(KERN_ERR "Failed to open /proc/uptime\n");
-        return -ENOENT;
-    }
+	filp = filp_open("/proc/uptime", O_RDONLY, 0);
+	if (IS_ERR(filp))
+	{
+		printk(KERN_ERR "Failed to open /proc/uptime\n");
+		return -ENOENT;
+	}
 
-    len = kernel_read(filp, 0, buf, sizeof(buf) - 1);
-    filp_close(filp, NULL);
+	len = kernel_read(filp, 0, buf, sizeof(buf) - 1);
+	filp_close(filp, NULL);
 
-    if (len <= 0) {
-        printk(KERN_ERR "Failed to read /proc/uptime\n");
-        return -EFAULT;
-    }
+	if (len <= 0)
+	{
+		printk(KERN_ERR "Failed to read /proc/uptime\n");
+		return -EFAULT;
+	}
 
-    buf[len] = '\0';
-    double uptime = strtod(buf, NULL);
+	buf[len] = '\0';
+	long uptime = kstrtol(buf, NULL);
 
 	unsigned long elapsed_sec = (unsigned long)uptime - start_time_sec;
 	unsigned long usage_sec = utime_sec + stime_sec;
