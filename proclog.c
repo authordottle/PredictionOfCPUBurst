@@ -58,7 +58,7 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 	printk("Hit proc_seq_stop");
 }
 
-static long get_process_cpu_usage(struct task_struct *task)
+static long get_process_elapsed_time(struct task_struct *task)
 {
 	// adapted from https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat
 	// /proc/[PID]/stat
@@ -84,29 +84,14 @@ static long get_process_cpu_usage(struct task_struct *task)
 
 	// The reason for this is that the utime value in the /proc/[pid]/stat file is measured in clock ticks, 
 	// whereas the utime field in the task_struct is measured in nanoseconds. 
-	utime = task->utime;
-	stime = task->stime;
-	// cutime = task->cutime;
-	// cstime = task->cstime;
 	start_time = task->start_time;
-
-	total_time = utime + stime;
-	// if (cutime != 0) {
-	// 	total_time += cutime;
-	// }
-	// if (cstime != 0) {
-	// 	total_time += cstime;
-	// }
-
-	start_time_sec = start_time;
 
 	// kernel system timer
 	uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
-	elapsed_sec = (long)uptime * 1000000000 - start_time_sec;
-	cpu_usage = total_time / elapsed_sec * 100;
+	elapsed_sec = (long)uptime * 1000000000 - start_time;
 
-	return cpu_usage;
+	return elapsed_sec;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
@@ -115,22 +100,29 @@ static int proc_seq_show(struct seq_file *s, void *v)
 
 	loff_t *spos = (loff_t *)v;
 
+unsigned long long utime, stime, cutime, cstime, start_time;
+	unsigned long long total_time;
 	struct task_struct *task;
 
 	seq_printf(s,
-			   "PID\t NAME\t CPU_USAGE\t utime\t stime\t start_time\t uptime\t\n");
+			   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
 	for_each_process(task)
 	{
 		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 
+utime = task->utime;
+	stime = task->stime;
+
+	total_time = utime + stime;
 		/* Get CPU usage for the process */
-		long cpu_usage = get_process_cpu_usage(task);
+		long elapsed_time = get_process_elapsed_time(task);
 
 		seq_printf(s,
-				   "%d\t %s\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
+				   "%d\t %s\t %lld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
 				   task->pid,
 				   task->comm,
-				   cpu_usage,
+				   elapsed_time,
+					total_time,
 				   task->utime,
 				   task->stime,
 				   task->start_time,
