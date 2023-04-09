@@ -79,6 +79,8 @@ static long get_process_cpu_usage(struct task_struct *task)
 	stime = task->stime;
 	start_time = task->start_time;
 
+	return utime / 100;
+	
 	struct file *filp;
 	char buf[64];
 	int len;
