@@ -75,8 +75,6 @@ static long get_process_cpu_usage(struct task_struct *task)
 		return -EINVAL;
 	}
 
-	return 100;
-
 	// utime, stime, and starttime are in units called clock ticks
 	utime = task->utime;
 	stime = task->stime;
@@ -107,7 +105,10 @@ static long get_process_cpu_usage(struct task_struct *task)
 	// uptime
 	long uptime = kstrtol(buf, 10, NULL);
 
-	// long utime_sec = utime / clk_tck;
+	long utime_sec = utime / clk_tck;
+
+		return utime_sec;
+
 	// long stime_sec = stime / clk_tck;
 	// long start_time_sec = start_time / clk_tck;
 
