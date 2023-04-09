@@ -114,7 +114,7 @@ static unsigned long get_process_cpu_usage(struct task_struct *task)
 
 	unsigned long elapsed_sec = (unsigned long)uptime - start_time_sec;
 	unsigned long usage_sec = utime_sec + stime_sec;
-	unsigned long cpu_usage = usage_sec * 100 / elapsed_sec;
+	long cpu_usage = usage_sec * 100 / elapsed_sec;
 
 	return cpu_usage;
 }
