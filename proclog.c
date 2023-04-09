@@ -124,7 +124,8 @@ static struct seq_operations proc_seq_ops = {
 static int procfile_open(struct inode *inode, struct file *file)
 {
 	printk("Hit procfile_open");
-	return seq_open(file, &proc_seq_ops);
+	 return single_open(file, proc_seq_show, NULL);
+	// return seq_open(file, &proc_seq_ops);
 }
 
 // function to write to proc file
