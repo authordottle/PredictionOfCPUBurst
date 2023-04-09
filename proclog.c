@@ -93,7 +93,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 
 	struct task_struct *task;
 	seq_printf(s,
-			   "PID\t NAME\t CPU_USAGE\t MEMORY_MANAGER\t FILES\t\n");
+			   "PID\t NAME\t CPU_USAGE\t start_time\t stime\t\n");
 	for_each_process(task)
 	{
 		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
@@ -106,8 +106,8 @@ static int proc_seq_show(struct seq_file *s, void *v)
 				   task->pid,
 				   task->comm,
 				   cpu_usage,
-				   task->mm,
-				   task->files);
+				   task->start_time,
+				   task->stime);
 	}
 
 	seq_printf(s, "%Ld\n", *spos);
