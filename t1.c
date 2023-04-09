@@ -7,6 +7,8 @@
 #include <signal.h>
 
 int main(){
+	printf("t1 executes. \n");
+
 	FILE *proc;
 	int test = 321;
 
@@ -20,4 +22,6 @@ int main(){
 	fprintf(proc, "%d\n", test);
 
 	fclose(proc);
+
+	printf("t1 finishes. \n");
 }
