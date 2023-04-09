@@ -7,7 +7,7 @@
 #include <linux/seq_file.h> // seq_read, ...
 #include <linux/uaccess.h>
 #include <linux/sched.h>
-#include <linux/time.h>
+#include <time.h>
 
 static int endflag;
 
