@@ -65,8 +65,14 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 
 static unsigned long get_process_cpu_usage(struct task_struct *task)
 {
-	unsigned int clk_tck = sysconf(_SC_CLK_TCK);
+	long int ticks_per_sec = sysconf(_SC_CLK_TCK);
 
+    printk(KERN_INFO "Ticks per second: %ld\n", ticks_per_sec);
+
+	return 0;
+
+
+	
 	unsigned long utime, stime, total_time;
 	unsigned long start_time, now, delta_time;
 	long cpu_usage = 0;
