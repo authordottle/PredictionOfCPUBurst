@@ -9,7 +9,7 @@
 */
 struct Process
 {
-    double burst_time;
+    int burst_time;
     pid_t proc_pid;
     struct Process *next;
     struct Process *previous;
