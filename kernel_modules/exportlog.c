@@ -18,8 +18,8 @@ struct file *virtual_file;
 struct file *disk_file;
 
 static int major_num;
-struct file *virtual_file;
-struct file *actual_file;
+FILE *virtual_file;
+FILE *actual_file;
 // static char buffer[256];
 static int buffer_size;
 char *buffer;
@@ -84,6 +84,31 @@ char *buffer;
 //     //.read_iter = device_export, // Use write_iter to support large files
 // };
 
+void copy_proc_file_to_disk()
+{
+    *buffer = NULL;
+    ssize_t bytes_read;
+
+    // Allocate a buffer to read data from the virtual file
+    buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
+    if (!buffer)
+    {
+        printk(KERN_ERR "Failed to allocate memory for buffer\n");
+        return PTR_ERR(buffer);
+    }
+
+    // Read data from the virtual file and write it to the actual file on disk
+    while ((bytes_read = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos)) > 0)
+    {
+        ssize_t bytes_written = kernel_write(disk_file, buffer, bytes_read, &disk_file->f_pos);
+        if (bytes_written != bytes_read)
+        {
+            printk(KERN_ERR "Failed to write data to %s\n", ACTUAL_FILE_PATH);
+            return PTR_ERR(disk_file);
+        }
+    }
+}
+
 static int __init init_kernel_module(void)
 {
     *virtual_file = NULL;
@@ -139,28 +164,3 @@ static void __exit exit_kernel_module(void)
 
 module_init(init_kernel_module);
 module_exit(exit_kernel_module);
-
-static int copy_proc_file_to_disk()
-{
-    *buffer = NULL;
-    ssize_t bytes_read;
-
-    // Allocate a buffer to read data from the virtual file
-    buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
-    if (!buffer)
-    {
-        printk(KERN_ERR "Failed to allocate memory for buffer\n");
-        return PTR_ERR(buffer);
-    }
-
-    // Read data from the virtual file and write it to the actual file on disk
-    while ((bytes_read = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos)) > 0)
-    {
-        ssize_t bytes_written = kernel_write(disk_file, buffer, bytes_read, &disk_file->f_pos);
-        if (bytes_written != bytes_read)
-        {
-            printk(KERN_ERR "Failed to write data to %s\n", ACTUAL_FILE_PATH);
-            return PTR_ERR(disk_file);
-        }
-    }
-}
