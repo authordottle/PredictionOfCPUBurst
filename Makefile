@@ -1,1 +1,2 @@
-gcc -o lottery lottery.c -lpthread
+all:
+	gcc -o lottery lottery.c -lpthread
