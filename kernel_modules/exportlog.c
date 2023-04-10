@@ -20,6 +20,63 @@ struct file *actual_file = NULL;
 static char buffer[256];
 static int buffer_size;
 
+
+static void *proc_seq_start(struct seq_file *s, loff_t *pos)
+{
+	printk("Hit proc_seq_start");
+
+	static unsigned long counter = 0;
+
+	/* beginning a new sequence ? */
+	if (*pos == 0)
+	{
+		/* yes => return a non null value to begin the sequence */
+		return &counter;
+	}
+	else
+	{
+		/* no => it's the end of the sequence, return end to stop reading */
+		*pos = 0;
+		return NULL;
+	}
+}
+
+static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
+{
+	printk("Hit proc_seq_next");
+
+	char *temp = (char *)v;
+	temp++;
+	printk("Temp increased.");
+	(*pos)++;
+	printk("Position increased.");
+	printk("Position is %Ld\n", (*pos));
+	return NULL;
+}
+
+static void proc_seq_stop(struct seq_file *s, void *v)
+{
+	printk("Hit proc_seq_stop");
+}
+
+static int proc_seq_show(struct seq_file *s, void *v)
+{
+	printk("Hit proc_seq_show");
+
+	loff_t *spos = (loff_t *)v;
+
+	seq_printf(s,
+			   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
+
+	return 0;
+}
+
+static struct seq_operations proc_seq_ops = {
+	.start = proc_seq_start,
+	.next = proc_seq_next,
+	.stop = proc_seq_stop,
+	.show = proc_seq_show};
+
 static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_t *offset)
 {
     printk(KERN_INFO "Hit device_read\n");
@@ -37,7 +94,7 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
 static int device_open(struct inode *inode, struct file *file)
 {
     printk(KERN_INFO "Hit device_open\n");
-    return 0;
+	return seq_open(file, &proc_seq_ops);
 }
 
 static int device_release(struct inode *inode, struct file *file)
@@ -110,7 +167,6 @@ static const struct file_operations proc_file_fops = {
     .write = device_write,
     .open = device_open,
     .release = device_release,
-    .read_iter = device_export, // Use write_iter to support large files
 };
 
 static int __init init_kernel_module(void)
