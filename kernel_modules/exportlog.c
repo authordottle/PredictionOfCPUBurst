@@ -17,6 +17,7 @@ MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to
 #define DEVICE_NAME "export_file"
 #define VIRTUAL_FILE_NAME "virtual_file"
 #define ACTUAL_FILE_NAME "/tmp/actual_file"
+#define PATH "/proc/log_file"
 
 static int major_num;
 static struct file* virtual_file;
@@ -97,17 +98,16 @@ static const struct file_operations proc_file_fops = {
 static int __init mymodule_init(void)
 {
     int ret = 0;
-    struct path virtual_file_path;
 
-    // Get the path to the virtual file
-    ret = kernfs_path(VIRTUAL_FILE_NAME, 0, &virtual_file_path);
-    if (ret < 0) {
-        printk(KERN_ERR "Failed to get virtual file path\n");
-        return ret;
-    }
+    // // Get the path to the virtual file
+    // ret = kernfs_path(PATH, 0, &virtual_file_path);
+    // if (ret < 0) {
+    //     printk(KERN_ERR "Failed to get virtual file path\n");
+    //     return ret;
+    // }
 
     // Open the virtual file
-    virtual_file = filp_open(virtual_file_path, O_RDONLY, 0);
+    virtual_file = filp_open(PATH, O_RDONLY, 0);
     if (IS_ERR(virtual_file)) {
         printk(KERN_ERR "Failed to open virtual file\n");
         return PTR_ERR(virtual_file);
