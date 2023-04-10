@@ -232,7 +232,7 @@ static void __exit exit_kernel_module(void)
 	// Copy the virtual file's contents to the buffer
 	ssize_t count = 1;
 	loff_t length = 0;
-	ssize_t ret = kernel_read(virtual_file, buffer, count, &length);
+	ssize_t ret = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos);
 	printk(KERN_INFO "buffer is %d\n", ret);
 
 	remove_proc_entry("log_file", NULL);
