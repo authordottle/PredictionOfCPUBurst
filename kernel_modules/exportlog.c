@@ -1,4 +1,6 @@
-#include <headers.h>
+/********* exportlog.c ***********/
+// Export logger into actual file
+#include "headers.h"
 
 #ifndef __KERNEL__
 #define __KERNEL__
