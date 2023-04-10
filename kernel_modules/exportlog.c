@@ -15,8 +15,8 @@ MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to
 #define PROC_FILE_PATH "/proc/log_file"
 
 static int major_num;
-static struct file* virtual_file;
-static struct file* actual_file;
+struct file *virtual_file;
+struct file *actual_file;
 // static char buffer[256];
 static int buffer_size;
 char *buffer;
@@ -90,8 +90,9 @@ void copy_proc_file_to_disk()
     buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
     if (!buffer)
     {
-        printk(KERN_ERR "Failed to allocate memory for buffer\n");
-        return PTR_ERR(buffer);
+        pr_err("Failed to allocate memory for buffer\n");
+        ret = -EINVAL; // Return "Invalid argument" error
+        goto exit;
     }
 
     // Read data from the virtual file and write it to the actual file on disk
@@ -100,16 +101,20 @@ void copy_proc_file_to_disk()
         ssize_t bytes_written = kernel_write(actual_file, buffer, bytes_read, &actual_file->f_pos);
         if (bytes_written != bytes_read)
         {
-            printk(KERN_ERR "Failed to write data to %s\n", ACTUAL_FILE_PATH);
-            return PTR_ERR(actual_file);
+            pr_err("Failed to write data to %s\n", ACTUAL_FILE_PATH);
+            ret = -EINVAL; // Return "Invalid argument" error
+            goto exit;
         }
     }
+
+exit:
+    return ret;
 }
 
 static int __init init_kernel_module(void)
 {
     printk(KERN_INFO "Export logger module loaded\n");
-    
+
     *virtual_file = NULL;
     *actual_file = NULL;
 
@@ -117,16 +122,16 @@ static int __init init_kernel_module(void)
     virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
     if (IS_ERR(virtual_file))
     {
-        printk(KERN_ERR "Failed to open virtual file\n");
-        return PTR_ERR(virtual_file);
+        pr_err("Failed to open virtual file\n");
+        return -EINVAL; // Return "Invalid argument" error
     }
 
     // Create the actual file on disk
     actual_file = filp_open(ACTUAL_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (IS_ERR(actual_file))
     {
-        printk(KERN_ERR "Failed to create actual file\n");
-        return PTR_ERR(virtual_file);
+        pr_err("Failed to create actual file\n");
+        return -EINVAL; // Return "Invalid argument" error
     }
 
     // // Register the device
@@ -158,7 +163,7 @@ static void __exit exit_kernel_module(void)
         kfree(buffer);
     }
 
-printk(KERN_INFO "Export logger module unloaded\n");
+    printk(KERN_INFO "Export logger module unloaded\n");
 }
 
 module_init(init_kernel_module);
