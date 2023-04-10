@@ -23,7 +23,7 @@ static int buffer_size;
 
 static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
-	printk("Hit proc_seq_start in exportlog");
+	printk("exportlog: Hit proc_seq_start");
 
 	static unsigned long counter = 0;
 
@@ -43,7 +43,7 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 
 static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
-	printk("Hit proc_seq_next in exportlog");
+	printk("exportlog: Hit proc_seq_next");
 
 	char *temp = (char *)v;
 	temp++;
@@ -56,12 +56,12 @@ static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 
 static void proc_seq_stop(struct seq_file *s, void *v)
 {
-	printk("Hit proc_seq_stop in exportlog");
+	printk("exportlog: Hit proc_seq_stop");
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)
 {
-	printk("Hit proc_seq_show in exportlog");
+	printk("exportlog: Hit proc_seq_show");
 
 	loff_t *spos = (loff_t *)v;
 
