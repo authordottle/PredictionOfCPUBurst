@@ -15,8 +15,8 @@ MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to
 #define PROC_FILE_PATH "/proc/log_file"
 
 static int major_num;
-FILE *virtual_file;
-FILE *actual_file;
+static struct file* virtual_file;
+static struct file* actual_file;
 // static char buffer[256];
 static int buffer_size;
 char *buffer;
@@ -108,6 +108,8 @@ void copy_proc_file_to_disk()
 
 static int __init init_kernel_module(void)
 {
+    printk(KERN_INFO "Export logger module loaded\n");
+    
     *virtual_file = NULL;
     *actual_file = NULL;
 
@@ -156,7 +158,7 @@ static void __exit exit_kernel_module(void)
         kfree(buffer);
     }
 
-    pr_info("Module unloaded successfully\n");
+printk(KERN_INFO "Export logger module unloaded\n");
 }
 
 module_init(init_kernel_module);
