@@ -10,7 +10,7 @@
 	$ sudo apt-get install build-essential
 	```
 
-## How to use proclog kernel module:
+## How to use proclog kernel module to collect linux sample data:
 1. cd into kernel_modules folder
 2. Make the proclog kernel module by following command.
    ```sh
@@ -38,6 +38,10 @@
    ```sh
    $ sudo sysctl kernel.dmesg_restrict=0
    ```
+7. Currently, we need to temporarily use export_log_file.c to export log_file from virtual file to actual file.
+   ```sh
+   $ ./export_log_file 
+   ```
 
 ## How to use test functions to ensure kernel module is working correctly:
 1. cd into test folder
@@ -52,3 +56,6 @@
    ```sh
    $ bash ./test_cpu_usage.sh
    ``` 
+
+## How to use python functions to collect mac processes data:
+1. cd into ?????? folder   

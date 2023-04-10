@@ -279,7 +279,7 @@ static int __init init_kernel_module(void)
 	struct proc_dir_entry *log_file;
 	endflag = 0;
 
-	// printk(KERN_INFO "There are %d running processes.\n", proc_count());
+	printk(KERN_INFO "There are %d running processes.\n", proc_count());
 
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
