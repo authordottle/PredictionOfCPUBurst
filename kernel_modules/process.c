@@ -41,8 +41,7 @@ struct Process *create_new_process(int process_burst_time, pid_t pid)
     if (check_alloc(new_process) == 0)
     {
         pr_err("An error occurred during initialization\n");
-        ret = -EINVAL; // Return "Invalid argument" error
-        goto exit;
+        return -EINVAL; // Return "Invalid argument" error
     }
 
     new_process->burst_time = process_burst_time;
@@ -51,7 +50,4 @@ struct Process *create_new_process(int process_burst_time, pid_t pid)
     new_process->previous = NULL;
 
     return new_process;
-
-exit:
-    return ret;
 }
