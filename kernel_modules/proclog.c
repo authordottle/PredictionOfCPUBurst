@@ -211,7 +211,6 @@ static void __exit exit_kernel_module(void)
     if (IS_ERR(virtual_file))
     {
         pr_err("Failed to open virtual file\n");
-        return -EINVAL; // Return "Invalid argument" error
     }
 
     // Create the actual file on disk
@@ -219,7 +218,15 @@ static void __exit exit_kernel_module(void)
     if (IS_ERR(actual_file))
     {
         pr_err("Failed to create actual file\n");
-        return -EINVAL; // Return "Invalid argument" error
+    }
+
+	if (virtual_file)
+    {
+        filp_close(virtual_file, NULL);
+    }
+    if (actual_file)
+    {
+        filp_close(actual_file, NULL);
     }
 
     // Copy the virtual file's contents to the buffer

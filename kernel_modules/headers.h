@@ -26,6 +26,8 @@ struct file *actual_file = NULL;
 #define ACTUAL_FILE_PATH "/tmp/actual_file"
 #define PROC_FILE_PATH "/proc/log_file"
 
+char buffer[256];
+
 // // size of buffer ~32Kb
 // #define PROCFS_MAX_SIZE 32768
 
