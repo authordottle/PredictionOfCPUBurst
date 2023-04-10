@@ -81,17 +81,16 @@ static const struct proc_ops proc_file_fops = {
     .proc_write = device_write,
     .proc_open = device_open,
     .proc_release = device_release,
-    .proc_llseek = no_llseek,
-    .proc_write_iter = device_export};
+    .proc_read_iter = device_export
+    };
 #else
 static const struct file_operations proc_file_fops = {
 	  .read = device_read,
     .write = device_write,
     .open = device_open,
     .release = device_release,
-    .llseek = no_llseek,
     .owner = THIS_MODULE,
-    .write_iter = device_export, // Use write_iter to support large files
+    .read_iter = device_export, // Use write_iter to support large files
     };
 #endif
 
@@ -101,21 +100,21 @@ static int __init mymodule_init(void)
     struct path virtual_file_path;
 
     // Get the path to the virtual file
-    ret = kern_path(VIRTUAL_FILE_NAME, 0, &virtual_file_path);
+    ret = kernfs_path(VIRTUAL_FILE_NAME, 0, &virtual_file_path);
     if (ret < 0) {
         printk(KERN_ERR "Failed to get virtual file path\n");
         return ret;
     }
 
     // Open the virtual file
-    virtual_file = file_open(virtual_file_path, O_RDONLY, 0);
+    virtual_file = filp_open(virtual_file_path, O_RDONLY, 0);
     if (IS_ERR(virtual_file)) {
         printk(KERN_ERR "Failed to open virtual file\n");
         return PTR_ERR(virtual_file);
     }
 
     // Register the device
-    major_num = register_chrdev(0, DEVICE_NAME, &fops);
+    major_num = register_chrdev(0, DEVICE_NAME, &proc_file_fops);
     if (major_num < 0) {
         printk(KERN_ERR "Failed to register device\n");
         return major_num;
@@ -127,9 +126,6 @@ static int __init mymodule_init(void)
 
 static void __exit mymodule_exit(void)
 {
-    // Remove the virtual file from the /proc filesystem
-    proc_remove(proc_file_entry);
-
     pr_info("Module unloaded successfully\n");
 }
 
