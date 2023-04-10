@@ -148,11 +148,11 @@ static struct seq_operations proc_seq_ops = {
 	.stop = proc_seq_stop,
 	.show = proc_seq_show};
 
-// static int procfile_open(struct inode *inode, struct file *file)
-// {
-// 	printk("Hit procfile_open");
-//     return single_open(file, proc_seq_show, NULL);
-// }
+static int procfile_single_open(struct inode *inode, struct file *file)
+{
+	printk("Hit procfile_single_open");
+	return single_open(file, proc_seq_show, NULL);
+}
 
 static int procfile_open(struct inode *inode, struct file *file)
 {
@@ -174,7 +174,7 @@ static int procfile_show(struct seq_file *m, void *v)
 
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
-	.proc_open = procfile_open,
+	.proc_open = procfile_open, // or procfile_single_open
 	.proc_write = procfile_write,
 	.proc_read = seq_read,
 	.proc_lseek = seq_lseek,
@@ -182,7 +182,7 @@ static const struct proc_ops proc_file_fops = {
 #else
 static const struct file_operations proc_file_fops = {
 	.owner = THIS_MODULE,
-	.open = procfile_open,
+	.open = procfile_open, // or procfile_single_open
 	.write = procfile_write,
 	.read = seq_read,
 	.llseek = seq_lseek,
