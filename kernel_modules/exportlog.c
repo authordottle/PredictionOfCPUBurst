@@ -77,12 +77,12 @@ static ssize_t device_export(struct file* file, const char __user *buf, size_t l
 
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
-	  .read = device_read,
-    .write = device_write,
-    .open = device_open,
-    .release = device_release,
-    .llseek = no_llseek,
-    .write_iter = device_export};
+	  .proc_read = device_read,
+    .proc_write = device_write,
+    .proc_open = device_open,
+    .proc_release = device_release,
+    .proc_llseek = no_llseek,
+    .proc_write_iter = device_export};
 #else
 static const struct file_operations proc_file_fops = {
 	  .read = device_read,
