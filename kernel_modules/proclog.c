@@ -206,25 +206,25 @@ static int __init init_kernel_module(void)
 
 static void export_virtual_file_into_actual_file(void)
 {
-	// Open the virtual file
-	virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
-	if (IS_ERR(virtual_file))
+	// Allocate a buffer to read data from the virtual file
+	char *buffer = (char *)kmalloc(PAGE_SIZE, GFP_KERNEL);
+	if (!buffer)
 	{
-		pr_err("Failed to open virtual file\n");
+		pr_err("Failed to allocate memory for buffer\n");
 	}
+
+	// // Open the virtual file
+	// virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
+	// if (IS_ERR(virtual_file))
+	// {
+	// 	pr_err("Failed to open virtual file\n");
+	// }
 
 	// Create the actual file on disk
 	actual_file = filp_open(ACTUAL_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (IS_ERR(actual_file))
 	{
 		pr_err("Failed to create actual file\n");
-	}
-
-	// Allocate a buffer to read data from the virtual file
-	char *buffer = (char *)kmalloc(PAGE_SIZE, GFP_KERNEL);
-	if (!buffer)
-	{
-		pr_err("Failed to allocate memory for buffer\n");
 	}
 
 	// // Copy the virtual file's contents to the buffer
@@ -256,7 +256,7 @@ static void export_virtual_file_into_actual_file(void)
 
 static void __exit exit_kernel_module(void)
 {
-	// export_virtual_file_into_actual_file();
+	export_virtual_file_into_actual_file();
 	remove_proc_entry("log_file", NULL);
 	printk(KERN_INFO "Process logger module unloaded\n");
 }
