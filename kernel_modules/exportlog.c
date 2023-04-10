@@ -174,16 +174,19 @@ static int __init init_kernel_module(void)
     }
 
     // Copy the virtual file's contents to the buffer
-    size_t count = 1;
+    ssize_t count = 1;
     loff_t length = 0;
-    int ret = kernel_read(virtual_file, buffer, count, &length);
+    ssize_t ret = kernel_read(virtual_file, buffer, count, &length);
     // if (ret < 0) {
     //     pr_err("Failed to read from virtual file\n");
     //     return -EINVAL; // Return "Invalid argument" error
     // }
-    buffer_size = ret;
 
-    printk(KERN_INFO "buffer is %d\n", buffer_size);
+    printk(KERN_INFO "buffer is %d\n", ret);
+
+
+
+
 
 
 
