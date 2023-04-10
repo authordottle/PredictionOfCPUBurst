@@ -202,6 +202,8 @@ static int __init init_kernel_module(void)
 static void __exit exit_kernel_module(void)
 {
 
+    unregister_chrdev(major_num, DEVICE_NAME);
+
     if (virtual_file)
     {
         filp_close(virtual_file, NULL);
