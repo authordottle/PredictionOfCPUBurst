@@ -91,7 +91,7 @@ static const struct file_operations proc_file_fops = {
     .open = device_open,
     .release = device_release,
     .owner = THIS_MODULE,
-    .read_iter = device_export, // Use write_iter to support large files
+    //.read_iter = device_export, // Use write_iter to support large files
     };
 // #endif
 
