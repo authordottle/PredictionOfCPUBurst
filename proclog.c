@@ -127,9 +127,6 @@ static int proc_seq_show(struct seq_file *s, void *v)
 				   task->stime,
 				   task->start_time,
 				   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
-		//    task->start_time,
-		//    task->stime,
-		//   task->utime);
 	}
 
 	seq_printf(s, "%Ld\n", *spos);
