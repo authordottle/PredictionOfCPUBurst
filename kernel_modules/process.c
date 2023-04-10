@@ -34,6 +34,7 @@ static int check_alloc(void *ptr)
 */
 struct Process *create_new_process(int process_burst_time, pid_t pid)
 {
+    int ret = 0;
     struct Process *new_process = NULL;
 
     new_process = (struct Process *)kmalloc(sizeof(struct Process), GFP_KERNEL);
@@ -50,4 +51,7 @@ struct Process *create_new_process(int process_burst_time, pid_t pid)
     new_process->previous = NULL;
 
     return new_process;
+
+exit:
+    return ret;
 }
