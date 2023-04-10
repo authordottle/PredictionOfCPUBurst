@@ -98,7 +98,8 @@ static int proc_seq_show(struct seq_file *s, void *v)
 
 	loff_t *spos = (loff_t *)v;
 
-	unsigned long long utime, stime, cutime, cstime, start_time;
+	unsigned long long utime, stime;
+	// unsigned long long cutime, cstime, start_time;
 	unsigned long long total_time;
 	struct task_struct *task;
 
@@ -197,7 +198,7 @@ static int __init init_kernel_module(void)
 
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
-	proc_create("log_file", 0, NULL, &proc_file_fops);
+	log_file = proc_create("log_file", 0, NULL, &proc_file_fops);
 
 	return 0;
 }
