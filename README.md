@@ -58,4 +58,4 @@
    ``` 
 
 ## How to use python functions to collect mac processes data:
-1. cd into ?????? folder   
+1. cd into sudo_py_mac folder   
