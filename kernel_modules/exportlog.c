@@ -18,7 +18,7 @@ static int major_num;
 struct file *virtual_file = NULL;
 struct file *actual_file = NULL;
 // static char buffer[256];
-// static int buffer_size;
+static int buffer_size;
 char *buffer;
 
 static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_t *offset)
