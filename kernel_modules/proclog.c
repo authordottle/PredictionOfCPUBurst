@@ -17,7 +17,7 @@ MODULE_DESCRIPTION("Kernel module to log process times");
 
 static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
-	printk("Hit proc_seq_start");
+	// printk("Hit proc_seq_start");
 
 	static unsigned long counter = 0;
 
@@ -37,20 +37,20 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 
 static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
-	printk("Hit proc_seq_next");
+	// printk("Hit proc_seq_next");
 
 	char *temp = (char *)v;
 	temp++;
-	printk("Temp increased.");
+	// printk("Temp increased.");
 	(*pos)++;
-	printk("Position increased.");
-	printk("Position is %Ld\n", (*pos));
+	// printk("Position increased.");
+	// printk("Position is %Ld\n", (*pos));
 	return NULL;
 }
 
 static void proc_seq_stop(struct seq_file *s, void *v)
 {
-	printk("Hit proc_seq_stop");
+	// printk("Hit proc_seq_stop");
 }
 
 static long get_process_elapsed_time(struct task_struct *task)
@@ -95,7 +95,7 @@ static long get_process_elapsed_time(struct task_struct *task)
 
 static int proc_seq_show(struct seq_file *s, void *v)
 {
-	printk("Hit proc_seq_show");
+	// printk("Hit proc_seq_show");
 
 	loff_t *spos = (loff_t *)v;
 
@@ -156,13 +156,13 @@ static struct seq_operations proc_seq_ops = {
 
 static int procfile_open(struct inode *inode, struct file *file)
 {
-	printk("Hit procfile_open");
+	// printk("Hit procfile_open");
 	return seq_open(file, &proc_seq_ops);
 }
 
 static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
 {
-	printk("Hit procfile_write");
+	// printk("Hit procfile_write");
 	return 1;
 }
 

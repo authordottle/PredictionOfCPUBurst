@@ -20,7 +20,6 @@ struct file *actual_file = NULL;
 static char buffer[256];
 static int buffer_size;
 
-
 static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
 	printk("exportlog: Hit proc_seq_start");
