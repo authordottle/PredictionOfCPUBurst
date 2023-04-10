@@ -39,7 +39,9 @@ struct Process *create_new_process(int process_burst_time, pid_t pid)
     new_process = (struct Process *)kmalloc(sizeof(struct Process), GFP_KERNEL);
     if (check_alloc(new_process) == 0)
     {
-        return -ENOMEM;
+        pr_err("An error occurred during initialization\n");
+        ret = -EINVAL; // Return "Invalid argument" error
+        goto exit;
     }
 
     new_process->burst_time = process_burst_time;
