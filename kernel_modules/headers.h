@@ -17,17 +17,17 @@
 
 static int endflag;
 
-// size of buffer ~32Kb
-#define PROCFS_MAX_SIZE 32768
-
-// buffer to hold information from log
-static char procfs_buffer[PROCFS_MAX_SIZE];
-
-// size of buffer
-static unsigned long procfs_buffer_size = 0;
-
-// pointer for buffer location in read
-static char *buff_ptr;
-
 // /proc/uptime #1 uptime of the system (seconds)
 s64 uptime;
+
+// // size of buffer ~32Kb
+// #define PROCFS_MAX_SIZE 32768
+
+// // buffer to hold information from log
+// static char procfs_buffer[PROCFS_MAX_SIZE];
+
+// // size of buffer
+// static unsigned long procfs_buffer_size = 0;
+
+// // pointer for buffer location in read
+// static char *buff_ptr;
