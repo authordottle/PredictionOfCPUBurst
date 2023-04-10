@@ -22,7 +22,7 @@ exec:
   	# an error in case the module isn’t loaded.
 	-sudo rmmod proclog
   	# Clear the kernel log without echo
-	sudo dmesg -C
+	# sudo dmesg -C
   	# Insert the module
 	sudo insmod proclog.ko
   	# Display the kernel log

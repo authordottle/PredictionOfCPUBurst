@@ -207,34 +207,33 @@ static int __init init_kernel_module(void)
 static void __exit exit_kernel_module(void)
 {
 	// Open the virtual file
-    virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
-    if (IS_ERR(virtual_file))
-    {
-        pr_err("Failed to open virtual file\n");
-    }
+	virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
+	if (IS_ERR(virtual_file))
+	{
+		pr_err("Failed to open virtual file\n");
+	}
 
-    // Create the actual file on disk
-    actual_file = filp_open(ACTUAL_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (IS_ERR(actual_file))
-    {
-        pr_err("Failed to create actual file\n");
-    }
+	// Create the actual file on disk
+	actual_file = filp_open(ACTUAL_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (IS_ERR(actual_file))
+	{
+		pr_err("Failed to create actual file\n");
+	}
 
 	if (virtual_file)
-    {
-        filp_close(virtual_file, NULL);
-    }
-    if (actual_file)
-    {
-        filp_close(actual_file, NULL);
-    }
+	{
+		filp_close(virtual_file, NULL);
+	}
+	if (actual_file)
+	{
+		filp_close(actual_file, NULL);
+	}
 
-    // Copy the virtual file's contents to the buffer
-    ssize_t count = 1;
-    loff_t length = 0;
-    ssize_t ret = kernel_read(virtual_file, buffer, count, &length);
-   printk(KERN_INFO "buffer is %d\n", ret);
-
+	// Copy the virtual file's contents to the buffer
+	ssize_t count = 1;
+	loff_t length = 0;
+	ssize_t ret = kernel_read(virtual_file, buffer, count, &length);
+	printk(KERN_INFO "buffer is %d\n", ret);
 
 	remove_proc_entry("log_file", NULL);
 	printk(KERN_INFO "Process logger module unloaded\n");
