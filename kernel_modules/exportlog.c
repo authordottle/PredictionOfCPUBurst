@@ -18,8 +18,8 @@ struct file *virtual_file;
 struct file *disk_file;
 
 static int major_num;
- struct file *virtual_file;
- struct file *actual_file;
+struct file *virtual_file;
+struct file *actual_file;
 // static char buffer[256];
 static int buffer_size;
 char *buffer;
@@ -118,7 +118,7 @@ static int __init init_kernel_module(void)
     return 0;
 }
 
-static void __exit mymodule_exit(void)
+static void __exit exit_kernel_module(void)
 {
 
     if (virtual_file)
@@ -138,7 +138,7 @@ static void __exit mymodule_exit(void)
 }
 
 module_init(init_kernel_module);
-module_exit(mymodule_exit);
+module_exit(exit_kernel_module);
 
 static int copy_proc_file_to_disk()
 {
@@ -154,7 +154,7 @@ static int copy_proc_file_to_disk()
     }
 
     // Read data from the virtual file and write it to the actual file on disk
-    while ((bytes_read = kernel_read(proc_file, buffer, PAGE_SIZE, &proc_file->f_pos)) > 0)
+    while ((bytes_read = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos)) > 0)
     {
         ssize_t bytes_written = kernel_write(disk_file, buffer, bytes_read, &disk_file->f_pos);
         if (bytes_written != bytes_read)
@@ -163,3 +163,4 @@ static int copy_proc_file_to_disk()
             return PTR_ERR(disk_file);
         }
     }
+}
