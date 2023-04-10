@@ -229,7 +229,7 @@ static void export_virtual_file_into_actual_file(void)
 
 	// // Copy the virtual file's contents to the buffer
 	// ssize_t ret = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos);
-	
+
 	// Read data from the virtual file and write it to the actual file on disk
 	// while ((bytes_read = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos)) > 0)
 	// {
@@ -256,7 +256,7 @@ static void export_virtual_file_into_actual_file(void)
 
 static void __exit exit_kernel_module(void)
 {
-	export_virtual_file_into_actual_file();
+	// export_virtual_file_into_actual_file();
 	remove_proc_entry("log_file", NULL);
 	printk(KERN_INFO "Process logger module unloaded\n");
 }
