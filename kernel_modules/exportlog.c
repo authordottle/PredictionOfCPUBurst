@@ -196,7 +196,7 @@ static int __init init_kernel_module(void)
         return major_num;
     }
  printk(KERN_INFO "majoyr number %d", major_num);
-
+ printk(KERN_INFO "Export file module loaded\n");
     return 0;
 }
 
