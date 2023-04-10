@@ -17,9 +17,8 @@ MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to
 static int major_num;
 struct file *virtual_file = NULL;
 struct file *actual_file = NULL;
-// static char buffer[256];
+static char buffer[256];
 static int buffer_size;
-char *buffer;
 
 static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_t *offset)
 {
@@ -38,19 +37,6 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
 static int device_open(struct inode *inode, struct file *file)
 {
     printk(KERN_INFO "Hit device_open\n");
-
-    int ret = 0;
-
-    // Copy the virtual file's contents to the buffer
-    ret = kernel_read(virtual_file, *offset, buffer, length);
-    if (ret < 0) {
-        pr_err("Failed to read from virtual file\n");
-        return -EINVAL; // Return "Invalid argument" error
-    }
-    buffer_size = ret;
-
-printk(KERN_INFO "buffer is %d\n", buffer_size);
-
     return 0;
 }
 
@@ -71,6 +57,12 @@ static ssize_t device_export(struct file* file, const char __user *buf, size_t l
         return -EINVAL; // Return "Invalid argument" error
     }
     buffer_size = ret;
+
+printk(KERN_INFO "buffer is %d\n", buffer_size);
+
+
+
+return buffer_size;
 
 
 
@@ -101,15 +93,15 @@ static ssize_t device_export(struct file* file, const char __user *buf, size_t l
 
 
 
-    // Write the buffer to the actual file
-    ret = kernel_write(actual_file, buffer, buffer_size, 0);
-    if (ret < 0) {
-        pr_err("Failed to read from actual file\n");
-        return -EINVAL; // Return "Invalid argument" error
-    }
+    // // Write the buffer to the actual file
+    // ret = kernel_write(actual_file, buffer, buffer_size, 0);
+    // if (ret < 0) {
+    //     pr_err("Failed to read from actual file\n");
+    //     return -EINVAL; // Return "Invalid argument" error
+    // }
 
-    *offset += buffer_size;
-    return buffer_size;
+    // *offset += buffer_size;
+    // return buffer_size;
 }
 
 static const struct file_operations proc_file_fops = {
@@ -118,7 +110,7 @@ static const struct file_operations proc_file_fops = {
     .write = device_write,
     .open = device_open,
     .release = device_release,
-    //.read_iter = device_export, // Use write_iter to support large files
+    .read_iter = device_export, // Use write_iter to support large files
 };
 
 static int __init init_kernel_module(void)
