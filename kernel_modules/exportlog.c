@@ -14,11 +14,11 @@ MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to
 #define ACTUAL_FILE_PATH "/tmp/actual_file"
 #define PROC_FILE_PATH "/proc/log_file"
 
-static int major_num;
-struct file *virtual_file;
-struct file *actual_file;
+// static int major_num;
+struct file *virtual_file = NULL;
+struct file *actual_file = NULL;
 // static char buffer[256];
-static int buffer_size;
+// static int buffer_size;
 char *buffer;
 
 // static int device_open(struct inode* inode, struct file* file) {
@@ -81,7 +81,7 @@ char *buffer;
 //     //.read_iter = device_export, // Use write_iter to support large files
 // };
 
-void copy_proc_file_to_disk(void)
+static int copy_proc_file_to_disk(void)
 {
     int ret = 0;
     *buffer = NULL;
@@ -115,9 +115,6 @@ exit:
 static int __init init_kernel_module(void)
 {
     printk(KERN_INFO "Export logger module loaded\n");
-
-    *virtual_file = NULL;
-    *actual_file = NULL;
 
     // Open the virtual file
     virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
