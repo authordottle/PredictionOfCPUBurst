@@ -41,7 +41,7 @@
 
 ## How to use test functions to ensure kernel module is working correctly:
 1. cd into test folder
-2. if you plan to test CPU usage, you need to run the following:
+2. if you plan to test tasks, you need to run the following:
    ```sh
    $ make
    ```
