@@ -23,7 +23,7 @@ exec:
 	-sudo rmmod proclog
 	-sudo rmmod exportlog
   	# Clear the kernel log without echo
-	# sudo dmesg -C
+	sudo dmesg -C
   	# Insert the module
 	sudo insmod proclog.ko
 	sudo insmod exportlog.ko
