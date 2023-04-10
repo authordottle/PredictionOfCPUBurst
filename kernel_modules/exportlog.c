@@ -1,5 +1,9 @@
 #include <headers.h>
 
+#ifndef __KERNEL__
+#define __KERNEL__
+#endif
+
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to actual file on disk");
 
