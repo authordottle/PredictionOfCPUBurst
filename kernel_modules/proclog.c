@@ -146,11 +146,11 @@ static struct seq_operations proc_seq_ops = {
 	.stop = proc_seq_stop,
 	.show = proc_seq_show};
 
-static int procfile_single_open(struct inode *inode, struct file *file)
-{
-	printk("Hit procfile_single_open");
-	return single_open(file, proc_seq_show, NULL);
-}
+// static int procfile_single_open(struct inode *inode, struct file *file)
+// {
+// 	printk("Hit procfile_single_open");
+// 	return single_open(file, proc_seq_show, NULL);
+// }
 
 static int procfile_open(struct inode *inode, struct file *file)
 {
