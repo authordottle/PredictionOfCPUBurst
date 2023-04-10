@@ -21,25 +21,28 @@ struct file *actual_file = NULL;
 // static int buffer_size;
 char *buffer;
 
-// static int device_open(struct inode* inode, struct file* file) {
-//     printk(KERN_INFO "Device opened\n");
-//     return 0;
-// }
+static ssize_t device_read(struct file* file, char* buffer, size_t length, loff_t* offset) {
+     printk(KERN_INFO "Hit device_read\n");
+    printk(KERN_INFO "Read operation not supported\n");
+    return -EINVAL;
+}
 
-// static int device_release(struct inode* inode, struct file* file) {
-//     printk(KERN_INFO "Device closed\n");
-//     return 0;
-// }
+static ssize_t device_write(struct file* file, const char* buffer, size_t length, loff_t* offset) {
+     printk(KERN_INFO "Hit device_write\n");
+    printk(KERN_INFO "Write operation not supported\n");
+    return -EINVAL;
+}
 
-// static ssize_t device_read(struct file* file, char* buffer, size_t length, loff_t* offset) {
-//     printk(KERN_INFO "Read operation not supported\n");
-//     return -EINVAL;
-// }
+static int device_open(struct inode* inode, struct file* file) {
+    printk(KERN_INFO "Hit device_open\n");
+    return 0;
+}
 
-// static ssize_t device_write(struct file* file, const char* buffer, size_t length, loff_t* offset) {
-//     printk(KERN_INFO "Write operation not supported\n");
-//     return -EINVAL;
-// }
+static int device_release(struct inode* inode, struct file* file) {
+    printk(KERN_INFO "Hit device_release\n");
+    printk(KERN_INFO "Device closed\n");
+    return 0;
+}
 
 // static ssize_t device_export(struct file* file, const char __user *buf, size_t length, loff_t* offset) {
 //     int ret = 0;
@@ -72,14 +75,14 @@ char *buffer;
 //     return buffer_size;
 // }
 
-// static const struct file_operations proc_file_fops = {
-//     .read = device_read,
-//     .write = device_write,
-//     .open = device_open,
-//     .release = device_release,
-//     .owner = THIS_MODULE,
-//     //.read_iter = device_export, // Use write_iter to support large files
-// };
+static const struct file_operations proc_file_fops = {
+    .owner = THIS_MODULE,
+    .read = device_read,
+    .write = device_write,
+    .open = device_open,
+    .release = device_release,
+    //.read_iter = device_export, // Use write_iter to support large files
+};
 
 static int copy_proc_file_to_disk(void)
 {
@@ -114,7 +117,7 @@ exit:
 
 static int __init init_kernel_module(void)
 {
-    printk(KERN_INFO "Export logger module loaded\n");
+    printk(KERN_INFO "Export file module loaded\n");
 
     // Open the virtual file
     virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
@@ -132,15 +135,15 @@ static int __init init_kernel_module(void)
         return -EINVAL; // Return "Invalid argument" error
     }
 
-    // // Register the device
-    // major_num = register_chrdev(0, DEVICE_NAME, &proc_file_fops);
-    // if (major_num < 0) {
-    //     printk(KERN_ERR "Failed to register device\n");
-    //     return major_num;
-    // }
-    // printk(KERN_INFO "Export file module loaded\n");
+    // Register the device
+    major_num = register_chrdev(0, DEVICE_NAME, &proc_file_fops);
+    if (major_num < 0) {
+        pr_err("Failed to register device\n");
+        return major_num;
+    }
 
-    copy_proc_file_to_disk();
+    // NOT WORK CORRECTLY
+    // copy_proc_file_to_disk();
 
     return 0;
 }
@@ -161,7 +164,7 @@ static void __exit exit_kernel_module(void)
         kfree(buffer);
     }
 
-    printk(KERN_INFO "Export logger module unloaded\n");
+    printk(KERN_INFO "Export file module unloaded\n");
 }
 
 module_init(init_kernel_module);
