@@ -81,8 +81,9 @@ char *buffer;
 //     //.read_iter = device_export, // Use write_iter to support large files
 // };
 
-void copy_proc_file_to_disk()
+void copy_proc_file_to_disk(void)
 {
+    int ret = 0;
     *buffer = NULL;
     ssize_t bytes_read;
 
