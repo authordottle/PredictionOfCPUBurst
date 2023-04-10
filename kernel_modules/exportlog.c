@@ -9,15 +9,13 @@
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to actual file on disk");
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
-#define HAVE_PROC_OPS
-#endif
-
-
 #define DEVICE_NAME "export_file"
 #define VIRTUAL_FILE_NAME "virtual_file"
 #define ACTUAL_FILE_NAME "/tmp/actual_file"
-#define PATH "/proc/log_file"
+#define PROC_FILE_PATH "/proc/log_file"
+
+struct file *virtual_file;
+struct file *disk_file;
 
 static int major_num;
 static struct file* virtual_file;
@@ -76,15 +74,6 @@ static ssize_t device_export(struct file* file, const char __user *buf, size_t l
     return buffer_size;
 }
 
-// #ifdef HAVE_PROC_OPS
-// static const struct proc_ops proc_file_fops = {
-// 	  .proc_read = device_read,
-//     .proc_write = device_write,
-//     .proc_open = device_open,
-//     .proc_release = device_release,
-//     .proc_read_iter = device_export
-//     };
-// #else
 static const struct file_operations proc_file_fops = {
 	  .read = device_read,
     .write = device_write,
@@ -93,23 +82,24 @@ static const struct file_operations proc_file_fops = {
     .owner = THIS_MODULE,
     //.read_iter = device_export, // Use write_iter to support large files
     };
-// #endif
 
 static int __init mymodule_init(void)
 {
-    int ret = 0;
-
-    // // Get the path to the virtual file
-    // ret = kernfs_path(PATH, 0, &virtual_file_path);
-    // if (ret < 0) {
-    //     printk(KERN_ERR "Failed to get virtual file path\n");
-    //     return ret;
-    // }
-
+    *virtual_file = NULL;
+    *disk_file = NULL;
+    
     // Open the virtual file
-    virtual_file = filp_open(PATH, O_RDONLY, 0);
+    virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
     if (IS_ERR(virtual_file)) {
         printk(KERN_ERR "Failed to open virtual file\n");
+        return PTR_ERR(virtual_file);
+    }
+
+    // Create the actual file on disk
+    disk_file = filp_open(ACTUAL_FILE_NAME, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (IS_ERR(disk_file))
+    {
+         printk(KERN_ERR "Failed to create actual file\n");
         return PTR_ERR(virtual_file);
     }
 
@@ -127,14 +117,14 @@ static int __init mymodule_init(void)
 static void __exit mymodule_exit(void)
 {
 
-    // if (proc_file)
-    // {
-    //     filp_close(proc_file, NULL);
-    // }
-    // if (disk_file)
-    // {
-    //     filp_close(disk_file, NULL);
-    // }
+    if (virtual_file)
+    {
+        filp_close(virtual_file, NULL);
+    }
+    if (disk_file)
+    {
+        filp_close(disk_file, NULL);
+    }
     // if (buffer)
     // {
     //     kfree(buffer);
@@ -149,29 +139,9 @@ module_exit(mymodule_exit);
 
 // static int copy_proc_file_to_disk(const char *proc_file_path, const char *disk_file_path)
 // {
-//     struct file *proc_file = NULL;
-//     struct file *disk_file = NULL;
 //     char *buffer = NULL;
 //     ssize_t bytes_read;
 //     int err = 0;
-
-//     // Open the virtual file in the /proc filesystem
-//     proc_file = filp_open(proc_file_path, O_RDONLY, 0);
-//     if (IS_ERR(proc_file))
-//     {
-//         err = PTR_ERR(proc_file);
-//         pr_err("Failed to open %s: %d\n", proc_file_path, err);
-//         goto exit;
-//     }
-
-//     // Create the actual file on disk
-//     disk_file = filp_open(disk_file_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-//     if (IS_ERR(disk_file))
-//     {
-//         err = PTR_ERR(disk_file);
-//         pr_err("Failed to create %s: %d\n", disk_file_path, err);
-//         goto exit;
-//     }
 
 //     // Allocate a buffer to read data from the virtual file
 //     buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
