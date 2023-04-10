@@ -14,9 +14,6 @@ MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to
 #define ACTUAL_FILE_PATH "/tmp/actual_file"
 #define PROC_FILE_PATH "/proc/log_file"
 
-struct file *virtual_file;
-struct file *disk_file;
-
 static int major_num;
 FILE *virtual_file;
 FILE *actual_file;
@@ -100,11 +97,11 @@ void copy_proc_file_to_disk()
     // Read data from the virtual file and write it to the actual file on disk
     while ((bytes_read = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos)) > 0)
     {
-        ssize_t bytes_written = kernel_write(disk_file, buffer, bytes_read, &disk_file->f_pos);
+        ssize_t bytes_written = kernel_write(actual_file, buffer, bytes_read, &actual_file->f_pos);
         if (bytes_written != bytes_read)
         {
             printk(KERN_ERR "Failed to write data to %s\n", ACTUAL_FILE_PATH);
-            return PTR_ERR(disk_file);
+            return PTR_ERR(actual_file);
         }
     }
 }
@@ -112,7 +109,7 @@ void copy_proc_file_to_disk()
 static int __init init_kernel_module(void)
 {
     *virtual_file = NULL;
-    *disk_file = NULL;
+    *actual_file = NULL;
 
     // Open the virtual file
     virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
@@ -123,8 +120,8 @@ static int __init init_kernel_module(void)
     }
 
     // Create the actual file on disk
-    disk_file = filp_open(ACTUAL_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (IS_ERR(disk_file))
+    actual_file = filp_open(ACTUAL_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (IS_ERR(actual_file))
     {
         printk(KERN_ERR "Failed to create actual file\n");
         return PTR_ERR(virtual_file);
@@ -150,9 +147,9 @@ static void __exit exit_kernel_module(void)
     {
         filp_close(virtual_file, NULL);
     }
-    if (disk_file)
+    if (actual_file)
     {
-        filp_close(disk_file, NULL);
+        filp_close(actual_file, NULL);
     }
     if (buffer)
     {
