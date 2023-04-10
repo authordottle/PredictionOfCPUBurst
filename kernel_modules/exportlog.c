@@ -21,59 +21,96 @@ struct file *actual_file = NULL;
 // static int buffer_size;
 char *buffer;
 
-static ssize_t device_read(struct file* file, char* buffer, size_t length, loff_t* offset) {
-     printk(KERN_INFO "Hit device_read\n");
+static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_t *offset)
+{
+    printk(KERN_INFO "Hit device_read\n");
     printk(KERN_INFO "Read operation not supported\n");
     return -EINVAL;
 }
 
-static ssize_t device_write(struct file* file, const char* buffer, size_t length, loff_t* offset) {
-     printk(KERN_INFO "Hit device_write\n");
+static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
+{
+    printk(KERN_INFO "Hit device_write\n");
     printk(KERN_INFO "Write operation not supported\n");
     return -EINVAL;
 }
 
-static int device_open(struct inode* inode, struct file* file) {
+static int device_open(struct inode *inode, struct file *file)
+{
     printk(KERN_INFO "Hit device_open\n");
+
+    int ret = 0;
+
+    // Copy the virtual file's contents to the buffer
+    ret = kernel_read(virtual_file, *offset, buffer, length);
+    if (ret < 0) {
+        pr_err("Failed to read from virtual file\n");
+        return -EINVAL; // Return "Invalid argument" error
+    }
+    buffer_size = ret;
+
+printk(KERN_INFO "buffer is %d\n", buffer_size);
+
     return 0;
 }
 
-static int device_release(struct inode* inode, struct file* file) {
+static int device_release(struct inode *inode, struct file *file)
+{
     printk(KERN_INFO "Hit device_release\n");
     printk(KERN_INFO "Device closed\n");
     return 0;
 }
 
-// static ssize_t device_export(struct file* file, const char __user *buf, size_t length, loff_t* offset) {
-//     int ret = 0;
+static ssize_t device_export(struct file* file, const char __user *buf, size_t length, loff_t* offset) {
+    int ret = 0;
 
-//     // Copy the virtual file's contents to the buffer
-//     ret = kernel_read(virtual_file, *offset, buffer, length);
-//     if (ret < 0) {
-//         printk(KERN_ERR "Failed to read from virtual file\n");
-//         return ret;
-//     }
-//     buffer_size = ret;
+    // Copy the virtual file's contents to the buffer
+    ret = kernel_read(virtual_file, *offset, buffer, length);
+    if (ret < 0) {
+        pr_err("Failed to read from virtual file\n");
+        return -EINVAL; // Return "Invalid argument" error
+    }
+    buffer_size = ret;
 
-//     // Open the actual file
-//     actual_file = filp_open(ACTUAL_FILE_PATH, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-//     if (IS_ERR(actual_file)) {
-//         printk(KERN_ERR "Failed to open actual file\n");
-//         return PTR_ERR(actual_file);
-//     }
 
-//     // Write the buffer to the actual file
-//     ret = kernel_write(actual_file, buffer, buffer_size, 0);
-//     if (ret < 0) {
-//         printk(KERN_ERR "Failed to write to actual file\n");
-//         return ret;
-//     }
 
-//     // Cleanup
-//     filp_close(actual_file, NULL);
-//     *offset += buffer_size;
-//     return buffer_size;
-// }
+
+    // *buffer = NULL;
+    // ssize_t bytes_read;
+
+    // // Allocate a buffer to read data from the virtual file
+    // buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
+    // if (!buffer)
+    // {
+    //     pr_err("Failed to allocate memory for buffer\n");
+    //     return -EINVAL; // Return "Invalid argument" error
+    // }
+
+    // // Read data from the virtual file and write it to the actual file on disk
+    // while ((bytes_read = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos)) > 0)
+    // {
+    //     ssize_t bytes_written = kernel_write(actual_file, buffer, bytes_read, &actual_file->f_pos);
+    //     if (bytes_written != bytes_read)
+    //     {
+    //         pr_err("Failed to write data to %s\n", ACTUAL_FILE_PATH);
+    //         return -EINVAL; // Return "Invalid argument" error
+    //     }
+    // }
+
+
+
+
+
+    // Write the buffer to the actual file
+    ret = kernel_write(actual_file, buffer, buffer_size, 0);
+    if (ret < 0) {
+        pr_err("Failed to read from actual file\n");
+        return -EINVAL; // Return "Invalid argument" error
+    }
+
+    *offset += buffer_size;
+    return buffer_size;
+}
 
 static const struct file_operations proc_file_fops = {
     .owner = THIS_MODULE,
@@ -83,37 +120,6 @@ static const struct file_operations proc_file_fops = {
     .release = device_release,
     //.read_iter = device_export, // Use write_iter to support large files
 };
-
-static int copy_proc_file_to_disk(void)
-{
-    int ret = 0;
-    *buffer = NULL;
-    ssize_t bytes_read;
-
-    // Allocate a buffer to read data from the virtual file
-    buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
-    if (!buffer)
-    {
-        pr_err("Failed to allocate memory for buffer\n");
-        ret = -EINVAL; // Return "Invalid argument" error
-        goto exit;
-    }
-
-    // Read data from the virtual file and write it to the actual file on disk
-    while ((bytes_read = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos)) > 0)
-    {
-        ssize_t bytes_written = kernel_write(actual_file, buffer, bytes_read, &actual_file->f_pos);
-        if (bytes_written != bytes_read)
-        {
-            pr_err("Failed to write data to %s\n", ACTUAL_FILE_PATH);
-            ret = -EINVAL; // Return "Invalid argument" error
-            goto exit;
-        }
-    }
-
-exit:
-    return ret;
-}
 
 static int __init init_kernel_module(void)
 {
@@ -137,13 +143,11 @@ static int __init init_kernel_module(void)
 
     // Register the device
     major_num = register_chrdev(0, DEVICE_NAME, &proc_file_fops);
-    if (major_num < 0) {
+    if (major_num < 0)
+    {
         pr_err("Failed to register device\n");
         return major_num;
     }
-
-    // NOT WORK CORRECTLY
-    // copy_proc_file_to_disk();
 
     return 0;
 }

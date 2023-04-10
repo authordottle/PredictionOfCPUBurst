@@ -74,13 +74,11 @@ static long get_process_elapsed_time(struct task_struct *task)
 	// long long usage_sec;
 	// int clk_tck = 100; // constants
 	// int number_of_cpu = 2;
-	int ret = 0;
 
 	if (task == NULL)
 	{
 		pr_err("An error occurred in task\n");
-		ret = -EINVAL; // Return "Invalid argument" error
-		goto exit;
+		return -EINVAL; // Return "Invalid argument" error
 	}
 
 	// The reason for this is that the utime value in the /proc/[pid]/stat file is measured in clock ticks,
@@ -93,9 +91,6 @@ static long get_process_elapsed_time(struct task_struct *task)
 	elapsed_sec = (long)uptime * 1000000000 - start_time;
 
 	return elapsed_sec;
-
-exit:
-	return ret;
 }
 
 static int proc_seq_show(struct seq_file *s, void *v)

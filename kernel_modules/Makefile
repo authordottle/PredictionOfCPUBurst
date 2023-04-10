@@ -17,13 +17,22 @@ clean:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) clean
 
 exec:
-	$(info Hit test)
+	$(info Hit exec)
   	# We put a — in front of the rmmod command to tell make to ignore
   	# an error in case the module isn’t loaded.
 	-sudo rmmod proclog
+	-sudo rmmod exportlog
   	# Clear the kernel log without echo
 	# sudo dmesg -C
   	# Insert the module
 	sudo insmod proclog.ko
+	sudo insmod exportlog.ko
   	# Display the kernel log
 	dmesg
+
+stop:
+	$(info Hit exec)
+  	# We put a — in front of the rmmod command to tell make to ignore
+  	# an error in case the module isn’t loaded.
+	-sudo rmmod proclog
+	-sudo rmmod exportlog
