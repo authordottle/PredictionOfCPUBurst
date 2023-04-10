@@ -1,2 +1,2 @@
 all:
-	gcc -o lottery lottery.c -lpthread
+	gcc -o t1 t1.c -lpthread
