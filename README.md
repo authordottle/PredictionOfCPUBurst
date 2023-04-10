@@ -9,6 +9,7 @@
 	```sh
 	$ sudo apt-get install build-essential
 	```
+2. Python version: >= 3.0
 
 ## How to use proclog kernel module to collect linux sample data:
 1. cd into kernel_modules folder
@@ -59,3 +60,7 @@
 
 ## How to use python functions to collect mac processes data:
 1. cd into sudo_py_mac folder   
+2. 
+   ```sh
+   $ sudo python3 index.py
+   ```
