@@ -228,10 +228,8 @@ static void export_virtual_file_into_actual_file(void)
 	}
 
 	// // Copy the virtual file's contents to the buffer
-	// ssize_t count = 1;
-	// loff_t length = 0;
 	// ssize_t ret = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos);
-	// printk(KERN_INFO "buffer is %d\n", ret);
+	
 	// Read data from the virtual file and write it to the actual file on disk
 	// while ((bytes_read = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos)) > 0)
 	// {
