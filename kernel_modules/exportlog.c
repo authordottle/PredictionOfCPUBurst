@@ -9,71 +9,120 @@
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to actual file on disk");
 
-#define PROC_FILE_NAME "log_file"
-#define DISK_FILE_NAME "/tmp/disk_log_file"
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+#define HAVE_PROC_OPS
+#endif
 
-static struct proc_dir_entry *proc_file_entry;
 
-static ssize_t proc_file_read(struct file *filep, char *buffer, size_t len, loff_t *offset)
-{
-    ssize_t bytes_read = 0;
-    char *proc_file_content = "This is the content of my virtual file in /proc\n";
-    size_t content_len = strlen(proc_file_content);
+#define DEVICE_NAME "export_file"
+#define VIRTUAL_FILE_NAME "virtual_file"
+#define ACTUAL_FILE_NAME "/tmp/actual_file"
 
-    if (*offset >= content_len)
-    {
-        // End of file
-        return 0;
-    }
+static int major_num;
+static struct file* virtual_file;
+static struct file* actual_file;
+static char buffer[256];
+static int buffer_size;
 
-    if (*offset + len > content_len)
-    {
-        len = content_len - *offset;
-    }
-
-    if (copy_to_user(buffer, proc_file_content + *offset, len))
-    {
-        return -EFAULT;
-    }
-
-    bytes_read = len;
-    *offset += len;
-    return bytes_read;
+static int device_open(struct inode* inode, struct file* file) {
+    printk(KERN_INFO "Device opened\n");
+    return 0;
 }
 
-static const struct file_operations proc_file_ops = {
+static int device_release(struct inode* inode, struct file* file) {
+    printk(KERN_INFO "Device closed\n");
+    return 0;
+}
+
+static ssize_t device_read(struct file* file, char* buffer, size_t length, loff_t* offset) {
+    printk(KERN_INFO "Read operation not supported\n");
+    return -EINVAL;
+}
+
+static ssize_t device_write(struct file* file, const char* buffer, size_t length, loff_t* offset) {
+    printk(KERN_INFO "Write operation not supported\n");
+    return -EINVAL;
+}
+
+static ssize_t device_export(struct file* file, const char __user *buf, size_t length, loff_t* offset) {
+    int ret = 0;
+
+    // Copy the virtual file's contents to the buffer
+    ret = kernel_read(virtual_file, *offset, buffer, length);
+    if (ret < 0) {
+        printk(KERN_ERR "Failed to read from virtual file\n");
+        return ret;
+    }
+    buffer_size = ret;
+
+    // Open the actual file
+    actual_file = filp_open(ACTUAL_FILE_NAME, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+    if (IS_ERR(actual_file)) {
+        printk(KERN_ERR "Failed to open actual file\n");
+        return PTR_ERR(actual_file);
+    }
+
+    // Write the buffer to the actual file
+    ret = kernel_write(actual_file, buffer, buffer_size, 0);
+    if (ret < 0) {
+        printk(KERN_ERR "Failed to write to actual file\n");
+        return ret;
+    }
+
+    // Cleanup
+    filp_close(actual_file, NULL);
+    *offset += buffer_size;
+    return buffer_size;
+}
+
+#ifdef HAVE_PROC_OPS
+static const struct proc_ops proc_file_fops = {
+	  .read = device_read,
+    .write = device_write,
+    .open = device_open,
+    .release = device_release,
+    .llseek = no_llseek,
+    .write_iter = device_export};
+#else
+static const struct file_operations proc_file_fops = {
+	  .read = device_read,
+    .write = device_write,
+    .open = device_open,
+    .release = device_release,
+    .llseek = no_llseek,
     .owner = THIS_MODULE,
-    .read = proc_file_read,
-};
+    .write_iter = device_export, // Use write_iter to support large files
+    };
+#endif
 
 static int __init mymodule_init(void)
 {
-    int err = 0;
+    int ret = 0;
+    struct path virtual_file_path;
 
-    // Create the virtual file in the /proc filesystem
-    proc_file_entry = proc_create(PROC_FILE_NAME, 0, NULL, &proc_file_ops);
-    if (!proc_file_entry)
-    {
-        pr_err("Failed to create /proc/%s\n", PROC_FILE_NAME);
-        err = -ENOMEM;
-        goto exit;
+    // Get the path to the virtual file
+    ret = kern_path(VIRTUAL_FILE_NAME, 0, &virtual_file_path);
+    if (ret < 0) {
+        printk(KERN_ERR "Failed to get virtual file path\n");
+        return ret;
     }
 
-    // Export the contents of the virtual file to the actual file on disk
-    err = simple_vfs_copy(PROC_FILE_NAME, DISK_FILE_NAME);
-    if (err)
-    {
-        pr_err("Failed to export /proc/%s to %s: %d\n", PROC_FILE_NAME, DISK_FILE_NAME, err);
-        goto exit_remove_proc_file;
+    // Open the virtual file
+    virtual_file = file_open(virtual_file_path, O_RDONLY, 0);
+    if (IS_ERR(virtual_file)) {
+        printk(KERN_ERR "Failed to open virtual file\n");
+        return PTR_ERR(virtual_file);
     }
 
-    pr_info("Module loaded successfully\n");
+    // Register the device
+    major_num = register_chrdev(0, DEVICE_NAME, &fops);
+    if (major_num < 0) {
+        printk(KERN_ERR "Failed to register device\n");
+        return major_num;
+    }
+    printk(KERN_INFO "Export file module loaded\n");
+
     return 0;
-
-exit_remove_proc_file:
-    proc_remove(proc_file_entry);
-exit:
-    return err;
 }
 
 static void __exit mymodule_exit(void)
