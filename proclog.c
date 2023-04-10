@@ -15,10 +15,9 @@ MODULE_DESCRIPTION("Kernel module to log process times");
 #define HAVE_PROC_OPS
 #endif
 
-// NOT APPLICABLE IN THIS CASE
-// #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 18, 0)
-// #define HAVE_PROC_CREATE_SINGLE
-// #endif
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 18, 0)
+#define HAVE_PROC_CREATE_SINGLE
+#endif
 
 static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
