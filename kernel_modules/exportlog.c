@@ -75,15 +75,15 @@ static ssize_t device_export(struct file* file, const char __user *buf, size_t l
     return buffer_size;
 }
 
-#ifdef HAVE_PROC_OPS
-static const struct proc_ops proc_file_fops = {
-	  .proc_read = device_read,
-    .proc_write = device_write,
-    .proc_open = device_open,
-    .proc_release = device_release,
-    .proc_read_iter = device_export
-    };
-#else
+// #ifdef HAVE_PROC_OPS
+// static const struct proc_ops proc_file_fops = {
+// 	  .proc_read = device_read,
+//     .proc_write = device_write,
+//     .proc_open = device_open,
+//     .proc_release = device_release,
+//     .proc_read_iter = device_export
+//     };
+// #else
 static const struct file_operations proc_file_fops = {
 	  .read = device_read,
     .write = device_write,
@@ -92,7 +92,7 @@ static const struct file_operations proc_file_fops = {
     .owner = THIS_MODULE,
     .read_iter = device_export, // Use write_iter to support large files
     };
-#endif
+// #endif
 
 static int __init mymodule_init(void)
 {
@@ -126,6 +126,20 @@ static int __init mymodule_init(void)
 
 static void __exit mymodule_exit(void)
 {
+
+    // if (proc_file)
+    // {
+    //     filp_close(proc_file, NULL);
+    // }
+    // if (disk_file)
+    // {
+    //     filp_close(disk_file, NULL);
+    // }
+    // if (buffer)
+    // {
+    //     kfree(buffer);
+    // }
+
     pr_info("Module unloaded successfully\n");
 }
 
@@ -180,18 +194,3 @@ module_exit(mymodule_exit);
 //         }
 //     }
 
-// exit:
-//     if (proc_file)
-//     {
-//         filp_close(proc_file, NULL);
-//     }
-//     if (disk_file)
-//     {
-//         filp_close(disk_file, NULL);
-//     }
-//     if (buffer)
-//     {
-//         kfree(buffer);
-//     }
-//     return err;
-// }
