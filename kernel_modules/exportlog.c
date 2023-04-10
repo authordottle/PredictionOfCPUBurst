@@ -18,8 +18,8 @@ struct file *virtual_file;
 struct file *disk_file;
 
 static int major_num;
-static struct file* virtual_file;
-static struct file* actual_file;
+ struct file *virtual_file;
+ struct file *actual_file;
 // static char buffer[256];
 static int buffer_size;
 char *buffer;
@@ -75,23 +75,24 @@ char *buffer;
 //     return buffer_size;
 // }
 
-static const struct file_operations proc_file_fops = {
-	  .read = device_read,
-    .write = device_write,
-    .open = device_open,
-    .release = device_release,
-    .owner = THIS_MODULE,
-    //.read_iter = device_export, // Use write_iter to support large files
-    };
+// static const struct file_operations proc_file_fops = {
+//     .read = device_read,
+//     .write = device_write,
+//     .open = device_open,
+//     .release = device_release,
+//     .owner = THIS_MODULE,
+//     //.read_iter = device_export, // Use write_iter to support large files
+// };
 
-static int __init mymodule_init(void)
+static int __init init_kernel_module(void)
 {
     *virtual_file = NULL;
     *disk_file = NULL;
-    
+
     // Open the virtual file
     virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
-    if (IS_ERR(virtual_file)) {
+    if (IS_ERR(virtual_file))
+    {
         printk(KERN_ERR "Failed to open virtual file\n");
         return PTR_ERR(virtual_file);
     }
@@ -100,7 +101,7 @@ static int __init mymodule_init(void)
     disk_file = filp_open(ACTUAL_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (IS_ERR(disk_file))
     {
-         printk(KERN_ERR "Failed to create actual file\n");
+        printk(KERN_ERR "Failed to create actual file\n");
         return PTR_ERR(virtual_file);
     }
 
@@ -136,9 +137,8 @@ static void __exit mymodule_exit(void)
     pr_info("Module unloaded successfully\n");
 }
 
-module_init(mymodule_init);
+module_init(init_kernel_module);
 module_exit(mymodule_exit);
-
 
 static int copy_proc_file_to_disk()
 {
@@ -149,7 +149,7 @@ static int copy_proc_file_to_disk()
     buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
     if (!buffer)
     {
-          printk(KERN_ERR "Failed to allocate memory for buffer\n");
+        printk(KERN_ERR "Failed to allocate memory for buffer\n");
         return PTR_ERR(buffer);
     }
 
@@ -159,8 +159,7 @@ static int copy_proc_file_to_disk()
         ssize_t bytes_written = kernel_write(disk_file, buffer, bytes_read, &disk_file->f_pos);
         if (bytes_written != bytes_read)
         {
-              printk(KERN_ERR "Failed to write data to %s\n", ACTUAL_FILE_PATH);
-        return PTR_ERR(disk_file);
+            printk(KERN_ERR "Failed to write data to %s\n", ACTUAL_FILE_PATH);
+            return PTR_ERR(disk_file);
         }
     }
-
