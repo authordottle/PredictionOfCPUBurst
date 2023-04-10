@@ -189,12 +189,13 @@ static int __init init_kernel_module(void)
     }
 
     // Register the device
-    major_num = register_chrdev(0, ACTUAL_FILE_PATH, &proc_file_fops);
+    major_num = register_chrdev(0, DEVICE_NAME, &proc_file_fops);
     if (major_num < 0)
     {
         pr_err("Failed to register device\n");
         return major_num;
     }
+ printk(KERN_INFO "majoyr number %d", major_num);
 
     return 0;
 }
