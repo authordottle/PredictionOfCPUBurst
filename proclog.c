@@ -15,10 +15,6 @@ MODULE_DESCRIPTION("Kernel module to log process times");
 #define HAVE_PROC_OPS
 #endif
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 18, 0)
-#define HAVE_PROC_CREATE_SINGLE
-#endif
-
 static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
 	printk("Hit proc_seq_start");
@@ -173,7 +169,7 @@ static int procfile_show(struct seq_file *m, void *v)
 
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
-	.proc_open = procfile_open, // or procfile_single_open
+	.proc_open = procfile_single_open,
 	.proc_write = procfile_write,
 	.proc_read = seq_read,
 	.proc_lseek = seq_lseek,
@@ -181,7 +177,7 @@ static const struct proc_ops proc_file_fops = {
 #else
 static const struct file_operations proc_file_fops = {
 	.owner = THIS_MODULE,
-	.open = procfile_open, // or procfile_single_open
+	.open = procfile_single_open,
 	.write = procfile_write,
 	.read = seq_read,
 	.llseek = seq_lseek,
@@ -198,11 +194,7 @@ static int __init init_kernel_module(void)
 
 // adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 // fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
-#ifdef HAVE_PROC_CREATE_SINGLE
-	proc_create_single("log_file", 0, NULL, procfile_show);
-#else
 	proc_create("log_file", 0, NULL, &proc_file_fops);
-#endif
 
 	return 0;
 }
