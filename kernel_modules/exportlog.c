@@ -14,7 +14,7 @@ MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to
 #define ACTUAL_FILE_PATH "/tmp/actual_file"
 #define PROC_FILE_PATH "/proc/log_file"
 
-// static int major_num;
+static int major_num;
 struct file *virtual_file = NULL;
 struct file *actual_file = NULL;
 // static char buffer[256];
