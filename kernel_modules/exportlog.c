@@ -17,8 +17,8 @@ MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to
 static int major_num;
 struct file *virtual_file = NULL;
 struct file *actual_file = NULL;
-static char buffer[256];
-static int buffer_size;
+char buffer[256];
+int buffer_size;
 
 static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
@@ -103,21 +103,6 @@ static int device_release(struct inode *inode, struct file *file)
     return 0;
 }
 
-//     int ret = 0;
-
-//     // Copy the virtual file's contents to the buffer
-//     ret = kernel_read(virtual_file, *offset, buffer, length);
-//     if (ret < 0) {
-//         pr_err("Failed to read from virtual file\n");
-//         return -EINVAL; // Return "Invalid argument" error
-//     }
-//     buffer_size = ret;
-
-// printk(KERN_INFO "buffer is %d\n", buffer_size);
-
-
-
-// return buffer_size;
 
 
 
@@ -188,13 +173,30 @@ static int __init init_kernel_module(void)
         return -EINVAL; // Return "Invalid argument" error
     }
 
-    // Register the device
-    major_num = register_chrdev(0, DEVICE_NAME, &proc_file_fops);
-    if (major_num < 0)
-    {
-        pr_err("Failed to register device\n");
-        return major_num;
-    }
+    // Copy the virtual file's contents to the buffer
+    size_t count = 1;
+    loff_t length = 0;
+    int ret = kernel_read(virtual_file, buffer, count, &length);
+    // if (ret < 0) {
+    //     pr_err("Failed to read from virtual file\n");
+    //     return -EINVAL; // Return "Invalid argument" error
+    // }
+    buffer_size = ret;
+
+    printk(KERN_INFO "buffer is %d\n", buffer_size);
+
+
+
+
+
+
+    // // Register the device
+    // major_num = register_chrdev(0, DEVICE_NAME, &proc_file_fops);
+    // if (major_num < 0)
+    // {
+    //     pr_err("Failed to register device\n");
+    //     return major_num;
+    // }
 
     return 0;
 }
@@ -202,7 +204,7 @@ static int __init init_kernel_module(void)
 static void __exit exit_kernel_module(void)
 {
 
-    unregister_chrdev(major_num, DEVICE_NAME);
+    // unregister_chrdev(major_num, DEVICE_NAME);
 
     if (virtual_file)
     {
