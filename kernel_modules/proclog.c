@@ -62,15 +62,18 @@ static long get_process_elapsed_time(struct task_struct *task)
 	// #16 cutime - Waited-for children's CPU time spent in user code (in clock ticks)
 	// #17 cstime - Waited-for children's CPU time spent in kernel code (in clock ticks)
 	// #22 starttime - Time when the process started, measured in clock ticks
-	unsigned long long utime, stime, cutime, cstime, start_time;
-	unsigned long long utime_sec, stime_sec, start_time_sec;
-	unsigned long long utime_msec, stime_msec, start_time_msec;
-	unsigned long long total_time;
-	long long cpu_usage = 0;
-	long long elapsed_nsec, usage_nsec;
-	long long elapsed_sec, usage_sec;
-	int clk_tck = 100; // constants
-	int number_of_cpu = 2;
+	// unsigned long long utime, stime, cutime, cstime;
+	unsigned long long start_time;
+	// unsigned long long utime_sec, stime_sec, start_time_sec;
+	// unsigned long long utime_msec, stime_msec, start_time_msec;
+	// unsigned long long total_time;
+	// long long cpu_usage = 0;
+	// long long elapsed_nsec;
+	// long long usage_nsec;
+	long long elapsed_sec;
+	long long usage_sec;
+	// int clk_tck = 100; // constants
+	// int number_of_cpu = 2;
 
 	if (task == NULL)
 	{
@@ -113,7 +116,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 		long elapsed_time = get_process_elapsed_time(task);
 
 		seq_printf(s,
-				   "%d\t %s\t %lld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
+				   "%d\t %s\t %ld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
 				   task->pid,
 				   task->comm,
 				   elapsed_time,
@@ -161,11 +164,11 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 	return 1;
 }
 
-static int procfile_show(struct seq_file *m, void *v)
-{
-	printk("Hit procfile_show");
-	return 0;
-}
+// static int procfile_show(struct seq_file *m, void *v)
+// {
+// 	printk("Hit procfile_show");
+// 	return 0;
+// }
 
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
