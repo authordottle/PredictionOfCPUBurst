@@ -1,12 +1,10 @@
 #include <headers.h>
 
-#include <linux/fs.h>
-#include <linux/module.h>
-#include <linux/proc_fs.h>
-#include <linux/uaccess.h>
+MODULE_LICENSE("GPL");
+MODULE_DESCRIPTION("Kernel module to export contents of virtual file in /proc to actual file on disk");
 
-#define PROC_FILE_NAME "myprocfile"
-#define DISK_FILE_NAME "/tmp/mydiskfile"
+#define PROC_FILE_NAME "log_file"
+#define DISK_FILE_NAME "/tmp/disk_log_file"
 
 static struct proc_dir_entry *proc_file_entry;
 
@@ -83,9 +81,6 @@ static void __exit mymodule_exit(void)
 module_init(mymodule_init);
 module_exit(mymodule_exit);
 
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Your Name");
-MODULE_DESCRIPTION("Export contents of virtual file in /proc to actual file on disk");
 
 // static int copy_proc_file_to_disk(const char *proc_file_path, const char *disk_file_path)
 // {
