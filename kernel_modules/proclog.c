@@ -204,8 +204,7 @@ static int __init init_kernel_module(void)
 	return 0;
 }
 
-static void __exit exit_kernel_module(void)
-{
+static void export_virtual_file_into_actual_file(void) {
 	// Open the virtual file
 	virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
 	if (IS_ERR(virtual_file))
@@ -220,6 +219,32 @@ static void __exit exit_kernel_module(void)
 		pr_err("Failed to create actual file\n");
 	}
 
+    // Allocate a buffer to read data from the virtual file
+    char *buffer = (char *)kmalloc(PAGE_SIZE, GFP_KERNEL);
+    if (!buffer)
+    {
+        pr_err("Failed to allocate memory for buffer\n");
+    }
+
+	// // Copy the virtual file's contents to the buffer
+	// ssize_t count = 1;
+	// loff_t length = 0;
+	// ssize_t ret = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos);
+	// printk(KERN_INFO "buffer is %d\n", ret);
+    // Read data from the virtual file and write it to the actual file on disk
+    // while ((bytes_read = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos)) > 0)
+    // {
+    //     ssize_t bytes_written = kernel_write(actual_file, buffer, bytes_read, &actual_file->f_pos);
+    //     if (bytes_written != bytes_read)
+    //     {
+    //         pr_err("Failed to write data to %s\n", ACTUAL_FILE_PATH);
+    //     }
+    // }
+	
+	if (buffer)
+    {
+        kfree(buffer);
+    }
 	if (virtual_file)
 	{
 		filp_close(virtual_file, NULL);
@@ -228,13 +253,11 @@ static void __exit exit_kernel_module(void)
 	{
 		filp_close(actual_file, NULL);
 	}
+}
 
-	// Copy the virtual file's contents to the buffer
-	ssize_t count = 1;
-	loff_t length = 0;
-	ssize_t ret = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos);
-	printk(KERN_INFO "buffer is %d\n", ret);
-
+static void __exit exit_kernel_module(void)
+{
+	export_virtual_file_into_actual_file();
 	remove_proc_entry("log_file", NULL);
 	printk(KERN_INFO "Process logger module unloaded\n");
 }
