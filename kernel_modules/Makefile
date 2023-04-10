@@ -31,7 +31,7 @@ exec:
 	dmesg
 
 stop:
-	$(info Hit exec)
+	$(info Hit stop)
   	# We put a — in front of the rmmod command to tell make to ignore
   	# an error in case the module isn’t loaded.
 	-sudo rmmod proclog

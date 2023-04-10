@@ -108,7 +108,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 			   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
 	for_each_process(task)
 	{
-		printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
+		// printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 
 		utime = task->utime;
 		stime = task->stime;

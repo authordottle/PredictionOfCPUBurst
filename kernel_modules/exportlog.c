@@ -104,22 +104,23 @@ static int device_release(struct inode *inode, struct file *file)
     return 0;
 }
 
-static ssize_t device_export(struct file* file, const char __user *buf, size_t length, loff_t* offset) {
-    int ret = 0;
+//     int ret = 0;
 
-    // Copy the virtual file's contents to the buffer
-    ret = kernel_read(virtual_file, *offset, buffer, length);
-    if (ret < 0) {
-        pr_err("Failed to read from virtual file\n");
-        return -EINVAL; // Return "Invalid argument" error
-    }
-    buffer_size = ret;
+//     // Copy the virtual file's contents to the buffer
+//     ret = kernel_read(virtual_file, *offset, buffer, length);
+//     if (ret < 0) {
+//         pr_err("Failed to read from virtual file\n");
+//         return -EINVAL; // Return "Invalid argument" error
+//     }
+//     buffer_size = ret;
 
-printk(KERN_INFO "buffer is %d\n", buffer_size);
-
+// printk(KERN_INFO "buffer is %d\n", buffer_size);
 
 
-return buffer_size;
+
+// return buffer_size;
+
+
 
 
 
@@ -159,7 +160,6 @@ return buffer_size;
 
     // *offset += buffer_size;
     // return buffer_size;
-}
 
 static const struct file_operations proc_file_fops = {
     .owner = THIS_MODULE,
