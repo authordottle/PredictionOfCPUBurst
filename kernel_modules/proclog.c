@@ -194,12 +194,12 @@ static int __init init_kernel_module(void)
 {
 	printk(KERN_INFO "Process logger module loaded\n");
 
-s64 time_stamp;
-s64 milliseconds_spent;
+s64 start_time;
+s64 end_time;
+s64 duration_time;
 
-/* capture initial time stamp */
-time_stamp = ktime_get();
-printk(KERN_INFO "%lld\n", time_stamp);
+	/* capture initial time stamp */
+	start_time = ktime_get();
 
 	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;
@@ -210,6 +210,12 @@ printk(KERN_INFO "%lld\n", time_stamp);
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
 	log_file = proc_create("log_file", 0, NULL, &proc_file_fops);
 
+	/* capture end time stamp */
+	end_time = ktime_get();
+
+	duration_time = end_time - start_time;
+
+printk(KERN_INFO "%lld\n", duration_time);
 	return 0;
 }
 
