@@ -97,7 +97,7 @@ static long get_process_elapsed_time(struct task_struct *task)
 static int proc_seq_show(struct seq_file *s, void *v)
 {
 	// printk("Hit proc_seq_show");
-{
+do {
 
 ktime_t current_time = ktime_get();
 s64 current_time_ns = ktime_to_ns(current_time);
