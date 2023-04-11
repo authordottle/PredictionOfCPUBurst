@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import csv
+
 
 # Load the Excel file
 processData = pd.read_csv("../sudo_py_mac/data/mac_processes.csv")
@@ -14,4 +14,5 @@ objTypeCols = processData[[i for i in processData.columns if processData[i].dtyp
 
 #
 corrprocessData = processData.corr()
-print(corrprocessData)
+# print(corrprocessData)
+

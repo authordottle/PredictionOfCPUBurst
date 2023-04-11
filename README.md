@@ -10,6 +10,12 @@
 	$ sudo apt-get install build-essential
 	```
 2. Python version: >= 3.0
+3. Python dependencies:
+	```sh
+	$ pip3 install -U scikit-learn
+   $ python3 -m pip install -U matplotlib
+   $ pip3 install seaborn
+	```
 
 ## How to use proclog kernel module to collect linux sample data:
 1. cd into kernel_modules folder
@@ -64,3 +70,9 @@
    ```sh
    $ sudo python3 index.py
    ```
+
+## How to run python functions to predict processes performance:
+   <!-- ```sh
+   $ pip3 install -r requirements.txt  
+   ``` -->
+ 

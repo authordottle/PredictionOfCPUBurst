@@ -1,21 +1,10 @@
-
-
-
-# import pandas as pd
-# import numpy as np
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-
-# # Load the Excel file
-# processData = pd.read_excel("data.xls")
-# print(processData.columns)
-# print(processData.dtypes)
-# objTypeCols = processData[[i for i in processData.columns if processData[i].dtype == 'object']]; del(i)
-
-# # Adding missing values intentionally
-# # processData.loc[np.random.choice(len(processData), size=200, replace=False), 'EmpLastSalaryHikePercent'] = np.nan # Inserting NaN values for analysis
-# # processData['EmpLastSalaryHikePercent'].isnull().value_counts()
-# # processData['EmpLastSalaryHikePercent'].isnull().sum()
+# sorted_ps = sorted(psutil.process_iter(['name', 'cpu_times']), key=lambda p: sum(p.info['cpu_times'][:2]) if p.info['cpu_times'] is not None else 0)
+# for p in sorted_ps:
+#     print(p.pid, p.info['name'])
+#     if p.info['cpu_times'] is not None:
+#         print(sum(p.info['cpu_times']))
+#     else:
+#         print(0)
 
 # # Imputing these missing values
 # # from sklearn.preprocessing import Imputer
@@ -30,9 +19,7 @@
 # #     processData[col+"_missing"] = processData[col].isnull() # Adding new cols that contains T if missing
 # # processData['EmpLastSalaryHikePercent_missing']
 
-# #
-# corrprocessData = processData.corr()
-# print(corrprocessData)
+
 # corrprocessData['PerformanceRating'].sort_values(ascending=False)
 # corrprocessData['PerformanceRating'].sort_values(ascending=False).index[:-4:-1]
 # # EmpEnvironmentSatisfaction, EmpLastSalaryHikePercent is having high Corr with PerformanceRating
