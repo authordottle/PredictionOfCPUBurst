@@ -18,17 +18,16 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
 	printk("Hit proc_seq_start");
 
-	seq_printf(s, "start");
 	static unsigned long counter = 0;
-	// beginning a new sequence ? 
+	// beginning a new sequence ?
 	if (*pos == 0)
 	{
-		// yes => return a non null value to begin the sequence 
+		// yes => return a non null value to begin the sequence
 		return &counter;
 	}
 	else
 	{
-		// no => it's the end of the sequence, return end to stop reading 
+		// no => it's the end of the sequence, return end to stop reading
 		*pos = 0;
 		return NULL;
 	}
@@ -42,15 +41,12 @@ static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 	temp++;
 	(*pos)++;
 
-		seq_printf(s, "next");
 	return NULL;
 }
 
 static void proc_seq_stop(struct seq_file *s, void *v)
 {
 	printk("Hit proc_seq_stop");
-
-	seq_printf(s, "stop");
 }
 
 static long get_process_elapsed_time(struct task_struct *task)
@@ -105,28 +101,33 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	// kernel system timer
 	uptime == ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
-	seq_printf(s,
-			   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
-	// for_each_process(task)
-	// {
-	// 	// printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
+	if (printTitle == 0)
+	{
+		seq_printf(s,
+				   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
+		printTitle = 1;
 
-	// 	utime = task->utime;
-	// 	stime = task->stime;
-	// 	total_time = utime + stime;
-	// 	long elapsed_time = get_process_elapsed_time(task);
+		for_each_process(task)
+	{
+		// printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 
-	// 	seq_printf(s,
-	// 			   "%d\t %s\t %ld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
-	// 			   task->pid,
-	// 			   task->comm,
-	// 			   elapsed_time,
-	// 			   total_time,
-	// 			   task->utime,
-	// 			   task->stime,
-	// 			   task->start_time,
-	// 			   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
-	// }
+		utime = task->utime;
+		stime = task->stime;
+		total_time = utime + stime;
+		long elapsed_time = get_process_elapsed_time(task);
+
+		seq_printf(s,
+				   "%d\t %s\t %ld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
+				   task->pid,
+				   task->comm,
+				   elapsed_time,
+				   total_time,
+				   task->utime,
+				   task->stime,
+				   task->start_time,
+				   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
+	}
+	}
 
 	seq_printf(s, "%Ld\n", *spos);
 
@@ -155,7 +156,7 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
-	.proc_open = procfile_open, 
+	.proc_open = procfile_open,
 	.proc_write = procfile_write,
 	.proc_read = seq_read,
 	.proc_lseek = seq_lseek,
@@ -163,7 +164,7 @@ static const struct proc_ops proc_file_fops = {
 #else
 static const struct file_operations proc_file_fops = {
 	.owner = THIS_MODULE,
-	.open = procfile_open, 
+	.open = procfile_open,
 	.write = procfile_write,
 	.read = seq_read,
 	.llseek = seq_lseek,
@@ -177,6 +178,7 @@ static int __init init_kernel_module(void)
 	ktime_t start_time = ktime_get();
 	s64 start_time_ns = ktime_to_ns(start_time);
 	start_time_s = start_time_ns / 1000000000;
+	printTitle = 0;
 
 	struct proc_dir_entry *log_file;
 
@@ -202,7 +204,6 @@ static void export_virtual_file_into_actual_file(void)
 	{
 		pr_err("Failed to create actual file\n");
 	}
-
 
 	if (buffer)
 	{
