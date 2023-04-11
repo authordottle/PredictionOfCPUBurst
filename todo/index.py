@@ -63,10 +63,6 @@
 # # ohe = OneHotEncoder()
 # # tmp = OneHotEncoder(categorical_features=le.fit_transform(processData['MaritalStatus']))
 
-# # Model building
-# from sklearn.model_selection import train_test_split
-# train, test = train_test_split(processData, test_size=0.3, random_state=123, stratify=processData["PerformanceRating"])
-
 # ######################################### Decision Tree ###############################################
 # from sklearn.tree import DecisionTreeClassifier
 # dtc = DecisionTreeClassifier(criterion="entropy", max_depth=8, min_samples_split=20, random_state=99)

@@ -6,20 +6,23 @@ import os
 
 processes = []
 
+
 def get_processes_to_csv(csv_path):
     # Get all running processes
     processes = psutil.process_iter()
 
     # Create a CSV file and write the header row
     with open(csv_path, mode='w', newline='') as csv_file:
-        fieldnames = ['pid', 'name', 'username', 'num_ctx_switches', 'memory_info', 'cpu_percent', 'memory_percent', 'nice', 'create_time', 'utime', 'stime', 'cutime', 'cstime']
+        fieldnames = ['pid', 'name', 'username', 'num_ctx_switches', 'memory_info', 'cpu_percent',
+                      'memory_percent', 'nice', 'create_time', 'utime', 'stime', 'cutime', 'cstime']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
 
         # Write each process's data to the CSV file
         for process in processes:
             try:
-                process_data = process.as_dict(attrs=['pid', 'name', 'username', 'num_ctx_switches', 'memory_info', 'cpu_percent', 'memory_percent', 'nice', 'create_time'])  
+                process_data = process.as_dict(
+                    attrs=['pid', 'name', 'username', 'num_ctx_switches', 'memory_info', 'cpu_percent', 'memory_percent', 'nice', 'create_time'])
                 utime = process.cpu_times().user
                 stime = process.cpu_times().system
                 cutime = process.cpu_times().children_user
@@ -33,5 +36,6 @@ def get_processes_to_csv(csv_path):
                 continue
 
             writer.writerow(process_data)
+
 
 get_processes_to_csv('mac_processes.csv')

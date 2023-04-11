@@ -4,22 +4,14 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from math import sqrt
 
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-import numpy as np
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_squared_error
-from math import sqrt
-
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
-import numpy as np
-import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
-from math import sqrt
+
 
 # Load the Excel file
 dataset = pd.read_csv('../sudo_py_mac/mac_processes.csv')
@@ -29,15 +21,16 @@ y = dataset.iloc[:, -2].values
 # print(processData.dtypes)
 # print(x)
 # print(y)
-objTypeCols = dataset[[i for i in dataset.columns if dataset[i].dtype == 'object']]
+objTypeCols = dataset[[
+    i for i in dataset.columns if dataset[i].dtype == 'object']]
 
 #
 corrprocessData = dataset.corr()
 # print(corrprocessData)
 
-# split dataset into training and testing
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
-
+# Model building
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, test_size=0.25, random_state=0)
 ######################################### Linear Regression ###############################################
 lr = LinearRegression()
 
