@@ -18,7 +18,7 @@
 #include <linux/pid_namespace.h>
 #include <asm/io.h>
 
-static int endflag;
+static int endflag = 0;
 
 // /proc/uptime #1 uptime of the system (seconds)
 s64 uptime;

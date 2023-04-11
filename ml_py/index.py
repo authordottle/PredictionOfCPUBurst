@@ -15,6 +15,7 @@ from sklearn.metrics import mean_squared_error
 
 # Load the Excel file
 dataset = pd.read_csv('../sudo_py_mac/mac_processes.csv')
+
 x = dataset.iloc[:, 5:-2].values
 y = dataset.iloc[:, -2].values
 # print(processData.columns)
@@ -27,6 +28,8 @@ objTypeCols = dataset[[
 #
 corrprocessData = dataset.corr()
 # print(corrprocessData)
+
+# Dropping un-necessary information
 
 # Model building
 x_train, x_test, y_train, y_test = train_test_split(

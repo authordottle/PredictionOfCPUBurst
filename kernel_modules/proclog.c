@@ -186,32 +186,37 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	unsigned long long total_time;
 	struct task_struct *task;
 
-	seq_printf(s,
-			   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
-	for_each_process(task)
+	if (endflag == 0)
 	{
-		// printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
-
-		utime = task->utime;
-		stime = task->stime;
-
-		total_time = utime + stime;
-		/* Get CPU usage for the process */
-		long elapsed_time = get_process_elapsed_time(task);
-
 		seq_printf(s,
-				   "%d\t %s\t %ld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
-				   task->pid,
-				   task->comm,
-				   elapsed_time,
-				   total_time,
-				   task->utime,
-				   task->stime,
-				   task->start_time,
-				   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
-	}
+				   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
+		for_each_process(task)
+		{
+			// printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 
-	seq_printf(s, "%Ld\n", *spos);
+			utime = task->utime;
+			stime = task->stime;
+
+			total_time = utime + stime;
+			/* Get CPU usage for the process */
+			long elapsed_time = get_process_elapsed_time(task);
+
+			seq_printf(s,
+					   "%d\t %s\t %ld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
+					   task->pid,
+					   task->comm,
+					   elapsed_time,
+					   total_time,
+					   task->utime,
+					   task->stime,
+					   task->start_time,
+					   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
+		}
+
+		seq_printf(s, "%Ld\n", *spos);
+
+		endflag = 1;
+	}
 
 	// char *temp = (char *)v;
 	// do
@@ -277,7 +282,6 @@ static int __init init_kernel_module(void)
 
 	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;
-	endflag = 0;
 
 	printk(KERN_INFO "There are %d running processes.\n", proc_count());
 
