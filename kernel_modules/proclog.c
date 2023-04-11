@@ -104,14 +104,14 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	long duration_time_s = 0;
 	do
 	{
-		current_time = ktime_get();
+		// current_time = ktime_get();
 		duration_time_s ++;
 		// current_time_ns = ktime_to_ns(current_time);
 		// current_time_s = current_time_ns / 1000000000;
 
 		// duration_time_s = current_time_s - start_time_s;
 		printk(KERN_INFO "%lld\n", duration_time_s);
-	} while (duration_time_s <= 5);
+	} while (duration_time_s <= 100);
 
 	// start_time_s = current_time;
 
