@@ -186,6 +186,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	unsigned long long total_time;
 	struct task_struct *task;
 
+	printk("Before Hit if statement");
 	if (endflag == 0)
 	{
 		printk("Hit if statement");
