@@ -17,7 +17,7 @@ int main()
         return 1;
     }
 
-    outfp = fopen(output_filename, "w+");
+    outfp = fopen(output_filename, "w");
     if (outfp == NULL)
     {
         perror("fopen");
