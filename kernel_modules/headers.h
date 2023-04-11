@@ -24,6 +24,7 @@ long start_time_s;
 
 // /proc/uptime #1 uptime of the system (seconds)
 s64 uptime;
+s64 updated_uptime;
 
 struct file *virtual_file = NULL;
 struct file *actual_file = NULL;
