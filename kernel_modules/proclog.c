@@ -104,10 +104,6 @@ static int proc_seq_show(struct seq_file *s, void *v)
 
 	// kernel system timer
 	uptime == ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
-	updated_uptime = uptime;
-	while (uptime == updated_uptime) {
-		updated_uptime == ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
-	}
 
 	seq_printf(s,
 			   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
