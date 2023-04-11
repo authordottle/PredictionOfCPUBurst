@@ -105,7 +105,7 @@ long current_time_s = current_time_ns / 1000000000;
 
 long duration_time_s = current_time_s - start_time_s;
 printk(KERN_INFO "%lld\n", duration_time_s);
-} while (duration_time_s <= 5) 
+} while (duration_time_s <= 5) ;
 
 
 	loff_t *spos = (loff_t *)v;
