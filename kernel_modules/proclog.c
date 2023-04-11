@@ -97,6 +97,16 @@ static long get_process_elapsed_time(struct task_struct *task)
 static int proc_seq_show(struct seq_file *s, void *v)
 {
 	// printk("Hit proc_seq_show");
+{
+
+ktime_t current_time = ktime_get();
+s64 current_time_ns = ktime_to_ns(current_time);
+long current_time_s = current_time_ns / 1000000000;
+
+long duration_time_s = current_time_s - start_time_s;
+printk(KERN_INFO "%lld\n", duration_time_s);
+} while (duration_time_s <= 5) 
+
 
 	loff_t *spos = (loff_t *)v;
 
@@ -194,17 +204,9 @@ static int __init init_kernel_module(void)
 {
 	printk(KERN_INFO "Process logger module loaded\n");
 
-s64 start_time;
-s64 end_time;
-s64 duration_time;
-
-	/* capture initial time stamp */
-	start_time = ktime_get();
-
-	ktime_t current_time = ktime_get();
-s64 current_time_ns = ktime_to_ns(current_time);
-long current_time_sec = current_time_ns / 1000000000;
-printk("%lld", current_time_sec);
+	ktime_t start_time = ktime_get();
+s64 start_time_ns = ktime_to_ns(start_time);
+long start_time_s = start_time_ns / 1000000000;
 
 	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;
@@ -215,12 +217,6 @@ printk("%lld", current_time_sec);
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
 	log_file = proc_create("log_file", 0, NULL, &proc_file_fops);
 
-	/* capture end time stamp */
-	end_time = ktime_get();
-
-	duration_time = end_time - start_time;
-
-printk(KERN_INFO "%lld\n", duration_time);
 	return 0;
 }
 
