@@ -194,14 +194,12 @@ static int __init init_kernel_module(void)
 {
 	printk(KERN_INFO "Process logger module loaded\n");
 
-    // /* Open the clock tick */
-    // tick_open(&my_tick_function);
 s64 time_stamp;
 s64 milliseconds_spent;
 
 /* capture initial time stamp */
 time_stamp = ktime_get();
-printk(KERN_INFO "%d\n", time_stamp);
+printk(KERN_INFO "%lld\n", time_stamp);
 
 	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;
