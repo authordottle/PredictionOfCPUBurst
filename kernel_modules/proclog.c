@@ -287,8 +287,16 @@ static int __init init_kernel_module(void)
 {
 	printk(KERN_INFO "Process logger module loaded\n");
 
-    /* Open the clock tick */
-    tick_open(&my_tick_function);
+    // /* Open the clock tick */
+    // tick_open(&my_tick_function);
+	u32_t start_time;
+u32_t stop_time;
+u32_t cycles_spent;
+u32_t nanoseconds_spent;
+
+/* capture initial time stamp */
+start_time = k_cycle_get_32();
+printk(KERN_INFO "%d\n", start_time);
 
 	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;
@@ -357,8 +365,8 @@ static void __exit exit_kernel_module(void)
 	export_virtual_file_into_actual_file();
 	remove_proc_entry("log_file", NULL);
 	
-	 /* Close the clock tick */
-    tick_close(&my_tick_function);
+	//  /* Close the clock tick */
+    // tick_close(&my_tick_function);
 
 	printk(KERN_INFO "Process logger module unloaded\n");
 }
