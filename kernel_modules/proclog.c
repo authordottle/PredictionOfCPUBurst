@@ -1,6 +1,5 @@
 /********* proclog.c ***********/
 // Logger that creates a proc file
-// idea from tldp.org/LDP/lkmpg/2.6/html/index.html
 #include "headers.h"
 #include "helper.c"
 
@@ -20,15 +19,15 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 	printk("Hit proc_seq_start");
 
 	static unsigned long counter = 0;
-	/* beginning a new sequence ? */
+	// beginning a new sequence ? 
 	if (*pos == 0)
 	{
-		/* yes => return a non null value to begin the sequence */
+		// yes => return a non null value to begin the sequence 
 		return &counter;
 	}
 	else
 	{
-		/* no => it's the end of the sequence, return end to stop reading */
+		// no => it's the end of the sequence, return end to stop reading 
 		*pos = 0;
 		return NULL;
 	}
@@ -51,7 +50,6 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 
 static long get_process_elapsed_time(struct task_struct *task)
 {
-	// adapted from https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat
 	// /proc/[PID]/stat
 	// #14 utime - CPU time spent in user code, measured in clock ticks
 	// #15 stime - CPU time spent in kernel code, measured in clock ticks
@@ -68,8 +66,6 @@ static long get_process_elapsed_time(struct task_struct *task)
 	// long long usage_nsec;
 	long long elapsed_sec;
 	// long long usage_sec;
-	// int clk_tck = 100; // constants
-	// int number_of_cpu = 2;
 
 	if (task == NULL)
 	{
@@ -84,7 +80,7 @@ static long get_process_elapsed_time(struct task_struct *task)
 	// kernel system timer
 	uptime = ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
-	elapsed_sec = (long)uptime * 1000000000 - start_time;
+	elapsed_sec = (long long)(uptime * 1000000000) - start_time;
 
 	return elapsed_sec;
 }
@@ -123,7 +119,6 @@ static int proc_seq_show(struct seq_file *s, void *v)
 		utime = task->utime;
 		stime = task->stime;
 		total_time = utime + stime;
-		/* Get CPU usage for the process */
 		long elapsed_time = get_process_elapsed_time(task);
 
 		seq_printf(s,
@@ -149,13 +144,6 @@ static struct seq_operations proc_seq_ops = {
 	.stop = proc_seq_stop,
 	.show = proc_seq_show};
 
-static int procfile_single_open(struct inode *inode, struct file *file)
-{
-	printk("Hit procfile_single_open");
-
-	return single_open(file, proc_seq_show, NULL);
-}
-
 static int procfile_open(struct inode *inode, struct file *file)
 {
 	printk("Hit procfile_open");
@@ -172,7 +160,7 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
-	.proc_open = procfile_single_open, 
+	.proc_open = procfile_open, 
 	.proc_write = procfile_write,
 	.proc_read = seq_read,
 	.proc_lseek = seq_lseek,
