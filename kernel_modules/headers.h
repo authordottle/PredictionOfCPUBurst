@@ -7,7 +7,6 @@
 #include <linux/seq_file.h> // seq_read, ...
 #include <linux/uaccess.h>
 #include <linux/sched.h>
-#include <linux/time.h>
 #include <linux/jiffies.h>
 #include <linux/syscalls.h>
 #include <linux/unistd.h>
@@ -17,6 +16,8 @@
 #include <linux/sched/signal.h>
 #include <linux/pid_namespace.h>
 #include <asm/io.h>
+#include <linux/tick.h>
+#include <linux/time.h>
 
 static int endflag = 0;
 

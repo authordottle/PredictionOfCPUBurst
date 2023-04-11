@@ -1,16 +1,13 @@
-# Prediction of CPU Burst
-
-## Updates:
-1. This repository is forked by JH, one of original contributors of this repository.
-2. JH will be the member to work on this forked version for further upgrades. 
+# Prediction of Process Performance
 
 ## Requirements:
-1. Make sure you have installed:
+1. This project requires both linux and MacOS environments to collect data respectively.
+2. Python version >= 3.0; use pip3;
+3. Linux enrionment dependencies:
 	```sh
 	$ sudo apt-get install build-essential
 	```
-2. Python version: >= 3.0
-3. Python dependencies:
+4. Python dependencies:
 	```sh
    $ pip3 install -U scikit-learn
    $ python3 -m pip install -U matplotlib
@@ -65,14 +62,12 @@
    ``` 
 
 ## How to use python functions to collect mac processes data:
-1. cd into sudo_py_mac folder   
+1. cd into data_collecting folder   
 2. 
    ```sh
    $ sudo python3 index.py
    ```
 
 ## How to run python functions to predict processes performance:
-   <!-- ```sh
-   $ pip3 install -r requirements.txt  
-   ``` -->
+1. 
  

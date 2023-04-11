@@ -97,6 +97,18 @@ int proc_count(void)
 	return i;
 }
 
+/* Function to be called when the clock tick is received */
+static void my_tick_function(struct pt_regs *regs)
+{
+    struct timespec ts;
+
+    /* Get the current time */
+    getnstimeofday(&ts);
+
+    /* Print the current time */
+    printk(KERN_INFO "Current time: %ld.%09ld\n", ts.tv_sec, ts.tv_nsec);
+}
+
 static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
 	// printk("Hit proc_seq_start");
@@ -275,10 +287,13 @@ static int __init init_kernel_module(void)
 {
 	printk(KERN_INFO "Process logger module loaded\n");
 
+    /* Open the clock tick */
+    tick_open(&my_tick_function);
+
 	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;
 
-	printk(KERN_INFO "There are %d running processes.\n", proc_count());
+	// printk(KERN_INFO "There are %d running processes.\n", proc_count());
 
 	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
 	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
@@ -341,6 +356,10 @@ static void __exit exit_kernel_module(void)
 {
 	export_virtual_file_into_actual_file();
 	remove_proc_entry("log_file", NULL);
+	
+	 /* Close the clock tick */
+    tick_close(&my_tick_function);
+
 	printk(KERN_INFO "Process logger module unloaded\n");
 }
 
