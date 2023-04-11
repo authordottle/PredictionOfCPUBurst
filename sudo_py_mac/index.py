@@ -6,7 +6,6 @@ import os
 
 processes = []
 
-
 def get_processes_to_csv(csv_path):
     # Get all running processes
     processes = psutil.process_iter()
@@ -35,6 +34,11 @@ def get_processes_to_csv(csv_path):
                 # Process may have terminated since we got the process list
                 continue
 
+            # Adding boolean col which represents original value as missing or not along with imputed column
+            # for col in process_data:
+            #     if process_data[col] is None:
+            #         process_data[col+"_missing"] = 1
+            
             writer.writerow(process_data)
 
 
