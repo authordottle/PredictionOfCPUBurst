@@ -98,21 +98,22 @@ static int proc_seq_show(struct seq_file *s, void *v)
 {
 	// printk("Hit proc_seq_show");
 
-	ktime_t current_time = ktime_get();
-	s64 current_time_ns = ktime_to_ns(current_time);
-	long current_time_s = current_time_ns / 1000000000;
+	// ktime_t current_time = ktime_get();
+	// s64 current_time_ns = ktime_to_ns(current_time);
+	// long current_time_s = current_time_ns / 1000000000;
 	long duration_time_s = 0;
 	do
 	{
 		current_time = ktime_get();
-		current_time_ns = ktime_to_ns(current_time);
-		current_time_s = current_time_ns / 1000000000;
+		duration_time_s ++;
+		// current_time_ns = ktime_to_ns(current_time);
+		// current_time_s = current_time_ns / 1000000000;
 
-		duration_time_s = current_time_s - start_time_s;
+		// duration_time_s = current_time_s - start_time_s;
 		printk(KERN_INFO "%lld\n", duration_time_s);
 	} while (duration_time_s <= 5);
 
-	start_time_s = current_time_s;
+	// start_time_s = current_time;
 
 	loff_t *spos = (loff_t *)v;
 
