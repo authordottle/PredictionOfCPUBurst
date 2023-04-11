@@ -215,7 +215,8 @@ s64 duration_time;
 
 	duration_time = end_time - start_time;
 
-printk(KERN_INFO "%lld\n", duration_time);
+s64 test = ktime_get_real();
+printk(KERN_INFO "%lld\n", test);
 	return 0;
 }
 
