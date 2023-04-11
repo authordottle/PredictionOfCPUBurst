@@ -18,6 +18,7 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
 	printk("Hit proc_seq_start");
 
+	seq_printf("start");
 	static unsigned long counter = 0;
 	// beginning a new sequence ? 
 	if (*pos == 0)
@@ -40,12 +41,16 @@ static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 	char *temp = (char *)v;
 	temp++;
 	(*pos)++;
+
+		seq_printf("next");
 	return NULL;
 }
 
 static void proc_seq_stop(struct seq_file *s, void *v)
 {
 	printk("Hit proc_seq_stop");
+
+	seq_printf("stop");
 }
 
 static long get_process_elapsed_time(struct task_struct *task)
@@ -116,26 +121,26 @@ static int proc_seq_show(struct seq_file *s, void *v)
 
 	seq_printf(s,
 			   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
-	for_each_process(task)
-	{
-		// printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
+	// for_each_process(task)
+	// {
+	// 	// printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 
-		utime = task->utime;
-		stime = task->stime;
-		total_time = utime + stime;
-		long elapsed_time = get_process_elapsed_time(task);
+	// 	utime = task->utime;
+	// 	stime = task->stime;
+	// 	total_time = utime + stime;
+	// 	long elapsed_time = get_process_elapsed_time(task);
 
-		seq_printf(s,
-				   "%d\t %s\t %ld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
-				   task->pid,
-				   task->comm,
-				   elapsed_time,
-				   total_time,
-				   task->utime,
-				   task->stime,
-				   task->start_time,
-				   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
-	}
+	// 	seq_printf(s,
+	// 			   "%d\t %s\t %ld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
+	// 			   task->pid,
+	// 			   task->comm,
+	// 			   elapsed_time,
+	// 			   total_time,
+	// 			   task->utime,
+	// 			   task->stime,
+	// 			   task->start_time,
+	// 			   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
+	// }
 
 	seq_printf(s, "%Ld\n", *spos);
 
