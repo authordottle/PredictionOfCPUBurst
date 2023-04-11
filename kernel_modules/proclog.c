@@ -97,15 +97,18 @@ static long get_process_elapsed_time(struct task_struct *task)
 static int proc_seq_show(struct seq_file *s, void *v)
 {
 	// printk("Hit proc_seq_show");
+	long duration_time_s = 0;
 do {
 
 ktime_t current_time = ktime_get();
 s64 current_time_ns = ktime_to_ns(current_time);
 long current_time_s = current_time_ns / 1000000000;
 
-long duration_time_s = current_time_s - start_time_s;
+ duration_time_s = current_time_s - start_time_s;
 printk(KERN_INFO "%lld\n", duration_time_s);
 } while (duration_time_s <= 5) ;
+
+start_time_s = current_time_s;
 
 
 	loff_t *spos = (loff_t *)v;
@@ -205,8 +208,8 @@ static int __init init_kernel_module(void)
 	printk(KERN_INFO "Process logger module loaded\n");
 
 	ktime_t start_time = ktime_get();
-s64 start_time_ns = ktime_to_ns(start_time);
-long start_time_s = start_time_ns / 1000000000;
+	s64 start_time_ns = ktime_to_ns(start_time);
+ 	start_time_s = start_time_ns / 1000000000;
 
 	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;

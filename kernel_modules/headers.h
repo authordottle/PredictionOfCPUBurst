@@ -19,7 +19,8 @@
 #include <linux/tick.h>
 #include <linux/time.h>
 
-static int endflag = 0;
+int endflag = 0;
+long start_time_s;
 
 // /proc/uptime #1 uptime of the system (seconds)
 s64 uptime;
