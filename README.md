@@ -12,7 +12,7 @@
 2. Python version: >= 3.0
 3. Python dependencies:
 	```sh
-	$ pip3 install -U scikit-learn
+   $ pip3 install -U scikit-learn
    $ python3 -m pip install -U matplotlib
    $ pip3 install seaborn
 	```
