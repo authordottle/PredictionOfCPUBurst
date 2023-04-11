@@ -1,3 +1,4 @@
+# /********* index.py ***********/
 # https://psutil.readthedocs.io/en/latest/#processes
 import csv
 import psutil
@@ -11,14 +12,14 @@ def get_processes_to_csv(csv_path):
 
     # Create a CSV file and write the header row
     with open(csv_path, mode='w', newline='') as csv_file:
-        fieldnames = ['pid', 'name', 'username', 'cpu_percent', 'memory_percent', 'utime', 'stime', 'cutime', 'cstime']
+        fieldnames = ['pid', 'name', 'username', 'cpu_percent', 'memory_info', 'memory_percent', 'nice', 'num_ctx_switches', 'create_time', 'utime', 'stime', 'cutime', 'cstime']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
 
         # Write each process's data to the CSV file
         for process in processes:
             try:
-                process_data = process.as_dict(attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent'])
+                process_data = process.as_dict(attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_info', 'memory_percent', 'nice', 'num_ctx_switches', 'create_time'])  
                 utime = process.cpu_times().user
                 stime = process.cpu_times().system
                 cutime = process.cpu_times().children_user
