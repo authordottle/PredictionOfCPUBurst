@@ -186,39 +186,32 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	unsigned long long total_time;
 	struct task_struct *task;
 
-	printk("Before Hit if statement");
-	if (endflag == 0)
+	seq_printf(s,
+			   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
+	for_each_process(task)
 	{
-		printk("Hit if statement");
+		// printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
+
+		utime = task->utime;
+		stime = task->stime;
+
+		total_time = utime + stime;
+		/* Get CPU usage for the process */
+		long elapsed_time = get_process_elapsed_time(task);
+
 		seq_printf(s,
-				   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
-		for_each_process(task)
-		{
-			// printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
-
-			utime = task->utime;
-			stime = task->stime;
-
-			total_time = utime + stime;
-			/* Get CPU usage for the process */
-			long elapsed_time = get_process_elapsed_time(task);
-
-			seq_printf(s,
-					   "%d\t %s\t %ld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
-					   task->pid,
-					   task->comm,
-					   elapsed_time,
-					   total_time,
-					   task->utime,
-					   task->stime,
-					   task->start_time,
-					   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
-		}
-
-		seq_printf(s, "%Ld\n", *spos);
-
-		endflag = 1;
+				   "%d\t %s\t %ld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
+				   task->pid,
+				   task->comm,
+				   elapsed_time,
+				   total_time,
+				   task->utime,
+				   task->stime,
+				   task->start_time,
+				   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
 	}
+
+	seq_printf(s, "%Ld\n", *spos);
 
 	// char *temp = (char *)v;
 	// do
