@@ -289,14 +289,12 @@ static int __init init_kernel_module(void)
 
     // /* Open the clock tick */
     // tick_open(&my_tick_function);
-	u32_t start_time;
-u32_t stop_time;
-u32_t cycles_spent;
-u32_t nanoseconds_spent;
+s64_t time_stamp;
+s64_t milliseconds_spent;
 
 /* capture initial time stamp */
-start_time = k_cycle_get_32();
-printk(KERN_INFO "%d\n", start_time);
+time_stamp = k_uptime_get();
+printk(KERN_INFO "%d\n", time_stamp);
 
 	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;
