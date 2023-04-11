@@ -97,19 +97,22 @@ static long get_process_elapsed_time(struct task_struct *task)
 static int proc_seq_show(struct seq_file *s, void *v)
 {
 	// printk("Hit proc_seq_show");
+
+	ktime_t current_time = ktime_get();
+	s64 current_time_ns = ktime_to_ns(current_time);
+	long current_time_s = current_time_ns / 1000000000;
 	long duration_time_s = 0;
-do {
+	do
+	{
+		current_time = ktime_get();
+		current_time_ns = ktime_to_ns(current_time);
+		current_time_s = current_time_ns / 1000000000;
 
-ktime_t current_time = ktime_get();
-s64 current_time_ns = ktime_to_ns(current_time);
-long current_time_s = current_time_ns / 1000000000;
+		duration_time_s = current_time_s - start_time_s;
+		printk(KERN_INFO "%lld\n", duration_time_s);
+	} while (duration_time_s <= 5);
 
- duration_time_s = current_time_s - start_time_s;
-printk(KERN_INFO "%lld\n", duration_time_s);
-} while (duration_time_s <= 5) ;
-
-start_time_s = current_time_s;
-
+	start_time_s = current_time_s;
 
 	loff_t *spos = (loff_t *)v;
 
@@ -209,7 +212,7 @@ static int __init init_kernel_module(void)
 
 	ktime_t start_time = ktime_get();
 	s64 start_time_ns = ktime_to_ns(start_time);
- 	start_time_s = start_time_ns / 1000000000;
+	start_time_s = start_time_ns / 1000000000;
 
 	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;
@@ -277,9 +280,9 @@ static void __exit exit_kernel_module(void)
 {
 	export_virtual_file_into_actual_file();
 	remove_proc_entry("log_file", NULL);
-	
+
 	//  /* Close the clock tick */
-    // tick_close(&my_tick_function);
+	// tick_close(&my_tick_function);
 
 	printk(KERN_INFO "Process logger module unloaded\n");
 }
