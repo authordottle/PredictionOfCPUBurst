@@ -18,10 +18,9 @@ MODULE_DESCRIPTION("Kernel module to log process times");
 
 static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
-	// printk("Hit proc_seq_start");
+	printk("Hit proc_seq_start");
 
 	static unsigned long counter = 0;
-
 	/* beginning a new sequence ? */
 	if (*pos == 0)
 	{
@@ -38,20 +37,17 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 
 static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
-	// printk("Hit proc_seq_next");
+	printk("Hit proc_seq_next");
 
 	char *temp = (char *)v;
 	temp++;
-	// printk("Temp increased.");
 	(*pos)++;
-	// printk("Position increased.");
-	// printk("Position is %Ld\n", (*pos));
 	return NULL;
 }
 
 static void proc_seq_stop(struct seq_file *s, void *v)
 {
-	// printk("Hit proc_seq_stop");
+	printk("Hit proc_seq_stop");
 }
 
 static long get_process_elapsed_time(struct task_struct *task)
@@ -96,7 +92,7 @@ static long get_process_elapsed_time(struct task_struct *task)
 
 static int proc_seq_show(struct seq_file *s, void *v)
 {
-	// printk("Hit proc_seq_show");
+	printk("Hit proc_seq_show");
 
 	// ktime_t current_time = ktime_get();
 	// s64 current_time_ns = ktime_to_ns(current_time);
@@ -108,15 +104,12 @@ static int proc_seq_show(struct seq_file *s, void *v)
 		duration_time_s ++;
 		// current_time_ns = ktime_to_ns(current_time);
 		// current_time_s = current_time_ns / 1000000000;
-
 		// duration_time_s = current_time_s - start_time_s;
-		printk(KERN_INFO "%lld\n", duration_time_s);
+		// printk(KERN_INFO "%lld\n", duration_time_s);
 	} while (duration_time_s <= 100);
-
 	// start_time_s = current_time;
 
 	loff_t *spos = (loff_t *)v;
-
 	unsigned long long utime, stime;
 	// unsigned long long cutime, cstime, start_time;
 	unsigned long long total_time;
@@ -130,7 +123,6 @@ static int proc_seq_show(struct seq_file *s, void *v)
 
 		utime = task->utime;
 		stime = task->stime;
-
 		total_time = utime + stime;
 		/* Get CPU usage for the process */
 		long elapsed_time = get_process_elapsed_time(task);
@@ -169,24 +161,28 @@ static struct seq_operations proc_seq_ops = {
 // static int procfile_single_open(struct inode *inode, struct file *file)
 // {
 // 	printk("Hit procfile_single_open");
+
 // 	return single_open(file, proc_seq_show, NULL);
 // }
 
 static int procfile_open(struct inode *inode, struct file *file)
 {
-	// printk("Hit procfile_open");
+	printk("Hit procfile_open");
+
 	return seq_open(file, &proc_seq_ops);
 }
 
 static ssize_t procfile_write(struct file *file, const char *buffer, size_t count, loff_t *off)
 {
-	// printk("Hit procfile_write");
+	printk("Hit procfile_write");
+
 	return 1;
 }
 
 // static int procfile_show(struct seq_file *m, void *v)
 // {
 // 	printk("Hit procfile_show");
+
 // 	return 0;
 // }
 
@@ -215,7 +211,6 @@ static int __init init_kernel_module(void)
 	s64 start_time_ns = ktime_to_ns(start_time);
 	start_time_s = start_time_ns / 1000000000;
 
-	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;
 
 	// printk(KERN_INFO "There are %d running processes.\n", proc_count());
