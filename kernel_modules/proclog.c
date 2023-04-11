@@ -201,6 +201,11 @@ s64 duration_time;
 	/* capture initial time stamp */
 	start_time = ktime_get();
 
+	ktime_t current_time = ktime_get();
+s64 current_time_ns = ktime_to_ns(current_time);
+long current_time_sec = current_time_ns / 1000000000;
+printk("%lld", current_time_sec);
+
 	// initialize: 1. struct to hold info about proc file 2. other variables
 	struct proc_dir_entry *log_file;
 
@@ -215,8 +220,7 @@ s64 duration_time;
 
 	duration_time = end_time - start_time;
 
-s64 test = ktime_get_real();
-printk(KERN_INFO "%lld\n", test);
+printk(KERN_INFO "%lld\n", duration_time);
 	return 0;
 }
 
