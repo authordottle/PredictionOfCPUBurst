@@ -43,5 +43,5 @@ def get_processes_to_csv(csv_path):
             writer.writerow(process_data)
 
 file_name = platform + "_processes.csv"
-print(platform)
+print("You are currently loading on " + platform + " platform.")
 get_processes_to_csv(file_name)
