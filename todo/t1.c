@@ -1,3 +1,29 @@
+	// // Copy the virtual file's contents to the buffer
+	// ssize_t ret = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos);
+
+	// Read data from the virtual file and write it to the actual file on disk
+	// while ((bytes_read = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos)) > 0)
+	// {
+	//     ssize_t bytes_written = kernel_write(actual_file, buffer, bytes_read, &actual_file->f_pos);
+	//     if (bytes_written != bytes_read)
+	//     {
+	//         pr_err("Failed to write data to %s\n", ACTUAL_FILE_PATH);
+	//     }
+	// }
+    	// // Open the virtual file
+	// virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
+	// if (IS_ERR(virtual_file))
+	// {
+	// 	pr_err("Failed to open virtual file\n");
+	// }
+
+	// char *temp = (char *)v;
+	// do
+	// {
+	// 	seq_putc(s, *temp);
+	// 	temp++;
+	// } while (*temp != '\n');
+	// seq_putc(s, '\n');
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>

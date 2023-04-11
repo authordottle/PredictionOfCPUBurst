@@ -2,7 +2,6 @@
 // Logger that creates a proc file
 // idea from tldp.org/LDP/lkmpg/2.6/html/index.html
 #include "headers.h"
-#include "process.c"
 #include "helper.c"
 
 #ifndef __KERNEL__
@@ -141,14 +140,6 @@ static int proc_seq_show(struct seq_file *s, void *v)
 
 	seq_printf(s, "%Ld\n", *spos);
 
-	// char *temp = (char *)v;
-	// do
-	// {
-	// 	seq_putc(s, *temp);
-	// 	temp++;
-	// } while (*temp != '\n');
-	// seq_putc(s, '\n');
-
 	return 0;
 }
 
@@ -158,12 +149,12 @@ static struct seq_operations proc_seq_ops = {
 	.stop = proc_seq_stop,
 	.show = proc_seq_show};
 
-// static int procfile_single_open(struct inode *inode, struct file *file)
-// {
-// 	printk("Hit procfile_single_open");
+static int procfile_single_open(struct inode *inode, struct file *file)
+{
+	printk("Hit procfile_single_open");
 
-// 	return single_open(file, proc_seq_show, NULL);
-// }
+	return single_open(file, proc_seq_show, NULL);
+}
 
 static int procfile_open(struct inode *inode, struct file *file)
 {
@@ -179,16 +170,9 @@ static ssize_t procfile_write(struct file *file, const char *buffer, size_t coun
 	return 1;
 }
 
-// static int procfile_show(struct seq_file *m, void *v)
-// {
-// 	printk("Hit procfile_show");
-
-// 	return 0;
-// }
-
 #ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
-	.proc_open = procfile_open, // need continuous seq_open to make export function in c file work
+	.proc_open = procfile_single_open, 
 	.proc_write = procfile_write,
 	.proc_read = seq_read,
 	.proc_lseek = seq_lseek,
@@ -196,7 +180,7 @@ static const struct proc_ops proc_file_fops = {
 #else
 static const struct file_operations proc_file_fops = {
 	.owner = THIS_MODULE,
-	.open = procfile_open, // need continuous seq_open to make export function in c file work
+	.open = procfile_open, 
 	.write = procfile_write,
 	.read = seq_read,
 	.llseek = seq_lseek,
@@ -215,8 +199,6 @@ static int __init init_kernel_module(void)
 
 	// printk(KERN_INFO "There are %d running processes.\n", proc_count());
 
-	// adapted from stackoverflow.com/questions/8516021/proc-create-example-for-kernel-module
-	// fixed the version issue from https://stackoverflow.com/questions/64931555/how-to-fix-error-passing-argument-4-of-proc-create-from-incompatible-pointer
 	log_file = proc_create("log_file", 0, NULL, &proc_file_fops);
 
 	return 0;
@@ -231,13 +213,6 @@ static void export_virtual_file_into_actual_file(void)
 		pr_err("Failed to allocate memory for buffer\n");
 	}
 
-	// // Open the virtual file
-	// virtual_file = filp_open(PROC_FILE_PATH, O_RDONLY, 0);
-	// if (IS_ERR(virtual_file))
-	// {
-	// 	pr_err("Failed to open virtual file\n");
-	// }
-
 	// Create the actual file on disk
 	actual_file = filp_open(ACTUAL_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (IS_ERR(actual_file))
@@ -245,18 +220,6 @@ static void export_virtual_file_into_actual_file(void)
 		pr_err("Failed to create actual file\n");
 	}
 
-	// // Copy the virtual file's contents to the buffer
-	// ssize_t ret = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos);
-
-	// Read data from the virtual file and write it to the actual file on disk
-	// while ((bytes_read = kernel_read(virtual_file, buffer, PAGE_SIZE, &virtual_file->f_pos)) > 0)
-	// {
-	//     ssize_t bytes_written = kernel_write(actual_file, buffer, bytes_read, &actual_file->f_pos);
-	//     if (bytes_written != bytes_read)
-	//     {
-	//         pr_err("Failed to write data to %s\n", ACTUAL_FILE_PATH);
-	//     }
-	// }
 
 	if (buffer)
 	{
@@ -276,9 +239,6 @@ static void __exit exit_kernel_module(void)
 {
 	export_virtual_file_into_actual_file();
 	remove_proc_entry("log_file", NULL);
-
-	//  /* Close the clock tick */
-	// tick_close(&my_tick_function);
 
 	printk(KERN_INFO "Process logger module unloaded\n");
 }
