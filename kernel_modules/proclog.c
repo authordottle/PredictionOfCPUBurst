@@ -18,7 +18,7 @@ static void *proc_seq_start(struct seq_file *s, loff_t *pos)
 {
 	printk("Hit proc_seq_start");
 
-	seq_printf("start");
+	seq_printf(s, "start");
 	static unsigned long counter = 0;
 	// beginning a new sequence ? 
 	if (*pos == 0)
@@ -42,7 +42,7 @@ static void *proc_seq_next(struct seq_file *s, void *v, loff_t *pos)
 	temp++;
 	(*pos)++;
 
-		seq_printf("next");
+		seq_printf(s, "next");
 	return NULL;
 }
 
@@ -50,7 +50,7 @@ static void proc_seq_stop(struct seq_file *s, void *v)
 {
 	printk("Hit proc_seq_stop");
 
-	seq_printf("stop");
+	seq_printf(s, "stop");
 }
 
 static long get_process_elapsed_time(struct task_struct *task)
@@ -94,16 +94,6 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	// ktime_t current_time = ktime_get();
 	// s64 current_time_ns = ktime_to_ns(current_time);
 	// long current_time_s = current_time_ns / 1000000000;
-	long duration_time_s = 0;
-	do
-	{
-		// current_time = ktime_get();
-		duration_time_s ++;
-		// current_time_ns = ktime_to_ns(current_time);
-		// current_time_s = current_time_ns / 1000000000;
-		// duration_time_s = current_time_s - start_time_s;
-		// printk(KERN_INFO "%lld\n", duration_time_s);
-	} while (duration_time_s <= 100);
 	// start_time_s = current_time;
 
 	loff_t *spos = (loff_t *)v;
