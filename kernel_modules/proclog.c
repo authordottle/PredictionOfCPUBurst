@@ -289,11 +289,11 @@ static int __init init_kernel_module(void)
 
     // /* Open the clock tick */
     // tick_open(&my_tick_function);
-s64_t time_stamp;
-s64_t milliseconds_spent;
+s64 time_stamp;
+s64 milliseconds_spent;
 
 /* capture initial time stamp */
-time_stamp = k_uptime_get();
+time_stamp = ktime_get();
 printk(KERN_INFO "%d\n", time_stamp);
 
 	// initialize: 1. struct to hold info about proc file 2. other variables
