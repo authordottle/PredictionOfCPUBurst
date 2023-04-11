@@ -188,6 +188,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 
 	if (endflag == 0)
 	{
+		printk("Hit if statement");
 		seq_printf(s,
 				   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
 		for_each_process(task)
