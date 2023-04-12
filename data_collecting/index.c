@@ -107,7 +107,17 @@ int main()
         return 1;
     }
 
-    output_log_file();
+    // output_log_file();
+     int nbytes;
+while(1) {
+    nbytes = read(fp, buffer, BUFFER_SIZE);
+    printf("read %d bytes from file.\n", nbytes);
+    // if(nbytes > 0) {
+    //   split_buffer_by_newline(buf); // split buffer by new line.
+    // }
+    sleep(1);
+  }
+
 
     fclose(fp);
     fclose(outfp);
