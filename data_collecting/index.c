@@ -86,7 +86,7 @@ void output_log_file()
                 }
             }
 
-            fprintf(outfp, "%s \n", new_line);
+            fprintf(outfp, "%s \n", updated_buffer);
             printf("hit\n");
         }
         else
