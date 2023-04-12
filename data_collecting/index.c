@@ -57,37 +57,27 @@ void output_log_file()
         // Read a line from the file
         if (fgets(buffer, BUFFER_SIZE, fp) != NULL)
         {
-            printf("fgets good\n");
             char *token;
-            printf("buffer %s\n", buffer);
             token = strtok(buffer, WHITE_SPACE);
-
-            printf("token %s\n", token);
-
+            
             char updated_buffer[BUFFER_SIZE];
             
             while (token != NULL)
             {
-                printf("in token loop %s\n", trim_white_space(token));
-
                 strcat(updated_buffer, trim_white_space(token));
-
                 token = strtok(NULL, WHITE_SPACE);
                 if (token != NULL)
                 {
-                    printf("hit if\n");
                     strcat(updated_buffer, COMMA);
                 }
                 else
                 {
-                    printf("hit else \n");
                     strcat(updated_buffer, NEXT_LINE);
                     break;
                 }
             }
 
             fprintf(outfp, "%s \n", updated_buffer);
-            printf("hit\n");
         }
         else
         {
