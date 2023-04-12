@@ -59,6 +59,8 @@ void output_log_file()
     {
         printf("Current time: %d \n", start_time);
 
+buffer[BUFFER_SIZE] = NULL;
+
         // Read a line from the file
         line = fgets(buffer, BUFFER_SIZE, fp);
         printf("Current line: %s \n", line);
@@ -85,8 +87,6 @@ void output_log_file()
             }
 
             fprintf(outfp, "%s \n", updated_buffer);
-
-            //  fseek( fp, sizeof(buffer), SEEK_SET );
         }
         else
         {
