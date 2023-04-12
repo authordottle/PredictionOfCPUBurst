@@ -48,38 +48,40 @@ void output_log_file()
 {
     ssize_t read;
     char *line = NULL;
-    char *new_line;
     size_t len = 0;
 
     // Loop indefinitely to continuously read from the file
     while (1)
     {
-             printf("in loop\n");
+        printf("in loop\n");
         // Read a line from the file
         if (fgets(buffer, BUFFER_SIZE, fp) != NULL)
         {
-                 printf("fgets good\n");
+            printf("fgets good\n");
             char *token;
-             printf("buffer %s\n", buffer);
+            printf("buffer %s\n", buffer);
             token = strtok(buffer, WHITE_SPACE);
 
-        printf("token %s\n", token);
+            printf("token %s\n", token);
+
+            char updated_buffer[BUFFER_SIZE];
+            
             while (token != NULL)
             {
                 printf("in token loop %s\n", trim_white_space(token));
-                
-                strcat(new_line, trim_white_space(token));
+
+                strcat(updated_buffer, trim_white_space(token));
 
                 token = strtok(NULL, WHITE_SPACE);
                 if (token != NULL)
                 {
-                     printf("hit if\n");
-                    strcat(new_line, COMMA);
+                    printf("hit if\n");
+                    strcat(updated_buffer, COMMA);
                 }
                 else
                 {
-                     printf("hit else \n");
-                    strcat(new_line, NEXT_LINE);
+                    printf("hit else \n");
+                    strcat(updated_buffer, NEXT_LINE);
                     break;
                 }
             }
