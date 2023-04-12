@@ -56,11 +56,11 @@ void output_log_file()
     {
              printf("in loop\n");
         // Read a line from the file
-        if (line = fgets(buffer, BUFFER_SIZE, fp) != NULL)
+        if (fgets(buffer, BUFFER_SIZE, fp) != NULL)
         {
                  printf("fgets good\n");
             char *token;
-             printf("line %s\n", line);
+             printf("buffer %s\n", buffer);
             token = strtok(line, WHITE_SPACE);
 
         printf("after strtok\n");
