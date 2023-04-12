@@ -14,22 +14,31 @@ FILE *fp, *outfp;
 
 void output_log_file()
 {
-    while ((bytes_read = fread(buffer, 1, sizeof(buffer), fp)) > 0)
-    {
-        char *token;
-        token = strtok(buffer, WHITE_SPACE);
-        
-        while( token != NULL ) {
-            printf( " %s\n", token );
-            
-            token = strtok(NULL, WHITE_SPACE);
-        }
 
-
-        // printf("%s", buffer);
-        break;
-        //fwrite(buffer, 1, bytes_read, outfp);
+    ssize_t read;
+     char * line = NULL;
+    size_t len = 0;
+    
+        while ((read = getline(&line, &len, fp)) != -1) {
+        printf("Retrieved line of length %zu:\n", read);
+        printf("%s", line);
     }
+    // while ((bytes_read = fread(buffer, 1, sizeof(buffer), fp)) > 0)
+    // {
+    //     char *token;
+    //     token = strtok(buffer, WHITE_SPACE);
+        
+    //     while( token != NULL ) {
+    //         printf( " %s\n", token );
+            
+    //         token = strtok(NULL, WHITE_SPACE);
+    //     }
+
+
+    //     // printf("%s", buffer);
+    //     break;
+    //     //fwrite(buffer, 1, bytes_read, outfp);
+    // }
 }
 
 int main()
