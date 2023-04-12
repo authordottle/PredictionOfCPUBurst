@@ -22,8 +22,8 @@ X = dataset.iloc[:, 3:-4]
 y = dataset.iloc[:, -4:]
 # print(dataset.columns)
 # print(dataset.dtypes)
-print(X)
-print(y)
+# print(X)
+# print(y)
 
 objTypeCols = dataset[[
     i for i in dataset.columns if dataset[i].dtype == 'object']]

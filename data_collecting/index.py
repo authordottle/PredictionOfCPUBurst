@@ -4,8 +4,8 @@ import csv
 import psutil
 import os
 from sys import platform
-
-processes = []
+import threading
+import time
 
 
 def get_processes_to_csv(csv_path):
@@ -13,7 +13,7 @@ def get_processes_to_csv(csv_path):
     processes = psutil.process_iter()
 
     # Create a CSV file and write the header row
-    with open(csv_path, mode='w', newline='') as csv_file:
+    with open(csv_path, mode='a', newline='') as csv_file:
         fieldnames = [
             'pid',
             'name',
@@ -39,9 +39,14 @@ def get_processes_to_csv(csv_path):
         # Write each process's data to the CSV file
         for process in processes:
             try:
-                process_data = process.as_dict(
-                    attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent', 'nice', 'create_time'])
-                
+                global print_attributes
+                if print_attributes:
+                    process_data = process.as_dict(
+                        attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent', 'nice', 'create_time'])
+                    print_attributes = False
+                else:
+                    process_data = {}
+
                 mem_rss = process.memory_info().rss
                 mem_vms = process.memory_info().vms
                 mem_pfaults = process.memory_info().pfaults
@@ -55,7 +60,7 @@ def get_processes_to_csv(csv_path):
                 num_involuntary = process.num_ctx_switches().involuntary
                 process_data['num_ctx_switches_voluntary'] = num_voluntary
                 process_data['num_ctx_switches_involuntary'] = num_involuntary
-                
+
                 utime = process.cpu_times().user
                 stime = process.cpu_times().system
                 cutime = process.cpu_times().children_user
@@ -76,6 +81,48 @@ def get_processes_to_csv(csv_path):
             writer.writerow(process_data)
 
 
+def action():
+    print(
+        'action to get processes to csv -> time : {:.1f}s'.format(time.time()-start_time))
+    get_processes_to_csv(file_name)
+
+
+class set_interval:
+    def __init__(self, interval, action):
+        self.interval = interval
+        self.action = action
+        self.stopEvent = threading.Event()
+        thread = threading.Thread(target=self.__set_interval)
+        thread.start()
+
+    def __set_interval(self):
+        nextTime = time.time()+self.interval
+        while not self.stopEvent.wait(nextTime-time.time()):
+            nextTime += self.interval
+            self.action()
+
+    def cancel(self):
+        self.stopEvent.set()
+
+
+# initial
+processes = []
 file_name = platform + "_processes.csv"
+start_time = time.time()
+print_attributes = True
+
+#
 print("You are currently loading on " + platform + " platform.")
-get_processes_to_csv(file_name)
+
+#
+inter = input("Enter a positive integer for interval to get process in seconds: ")
+stop = input("Enter a positive integer for interval to stop in seconds (>= first input): ")
+
+# start action every `inter` seconds
+interval = set_interval(int(inter), action)
+print(
+    'just after set_interval -> time : {:.1f}s'.format(time.time()-start_time))
+
+# stop interval in `stop` seconds
+t = threading.Timer(int(stop), interval.cancel)
+t.start()
