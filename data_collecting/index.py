@@ -8,45 +8,25 @@ import threading
 import time
 
 
+def write_header_to_csv(csv_path):
+    with open(csv_path, mode='w', newline='') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+
+
 def get_processes_to_csv(csv_path):
     # Get all running processes
     processes = psutil.process_iter()
 
     # Create a CSV file and write the header row
     with open(csv_path, mode='a', newline='') as csv_file:
-        fieldnames = [
-            'pid',
-            'name',
-            'username',
-            'cpu_percent',
-            'memory_percent',
-            'nice',
-            'create_time',
-            'mem_rss',
-            'mem_vms',
-            'mem_pfaults',
-            'mem_pageins',
-            'num_ctx_switches_voluntary',
-            'num_ctx_switches_involuntary',
-            'utime',
-            'stime',
-            'cutime',
-            'cstime'
-        ]
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
 
         # Write each process's data to the CSV file
         for process in processes:
             try:
-                global print_attributes
-                if print_attributes:
-                    process_data = process.as_dict(
-                        attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent', 'nice', 'create_time'])
-                    print_attributes = False
-                else:
-                    process_data = {}
-
+                process_data = process.as_dict(
+                    attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent', 'nice', 'create_time'])
                 mem_rss = process.memory_info().rss
                 mem_vms = process.memory_info().vms
                 mem_pfaults = process.memory_info().pfaults
@@ -110,13 +90,37 @@ processes = []
 file_name = platform + "_processes.csv"
 start_time = time.time()
 print_attributes = True
+fieldnames = [
+    'pid',
+    'name',
+    'username',
+    'cpu_percent',
+    'memory_percent',
+    'nice',
+    'create_time',
+    'mem_rss',
+    'mem_vms',
+    'mem_pfaults',
+    'mem_pageins',
+    'num_ctx_switches_voluntary',
+    'num_ctx_switches_involuntary',
+    'utime',
+    'stime',
+    'cutime',
+    'cstime'
+]
 
 #
 print("You are currently loading on " + platform + " platform.")
 
 #
-inter = input("Enter a positive integer for interval to get process in seconds: ")
-stop = input("Enter a positive integer for interval to stop in seconds (>= first input): ")
+inter = input(
+    "Enter a positive integer for interval to get process in seconds: ")
+stop = input(
+    "Enter a positive integer for interval to stop in seconds (>= first input): ")
+
+#
+write_header_to_csv(file_name)
 
 # start action every `inter` seconds
 interval = set_interval(int(inter), action)
