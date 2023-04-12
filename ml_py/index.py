@@ -30,7 +30,7 @@ objTypeCols = dataset[[
 
 #
 corrprocessData = dataset.corr()
-# print(corrprocessData)
+print(corrprocessData)
 
 # Dropping un-necessary information
 

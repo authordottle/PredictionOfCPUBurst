@@ -17,19 +17,22 @@ def get_processes_to_csv(csv_path):
         fieldnames = [
             'pid',
             'name',
-            'username', 
-            'memory_info', 
+            'username',
             'cpu_percent',
-            'memory_percent', 
-            'nice', 
-            'create_time', 
-            'num_ctx_switches_voluntary', 
-            'num_ctx_switches_involuntary', 
-            'utime', 
-            'stime', 
-            'cutime', 
+            'memory_percent',
+            'nice',
+            'create_time',
+            'mem_rss',
+            'mem_vms',
+            'mem_pfaults',
+            'mem_pageins',
+            'num_ctx_switches_voluntary',
+            'num_ctx_switches_involuntary',
+            'utime',
+            'stime',
+            'cutime',
             'cstime'
-            ]
+        ]
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -37,11 +40,22 @@ def get_processes_to_csv(csv_path):
         for process in processes:
             try:
                 process_data = process.as_dict(
-                    attrs=['pid', 'name', 'username', 'memory_info', 'cpu_percent', 'memory_percent', 'nice', 'create_time'])
+                    attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent', 'nice', 'create_time'])
+                
+                mem_rss = process.memory_info().rss
+                mem_vms = process.memory_info().vms
+                mem_pfaults = process.memory_info().pfaults
+                mem_pageins = process.memory_info().pageins
+                process_data['mem_rss'] = mem_rss
+                process_data['mem_vms'] = mem_vms
+                process_data['mem_pfaults'] = mem_pfaults
+                process_data['mem_pageins'] = mem_pageins
+
                 num_voluntary = process.num_ctx_switches().voluntary
                 num_involuntary = process.num_ctx_switches().involuntary
                 process_data['num_ctx_switches_voluntary'] = num_voluntary
                 process_data['num_ctx_switches_involuntary'] = num_involuntary
+                
                 utime = process.cpu_times().user
                 stime = process.cpu_times().system
                 cutime = process.cpu_times().children_user

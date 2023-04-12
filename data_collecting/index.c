@@ -77,7 +77,6 @@ void output_log_file()
                 }
                 else
                 {
-                    strcat(updated_buffer, NEXT_LINE);
                     break;
                 }
             }
