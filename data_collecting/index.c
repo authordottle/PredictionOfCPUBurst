@@ -57,10 +57,12 @@ void output_log_file()
     // Loop indefinitely to continuously read from the file
     while (start_time <= complete_time)
     {
-        printf("Current time: %d", start_time);
+        printf("Current time: %d \n", start_time);
 
         // Read a line from the file
-        if (fgets(buffer, BUFFER_SIZE, fp) != NULL)
+        line = fgets(buffer, BUFFER_SIZE, fp);
+        printf("Current line: %s \n", line);
+        if (line != NULL)
         {
             char *token;
             token = strtok(buffer, WHITE_SPACE);
