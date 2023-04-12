@@ -29,14 +29,16 @@ void output_log_file()
 
         while (token != NULL)
         {
+             printf("%s \n", token);
             strcat(new_line, token);
-            token = strtok(line, WHITE_SPACE);
-            if (token != NULL) {
-                strcat(new_line, COMMA);
-            }
-                 printf("%s \n", token);
+            // token = strtok(NULL, WHITE_SPACE);
+            // if (token != NULL) {
+            //     strcat(new_line, COMMA);
+            // }
+            printf("%s \n", token);
         }
 
+break;
         // fprintf(outfp, "%s \n", new_line);
         
         // printf("%s \n", new_line);
