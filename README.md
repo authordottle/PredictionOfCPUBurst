@@ -14,9 +14,9 @@
    $ pip3 install seaborn
 	```
 
-## How to use proclog kernel module to collect linux sample data:
+## How to install proclog kernel module to collect linux process data:
 1. cd into kernel_modules folder
-2. Make the proclog kernel module by following command.
+2. Compile the proclog kernel module by following command.
    ```sh
    $ make
    ```
@@ -31,7 +31,7 @@
    ```sh
    $ make stop
    ```
-5. You can verify the virtual file by running the following code, which lists all of process tasks.
+5. You can verify the virtual file by running the following code, which lists all of process tasks in virtual file.
    ```sh
    $ cat /proc/log_file
    ```
@@ -42,12 +42,30 @@
    ```sh
    $ sudo sysctl kernel.dmesg_restrict=0
    ```
-7. Currently, we need to temporarily use export_log_file.c to export log_file from virtual file to actual file.
+
+## How to export linux process data from /proc/log_file into actual file:   
+1. cd into data_collecting folder
+2. Compile the index.c by following command.
    ```sh
-   $ ./export_log_file 
+   $ make
+   ```
+3. Execute the following command to collect data.   
+   ```sh
+   $ ./index 
    ```
 
-## How to use test functions to ensure kernel module is working correctly:
+## How to use python functions to collect mac processes data:
+1. cd into data_collecting folder   
+2. Run the following command. 
+   ```sh
+   $ sudo python3 index.py
+   ```
+3. A csv file will be generated.
+
+## How to run python functions to predict processes performance:
+1. 
+
+## How to use test functions:
 1. cd into test folder
 2. if you plan to test tasks, you need to run the following:
    ```sh
@@ -61,13 +79,4 @@
    $ bash ./test_cpu_usage.sh
    ``` 
 
-## How to use python functions to collect mac processes data:
-1. cd into data_collecting folder   
-2. 
-   ```sh
-   $ sudo python3 index.py
-   ```
-
-## How to run python functions to predict processes performance:
-1. 
  
