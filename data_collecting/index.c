@@ -30,7 +30,7 @@ void output_log_file()
         while (token != NULL)
         {
             strcat(new_line, token);
-            token = strtok(NULL, WHITE_SPACE);
+            token = strtok(line, WHITE_SPACE);
             if (token != NULL) {
                 strcat(new_line, COMMA);
             }
