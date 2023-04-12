@@ -60,10 +60,13 @@ void output_log_file()
         {
                  printf("fgets good\n");
             char *token;
+             printf("buffer %s\n", buffer);
             token = strtok(buffer, WHITE_SPACE);
 
+        printf("after strtok\n");
             while (token != NULL)
             {
+                printf("in token loop\n");
                 strcat(new_line, trim_white_space(token));
                 token = strtok(NULL, WHITE_SPACE);
                 if (token != NULL)
