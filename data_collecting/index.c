@@ -59,11 +59,10 @@ void output_log_file()
     {
         printf("Current time: %d \n", start_time);
 
-buffer[BUFFER_SIZE] = NULL;
-
         // Read a line from the file
         line = fgets(buffer, BUFFER_SIZE, fp);
-        printf("Current line: %s \n", line);
+        printf("Current buffer: %s \n", buffer);
+        // printf("Current line: %s \n", line);
         if (line != NULL)
         {
             char *token;
