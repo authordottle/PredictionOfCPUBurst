@@ -54,10 +54,11 @@ void output_log_file()
     // Loop indefinitely to continuously read from the file
     while (1)
     {
+             printf("in loop\n");
         // Read a line from the file
-        if (fgets(buffer, 1024, fp) != NULL)
+        if (fgets(buffer, BUFFER_SIZE, fp) != NULL)
         {
-
+                 printf("fgets good\n");
             char *token;
             token = strtok(buffer, WHITE_SPACE);
 
@@ -77,7 +78,7 @@ void output_log_file()
             }
 
             fprintf(outfp, "%s \n", new_line);
-            printf("hit");
+            printf("hit\n");
         }
         else
         {
