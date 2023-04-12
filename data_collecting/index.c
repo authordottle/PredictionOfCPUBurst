@@ -19,7 +19,7 @@ void output_log_file()
 {
     ssize_t read;
     char *line = NULL;
-    char *new_line = "";
+    char *new_line;
     size_t len = 0;
 
     while ((read = getline(&line, &len, fp)) != -1)
@@ -29,7 +29,7 @@ void output_log_file()
 
         while (token != NULL)
         {
-            new_line = strcat(new_line, token);
+            strcat(new_line, token);
             printf("%s \n", new_line);
             // token = strtok(NULL, WHITE_SPACE);
             // if (token != NULL) {
