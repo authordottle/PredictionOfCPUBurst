@@ -67,24 +67,26 @@ void output_log_file()
 
         if (line != NULL)
         {
-            token = strtok(buffer, WHITE_SPACE);
+            // token = strtok(buffer, WHITE_SPACE);
 
-            while (token != NULL)
-            {
-                strcat(updated_buffer, trim_white_space(token));
-                token = strtok(NULL, WHITE_SPACE);
-                if (token != NULL)
-                {
-                    strcat(updated_buffer, COMMA);
-                }
-                else
-                {
-                    strcat(updated_buffer, NEXT_LINE);
-                    break;
-                }
-            }
+            // while (token != NULL)
+            // {
+            //     strcat(updated_buffer, trim_white_space(token));
+            //     token = strtok(NULL, WHITE_SPACE);
+            //     if (token != NULL)
+            //     {
+            //         strcat(updated_buffer, COMMA);
+            //     }
+            //     else
+            //     {
+            //         strcat(updated_buffer, NEXT_LINE);
+            //         break;
+            //     }
+            // }
 
-            fprintf(outfp, "%s \n", updated_buffer);
+            // fprintf(outfp, "%s \n", updated_buffer);
+
+            fprintf(outfp, "%s \n", buffer);
         }
         else
         {
