@@ -101,13 +101,10 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	// kernel system timer
 	uptime == ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC);
 
-	if (printTitle == 0)
-	{
-		seq_printf(s,
-				   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
-		printTitle = 1;
+	seq_printf(s,
+			   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
 
-		for_each_process(task)
+	for_each_process(task)
 	{
 		// printk(KERN_INFO "Process: %s (pid: %d)\n", task->comm, task->pid);
 
@@ -128,7 +125,6 @@ static int proc_seq_show(struct seq_file *s, void *v)
 				   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
 	}
 	seq_printf(s, "%Ld\n", *spos);
-	}
 
 	return 0;
 }
@@ -177,7 +173,6 @@ static int __init init_kernel_module(void)
 	ktime_t start_time = ktime_get();
 	s64 start_time_ns = ktime_to_ns(start_time);
 	start_time_s = start_time_ns / 1000000000;
-	printTitle = 0;
 
 	struct proc_dir_entry *log_file;
 

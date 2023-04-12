@@ -24,8 +24,6 @@ long start_time_s;
 
 // /proc/uptime #1 uptime of the system (seconds)
 s64 uptime;
-s64 updated_uptime;
-int printTitle;
 
 struct file *virtual_file = NULL;
 struct file *actual_file = NULL;
@@ -33,7 +31,7 @@ struct file *actual_file = NULL;
 #define ACTUAL_FILE_PATH "/tmp/actual_file"
 #define PROC_FILE_PATH "/proc/log_file"
 
-// static int clk_tck = 100; 
+// static int clk_tck = 100;
 // static int number_of_cpu = 2;
 
 // // size of buffer ~32Kb

@@ -1,5 +1,5 @@
-/********* export_log_file.c ***********/
-// Temporary file to export virtual file into actual file
+/********* index.c ***********/
+// Export virtual file into actual file
 #include <stdio.h>
 
 int main()
