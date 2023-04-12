@@ -1,6 +1,5 @@
 /********* proclog.c ***********/
 // Logger that creates a proc file
-#include "helper.c"
 #include <linux/version.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -20,6 +19,7 @@
 #include <asm/io.h>
 #include <linux/tick.h>
 #include <linux/time.h>
+#include "helper.c"
 
 long start_time_s;
 s64 uptime;
