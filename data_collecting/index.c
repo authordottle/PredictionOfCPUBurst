@@ -63,7 +63,7 @@ void output_log_file()
              printf("buffer %s\n", buffer);
             token = strtok(buffer, WHITE_SPACE);
 
-        printf("after strtok\n");
+        printf("token %s\n", token);
             while (token != NULL)
             {
                 printf("in token loop\n");
@@ -71,10 +71,12 @@ void output_log_file()
                 token = strtok(NULL, WHITE_SPACE);
                 if (token != NULL)
                 {
+                     printf("hit if\n");
                     strcat(new_line, COMMA);
                 }
                 else
                 {
+                     printf("hit else \n");
                     strcat(new_line, NEXT_LINE);
                     break;
                 }
