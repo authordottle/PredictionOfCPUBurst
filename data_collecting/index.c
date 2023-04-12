@@ -57,6 +57,8 @@ void output_log_file()
     // Loop indefinitely to continuously read from the file
     while (start_time <= complete_time)
     {
+        printf("Current time: %d", start_time);
+
         // Read a line from the file
         if (fgets(buffer, BUFFER_SIZE, fp) != NULL)
         {
