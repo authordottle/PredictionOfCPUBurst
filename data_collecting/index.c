@@ -1,6 +1,7 @@
 /********* index.c ***********/
 // Export virtual file into actual file
 #include <stdio.h>
+#include <string.h>
 
 #define ACTUAL_FILE_PATH "linux_log_file.csv"
 #define PROC_FILE_PATH "/proc/log_file"
