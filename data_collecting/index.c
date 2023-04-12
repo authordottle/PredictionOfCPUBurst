@@ -30,13 +30,14 @@ void output_log_file()
         while (token != NULL)
         {
             new_line = strcat(new_line, token);
-            token = strtok(NULL, WHITE_SPACE);
-            if (token != NULL) {
-                new_line = strcat(new_line, COMMA);
-            }
+            printf("%s \n", new_line);
+            // token = strtok(NULL, WHITE_SPACE);
+            // if (token != NULL) {
+            //     new_line = strcat(new_line, COMMA);
+            // }
         }
 
-        fprintf(outfp, "%s \n", new_line);
+        // fprintf(outfp, "%s \n", new_line);
 
         break;
     }
