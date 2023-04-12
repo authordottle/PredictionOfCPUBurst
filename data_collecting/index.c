@@ -4,8 +4,10 @@
 
 #define ACTUAL_FILE_PATH "linux_log_file.csv"
 #define PROC_FILE_PATH "/proc/log_file"
+#define BUFFER_SIZE 32768
+#define WHITE_SPACE " "
 
-char buffer[1024];
+char buffer[BUFFER_SIZE];
 size_t bytes_read;
 FILE *fp, *outfp;
 
@@ -13,7 +15,17 @@ void output_log_file()
 {
     while ((bytes_read = fread(buffer, 1, sizeof(buffer), fp)) > 0)
     {
+        char *token = strtok(buffer, WHITE_SPACE);
+        
+        while( token != NULL ) {
+            printf( " %s\n", token );
+            
+            token = strtok(NULL, WHITE_SPACE);
+        }
+
+
         printf("%s", buffer);
+        break;
         //fwrite(buffer, 1, bytes_read, outfp);
     }
 }

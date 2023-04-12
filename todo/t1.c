@@ -54,11 +54,7 @@ static void export_virtual_file_into_actual_file(void)
     // static int clk_tck = 100;
 // static int number_of_cpu = 2;
 
-// // size of buffer ~32Kb
-// #define PROCFS_MAX_SIZE 32768
 
-// // buffer to hold information from log
-// static char procfs_buffer[PROCFS_MAX_SIZE];
 
 // // size of buffer
 // static unsigned long procfs_buffer_size = 0;
