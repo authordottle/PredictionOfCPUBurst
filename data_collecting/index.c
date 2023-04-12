@@ -110,7 +110,7 @@ int main()
     // output_log_file();
      int nbytes;
 while(1) {
-    nbytes = fread(buffer, BUFFER_SIZE, 1, fp);
+    nbytes = fread(&buffer, BUFFER_SIZE, 1, fp);
     printf("read %d bytes from file.\n", nbytes);
     // if(nbytes > 0) {
     //   split_buffer_by_newline(buf); // split buffer by new line.
