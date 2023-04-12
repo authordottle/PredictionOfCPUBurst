@@ -1,58 +1,58 @@
 /********* helper.c ***********/
 
 /*
-    struct Process
-        -burst_time: given, time it takes for the process to complete
-        -next:      generated, next process in queue
-        -previous:  generated, process before self in queue
+	struct Process
+		-burst_time: given, time it takes for the process to complete
+		-next:      generated, next process in queue
+		-previous:  generated, process before self in queue
 */
 struct Process
 {
-    int burst_time;
-    pid_t proc_pid;
-    struct Process *next;
-    struct Process *previous;
+	int burst_time;
+	pid_t proc_pid;
+	struct Process *next;
+	struct Process *previous;
 };
 
 /*
-    static int check_alloc()
-        -checks if the given pointer has been allocated successfully and exits if it did not
+	static int check_alloc()
+		-checks if the given pointer has been allocated successfully and exits if it did not
 */
 static int check_alloc(void *ptr)
 {
-    if (!ptr)
-    {
-        printk("Allocation error!\n");
-        return 0;
-    }
-    return 1;
+	if (!ptr)
+	{
+		printk("Allocation error!\n");
+		return 0;
+	}
+	return 1;
 }
 
 /*
-    struct Process* create_new_process(int process_burst_time, pid_t pid)
-        -creates a pointer to a Process struct
+	struct Process* create_new_process(int process_burst_time, pid_t pid)
+		-creates a pointer to a Process struct
 */
 struct Process *create_new_process(int process_burst_time, pid_t pid)
 {
-    int ret = 0;
-    struct Process *new_process = NULL;
+	int ret = 0;
+	struct Process *new_process = NULL;
 
-    new_process = (struct Process *)kmalloc(sizeof(struct Process), GFP_KERNEL);
-    if (check_alloc(new_process) == 0)
-    {
-        pr_err("An error occurred during initialization\n");
-        return -EINVAL; // Return "Invalid argument" error
-    }
+	new_process = (struct Process *)kmalloc(sizeof(struct Process), GFP_KERNEL);
+	if (check_alloc(new_process) == 0)
+	{
+		pr_err("An error occurred during initialization\n");
+		return -EINVAL; // Return "Invalid argument" error
+	}
 
-    new_process->burst_time = process_burst_time;
-    new_process->next = NULL;
-    new_process->proc_pid = pid;
-    new_process->previous = NULL;
+	new_process->burst_time = process_burst_time;
+	new_process->next = NULL;
+	new_process->proc_pid = pid;
+	new_process->previous = NULL;
 
-    return new_process;
+	return new_process;
 }
 
-unsigned long virtu2phys(struct mm_struct *mm, unsigned long vpage)
+unsigned long virtu_to_phys(struct mm_struct *mm, unsigned long vpage)
 {
 	unsigned long physical_page_addr;
 	pgd_t *pgd;
@@ -87,16 +87,18 @@ unsigned long virtu2phys(struct mm_struct *mm, unsigned long vpage)
 
 int proc_count(void)
 {
-	int i = 0, counter = 0, contigCounter = 0, nonContigCounter = 0;
+	int i = 0, counter = 0, contig_counter = 0, non_contig_counter = 0;
 	struct task_struct *task;
 	struct vm_area_struct *vma = 0;
 	unsigned long vpage;
+
 	printk("PROCESS REPORT:\n");
-	printk("proc_id,proc_name,contig_pages,noncontig_pages,total_pages\n");
+	printk("proc_id,proc_name,contig_pages,non_contig_pages,total_pages\n");
+
 	for_each_process(task)
 	{
-		int totalPages = 0;
-		int contig = 0, nonContig = 0;
+		int total_pages = 0;
+		int contig = 0, non_contig = 0;
 		if (task->pid > 650)
 		{
 			if (task->mm && task->mm->mmap)
@@ -106,7 +108,7 @@ int proc_count(void)
 				{
 					for (vpage = vma->vm_start; vpage < vma->vm_end; vpage += PAGE_SIZE)
 					{
-						unsigned long physical_page_addr = virtu2phys(task->mm, vpage);
+						unsigned long physical_page_addr = virtu_to_phys(task->mm, vpage);
 						if (physical_page_addr != 0)
 						{
 							if (physical_page_addr == previous_page_addr + PAGE_SIZE)
@@ -115,21 +117,23 @@ int proc_count(void)
 							}
 							else
 							{
-								nonContig++;
+								non_contig++;
 							}
 							previous_page_addr = physical_page_addr;
-							totalPages++;
+							total_pages++;
 						}
 					}
 				}
 			}
-			counter += totalPages;
-			printk("%d,%s,%d,%d,%d\n", task->pid, task->comm, contig, nonContig, totalPages);
+			counter += total_pages;
+			printk("%d,%s,%d,%d,%d\n", task->pid, task->comm, contig, non_contig, total_pages);
 			i++;
 		}
-		contigCounter += contig;
-		nonContigCounter += nonContig;
+		contig_counter += contig;
+		non_contig_counter += non_contig;
 	}
-	printk("TOTALS,%d,%d,%d\n", contigCounter, nonContigCounter, counter);
+
+	printk("TOTALS,%d,%d,%d\n", contig_counter, non_contig_counter, counter);
+
 	return i;
 }

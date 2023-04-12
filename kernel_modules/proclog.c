@@ -1,7 +1,34 @@
 /********* proclog.c ***********/
 // Logger that creates a proc file
-#include "headers.h"
 #include "helper.c"
+#include <linux/version.h>
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/init.h>
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h> // seq_read, ...
+#include <linux/uaccess.h>
+#include <linux/sched.h>
+#include <linux/jiffies.h>
+#include <linux/syscalls.h>
+#include <linux/unistd.h>
+#include <linux/ktime.h>
+#include <linux/types.h>
+#include <linux/fs.h>
+#include <linux/sched/signal.h>
+#include <linux/pid_namespace.h>
+#include <asm/io.h>
+#include <linux/tick.h>
+#include <linux/time.h>
+
+long start_time_s;
+s64 uptime;
+
+struct file *virtual_file = NULL;
+struct file *actual_file = NULL;
+
+#define ACTUAL_FILE_PATH "/tmp/actual_file"
+#define PROC_FILE_PATH "/proc/log_file"
 
 #ifndef __KERNEL__
 #define __KERNEL__
@@ -57,16 +84,8 @@ static long get_process_elapsed_time(struct task_struct *task)
 	// #16 cutime - Waited-for children's CPU time spent in user code (in clock ticks)
 	// #17 cstime - Waited-for children's CPU time spent in kernel code (in clock ticks)
 	// #22 starttime - Time when the process started, measured in clock ticks
-	// unsigned long long utime, stime, cutime, cstime;
 	unsigned long long start_time;
-	// unsigned long long utime_sec, stime_sec, start_time_sec;
-	// unsigned long long utime_msec, stime_msec, start_time_msec;
-	// unsigned long long total_time;
-	// long long cpu_usage = 0;
-	// long long elapsed_nsec;
-	// long long usage_nsec;
 	long long elapsed_sec;
-	// long long usage_sec;
 
 	if (task == NULL)
 	{
@@ -87,14 +106,8 @@ static int proc_seq_show(struct seq_file *s, void *v)
 {
 	printk("Hit proc_seq_show");
 
-	// ktime_t current_time = ktime_get();
-	// s64 current_time_ns = ktime_to_ns(current_time);
-	// long current_time_s = current_time_ns / 1000000000;
-	// start_time_s = current_time;
-
 	loff_t *spos = (loff_t *)v;
 	unsigned long long utime, stime;
-	// unsigned long long cutime, cstime, start_time;
 	unsigned long long total_time;
 	struct task_struct *task;
 
@@ -183,39 +196,8 @@ static int __init init_kernel_module(void)
 	return 0;
 }
 
-static void export_virtual_file_into_actual_file(void)
-{
-	// Allocate a buffer to read data from the virtual file
-	char *buffer = (char *)kmalloc(PAGE_SIZE, GFP_KERNEL);
-	if (!buffer)
-	{
-		pr_err("Failed to allocate memory for buffer\n");
-	}
-
-	// Create the actual file on disk
-	actual_file = filp_open(ACTUAL_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (IS_ERR(actual_file))
-	{
-		pr_err("Failed to create actual file\n");
-	}
-
-	if (buffer)
-	{
-		kfree(buffer);
-	}
-	if (virtual_file)
-	{
-		filp_close(virtual_file, NULL);
-	}
-	if (actual_file)
-	{
-		filp_close(actual_file, NULL);
-	}
-}
-
 static void __exit exit_kernel_module(void)
 {
-	export_virtual_file_into_actual_file();
 	remove_proc_entry("log_file", NULL);
 
 	printk(KERN_INFO "Process logger module unloaded\n");
