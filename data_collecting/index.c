@@ -33,6 +33,8 @@ void output_log_file()
             token = strtok(NULL, WHITE_SPACE);
             if (token != NULL) {
                 strcat(new_line, COMMA);
+            } else {
+                 printf("hit \n");
             }
             printf("%s \n", token);
         }

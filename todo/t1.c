@@ -55,10 +55,6 @@ static void export_virtual_file_into_actual_file(void)
 // static int number_of_cpu = 2;
 
 
-
-// // size of buffer
-// static unsigned long procfs_buffer_size = 0;
-
 // // pointer for buffer location in read
 // static char *buff_ptr;
 
