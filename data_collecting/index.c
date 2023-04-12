@@ -57,7 +57,7 @@ void output_log_file()
     // Loop indefinitely to continuously read from the file
     while (start_time <= complete_time)
     {
-        printf("Current time: %d \n", start_time);
+        // printf("Current time: %d \n", start_time);
 
         // Read a line from the file
         line = fgets(buffer, BUFFER_SIZE, fp);
@@ -85,8 +85,6 @@ void output_log_file()
             }
 
             fprintf(outfp, "%s \n", updated_buffer);
-
-            // fprintf(outfp, "%s \n", buffer);
         }
         else
         {
@@ -95,7 +93,6 @@ void output_log_file()
         }
 
         memset(updated_buffer, 0, BUFFER_SIZE);
-        // sleep(1);
         start_time++;
     }
 }
@@ -120,7 +117,7 @@ int main()
         return 1;
     }
 
-    printf("Enter complete time in seconds (any positive integer): ");
+    printf("Enter # of rows for export (any positive integer): ");
     scanf("%d", &complete_time);
     if (complete_time <= 0)
     {
