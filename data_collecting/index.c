@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
+#include <unistd.h>
 
 #define ACTUAL_FILE_PATH "linux_log_file.csv"
 #define PROC_FILE_PATH "/proc/log_file"
@@ -50,12 +52,11 @@ void output_log_file()
     ssize_t read;
     char *line = NULL;
     size_t len = 0;
-    int start_time = 0;
+    int start_time = 1;
 
     // Loop indefinitely to continuously read from the file
     while (start_time <= complete_time)
     {
-        printf("in loop\n");
         // Read a line from the file
         if (fgets(buffer, BUFFER_SIZE, fp) != NULL)
         {
@@ -80,6 +81,8 @@ void output_log_file()
             }
 
             fprintf(outfp, "%s \n", updated_buffer);
+
+             fseek( fp, sizeof(buffer), SEEK_SET );
         }
         else
         {
@@ -116,21 +119,6 @@ int main()
     scanf("%d", &complete_time);
 
     output_log_file();
-
-
-
-//      int nbytes;
-// while(1) {
-//     nbytes = fread(&buffer, BUFFER_SIZE, 1, fp);
-//     split_buffer_by_newline(buffer); // split buffer by new line.
-//     // printf("read %d bytes from file.\n", nbytes);
-//     // printf("read %s.\n", buffer);
-//     // if(nbytes > 0) {
-//     //   split_buffer_by_newline(buf); // split buffer by new line.
-//     // }
-//     sleep(1);
-//   }
-
 
     fclose(fp);
     fclose(outfp);
