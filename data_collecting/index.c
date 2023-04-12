@@ -92,6 +92,7 @@ void output_log_file()
             continue;
         }
 
+        memset(updated_buffer, 0, BUFFER_SIZE);
         sleep(1);
         start_time++;
     }
