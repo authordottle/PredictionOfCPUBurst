@@ -15,7 +15,8 @@ void output_log_file()
 {
     while ((bytes_read = fread(buffer, 1, sizeof(buffer), fp)) > 0)
     {
-        char *token = strtok(buffer, WHITE_SPACE);
+        char *token;
+        token = strtok(buffer, WHITE_SPACE);
         
         while( token != NULL ) {
             printf( " %s\n", token );
