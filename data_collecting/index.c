@@ -8,6 +8,7 @@
 #define BUFFER_SIZE 32768
 #define WHITE_SPACE " "
 #define COMMA ","
+#define NEXT_LINE "\n"
 
 char buffer[BUFFER_SIZE];
 size_t bytes_read;
@@ -34,15 +35,13 @@ void output_log_file()
             if (token != NULL) {
                 strcat(new_line, COMMA);
             } else {
-                 printf("hit \n");
+                strcat(new_line, NEXT_LINE);
+                break;
             }
-            printf("%s \n", token);
         }
-
-break;
-        // fprintf(outfp, "%s \n", new_line);
+        fprintf(outfp, "%s \n", new_line);
         
-        // printf("%s \n", new_line);
+        printf("%s \n", new_line);
     }
 }
 
