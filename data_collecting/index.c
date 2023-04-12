@@ -48,6 +48,7 @@ char *trim_white_space(char *str)
 void output_log_file()
 {
     char buffer[BUFFER_SIZE];
+    char updated_buffer[BUFFER_SIZE];
     ssize_t read;
     char *line = NULL;
     size_t len = 0;
@@ -61,7 +62,7 @@ void output_log_file()
 
         // Read a line from the file
         line = fgets(buffer, BUFFER_SIZE, fp);
-        char updated_buffer[BUFFER_SIZE] = NULL;
+        updated_buffer[BUFFER_SIZE] = NULL;
         // printf("Current buffer: %s \n", buffer);
         // printf("Current line: %s \n", line);
 
