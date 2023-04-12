@@ -14,6 +14,31 @@ char buffer[BUFFER_SIZE];
 size_t bytes_read;
 FILE *fp, *outfp;
 
+// Note: This function returns a pointer to a substring of the original string.
+// If the given string was allocated dynamically, the caller must not overwrite
+// that pointer with the returned value, since the original pointer must be
+// deallocated using the same allocator with which it was allocated.  The return
+// value must NOT be deallocated using free() etc.
+char *trimwhitespace(char *str)
+{
+  char *end;
+
+  // Trim leading space
+  while(isspace((unsigned char)*str)) str++;
+
+  if(*str == 0)  // All spaces?
+    return str;
+
+  // Trim trailing space
+  end = str + strlen(str) - 1;
+  while(end > str && isspace((unsigned char)*end)) end--;
+
+  // Write new null terminator character
+  end[1] = '\0';
+
+  return str;
+}
+
 // Output data into csv file
 // Each column separated by comma in cse file
 void output_log_file()
@@ -30,17 +55,20 @@ void output_log_file()
 
         while (token != NULL)
         {
-            strcat(new_line, token);
+            strcat(new_line, trimwhitespace(token));
             token = strtok(NULL, WHITE_SPACE);
-            if (token != NULL) {
+            if (token != NULL)
+            {
                 strcat(new_line, COMMA);
-            } else {
+            }
+            else
+            {
                 strcat(new_line, NEXT_LINE);
                 break;
             }
         }
         fprintf(outfp, "%s \n", new_line);
-        
+
         printf("%s \n", new_line);
     }
 }
