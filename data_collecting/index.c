@@ -34,13 +34,12 @@ void output_log_file()
             if (token != NULL) {
                 strcat(new_line, COMMA);
             }
-
-            printf("%s \n", new_line);
+                 printf("%s \n", token);
         }
 
         // fprintf(outfp, "%s \n", new_line);
-
-        break;
+        
+        // printf("%s \n", new_line);
     }
 }
 
