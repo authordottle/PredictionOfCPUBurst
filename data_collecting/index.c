@@ -86,7 +86,7 @@ void output_log_file()
 
             fprintf(outfp, "%s \n", updated_buffer);
 
-             fseek( fp, sizeof(buffer), SEEK_SET );
+            //  fseek( fp, sizeof(buffer), SEEK_SET );
         }
         else
         {
