@@ -66,8 +66,10 @@ void output_log_file()
         printf("token %s\n", token);
             while (token != NULL)
             {
-                printf("in token loop\n");
+                printf("in token loop %s\n", trim_white_space(token));
+                
                 strcat(new_line, trim_white_space(token));
+
                 token = strtok(NULL, WHITE_SPACE);
                 if (token != NULL)
                 {
