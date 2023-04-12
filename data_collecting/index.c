@@ -34,9 +34,11 @@ void output_log_file()
             if (token != NULL) {
                 strcat(new_line, COMMA);
             }
+
+            printf("%s \n", new_line);
         }
 
-        fprintf(outfp, "%s \n", new_line);
+        // fprintf(outfp, "%s \n", new_line);
 
         break;
     }
