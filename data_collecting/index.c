@@ -61,7 +61,7 @@ void output_log_file()
                  printf("fgets good\n");
             char *token;
              printf("buffer %s\n", buffer);
-            token = strtok(line, WHITE_SPACE);
+            token = strtok(buffer, WHITE_SPACE);
 
         printf("after strtok\n");
             while (token != NULL)
