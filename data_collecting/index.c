@@ -51,39 +51,40 @@ void output_log_file()
     char *new_line;
     size_t len = 0;
 
- while (1) { // Loop indefinitely to continuously read from the file
-        if (fgets(buffer, 1024, fp) != NULL) { // Read a line from the file
-            fprintf(outfp, "%s \n", buffer);
+    // Loop indefinitely to continuously read from the file
+    while (1)
+    {
+        // Read a line from the file
+        if (fgets(buffer, 1024, fp) != NULL)
+        {
+
+            char *token;
+            token = strtok(buffer, WHITE_SPACE);
+
+            while (token != NULL)
+            {
+                strcat(new_line, trim_white_space(token));
+                token = strtok(NULL, WHITE_SPACE);
+                if (token != NULL)
+                {
+                    strcat(new_line, COMMA);
+                }
+                else
+                {
+                    strcat(new_line, NEXT_LINE);
+                    break;
+                }
+            }
+
+            fprintf(outfp, "%s \n", new_line);
             printf("hit");
-        } else {
-            // it means there is no new data in the file yet, so the loop continues.
+        }
+        else
+        {
+            // No new data in the file yet
+            continue;
         }
     }
-
-
-    // while ((read = getline(&line, &len, fp)) != -1)
-    // {
-    //     char *token;
-    //     token = strtok(line, WHITE_SPACE);
-
-    //     while (token != NULL)
-    //     {
-    //         strcat(new_line, trim_white_space(token));
-    //         token = strtok(NULL, WHITE_SPACE);
-    //         if (token != NULL)
-    //         {
-    //             strcat(new_line, COMMA);
-    //         }
-    //         else
-    //         {
-    //             strcat(new_line, NEXT_LINE);
-    //             break;
-    //         }
-    //     }
-    //     fprintf(outfp, "%s \n", new_line);
-
-    //     printf("%s \n", new_line);
-    // }
 }
 
 int main()
