@@ -1,4 +1,11 @@
-	static void export_virtual_file_into_actual_file(void)
+	struct file *virtual_file = NULL;
+struct file *actual_file = NULL;
+
+#define ACTUAL_FILE_PATH "/tmp/actual_file"
+#define PROC_FILE_PATH "/proc/log_file"
+
+
+static void export_virtual_file_into_actual_file(void)
 {
 	// Allocate a buffer to read data from the virtual file
 	char *buffer = (char *)kmalloc(PAGE_SIZE, GFP_KERNEL);

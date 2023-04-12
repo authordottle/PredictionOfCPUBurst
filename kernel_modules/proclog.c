@@ -24,12 +24,6 @@
 long start_time_s;
 s64 uptime;
 
-struct file *virtual_file = NULL;
-struct file *actual_file = NULL;
-
-#define ACTUAL_FILE_PATH "/tmp/actual_file"
-#define PROC_FILE_PATH "/proc/log_file"
-
 #ifndef __KERNEL__
 #define __KERNEL__
 #endif
@@ -135,7 +129,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 				   task->utime,
 				   task->stime,
 				   task->start_time,
-				   ktime_divns(ktime_get_coarse_boottime(), NSEC_PER_SEC));
+				   uptime);
 	}
 	seq_printf(s, "%Ld\n", *spos);
 
