@@ -18,10 +18,11 @@ void output_log_file()
     ssize_t read;
      char * line = NULL;
     size_t len = 0;
-    
+
         while ((read = getline(&line, &len, fp)) != -1) {
         printf("Retrieved line of length %zu:\n", read);
         printf("%s", line);
+        break;
     }
     // while ((bytes_read = fread(buffer, 1, sizeof(buffer), fp)) > 0)
     // {
