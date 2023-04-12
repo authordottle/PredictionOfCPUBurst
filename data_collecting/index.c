@@ -7,6 +7,7 @@
 #define PROC_FILE_PATH "/proc/log_file"
 #define BUFFER_SIZE 32768
 #define WHITE_SPACE " "
+#define COMMA ","
 
 char buffer[BUFFER_SIZE];
 size_t bytes_read;
@@ -14,32 +15,29 @@ FILE *fp, *outfp;
 
 void output_log_file()
 {
-
     ssize_t read;
-     char * line = NULL;
+    char *line = NULL;
+    char *new_line = "";
     size_t len = 0;
 
-        while ((read = getline(&line, &len, fp)) != -1) {
-        printf("Retrieved line of length %zu:\n", read);
-        printf("%s", line);
+    while ((read = getline(&line, &len, fp)) != -1)
+    {
+        char *token;
+        token = strtok(line, WHITE_SPACE);
+
+        while (token != NULL)
+        {
+            new_line = strcat(new_line, token);
+            token = strtok(NULL, WHITE_SPACE);
+            if (token != NULL) {
+                new_line = strcat(new_line, COMMA);
+            }
+        }
+
+        fprintf(outfp, "%s", new_line);
+
         break;
     }
-    // while ((bytes_read = fread(buffer, 1, sizeof(buffer), fp)) > 0)
-    // {
-    //     char *token;
-    //     token = strtok(buffer, WHITE_SPACE);
-        
-    //     while( token != NULL ) {
-    //         printf( " %s\n", token );
-            
-    //         token = strtok(NULL, WHITE_SPACE);
-    //     }
-
-
-    //     // printf("%s", buffer);
-    //     break;
-    //     //fwrite(buffer, 1, bytes_read, outfp);
-    // }
 }
 
 int main()
