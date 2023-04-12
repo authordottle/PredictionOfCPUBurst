@@ -28,12 +28,12 @@ void output_log_file()
         token = strtok(line, WHITE_SPACE);
 
         while (token != NULL)
-        {             printf("%s \n", token);
+        {
             strcat(new_line, token);
             token = strtok(NULL, WHITE_SPACE);
-            // if (token != NULL) {
-            //     strcat(new_line, COMMA);
-            // }
+            if (token != NULL) {
+                strcat(new_line, COMMA);
+            }
             printf("%s \n", token);
         }
 
