@@ -12,6 +12,7 @@
 #define NEXT_LINE "\n"
 
 char buffer[BUFFER_SIZE];
+int complete_time;
 size_t bytes_read;
 FILE *fp, *outfp;
 
@@ -49,9 +50,10 @@ void output_log_file()
     ssize_t read;
     char *line = NULL;
     size_t len = 0;
+    int start_time = 0;
 
     // Loop indefinitely to continuously read from the file
-    while (1)
+    while (start_time <= complete_time)
     {
         printf("in loop\n");
         // Read a line from the file
@@ -84,6 +86,9 @@ void output_log_file()
             // No new data in the file yet
             continue;
         }
+
+        sleep(1);
+        start_time++;
     }
 }
 
@@ -107,17 +112,24 @@ int main()
         return 1;
     }
 
-    // output_log_file();
-     int nbytes;
-while(1) {
-    nbytes = fread(&buffer, BUFFER_SIZE, 1, fp);
-    printf("read %d bytes from file.\n", nbytes);
-    printf("read %s.\n", buffer);
-    // if(nbytes > 0) {
-    //   split_buffer_by_newline(buf); // split buffer by new line.
-    // }
-    sleep(1);
-  }
+    printf("Enter complete time (any positive integer): ");
+    scanf("%d", &complete_time);
+
+    output_log_file();
+
+
+
+//      int nbytes;
+// while(1) {
+//     nbytes = fread(&buffer, BUFFER_SIZE, 1, fp);
+//     split_buffer_by_newline(buffer); // split buffer by new line.
+//     // printf("read %d bytes from file.\n", nbytes);
+//     // printf("read %s.\n", buffer);
+//     // if(nbytes > 0) {
+//     //   split_buffer_by_newline(buf); // split buffer by new line.
+//     // }
+//     sleep(1);
+//   }
 
 
     fclose(fp);
