@@ -13,9 +13,7 @@
 #define COMMA ","
 #define NEXT_LINE "\n"
 
-char buffer[BUFFER_SIZE];
 int complete_time;
-size_t bytes_read;
 FILE *fp, *outfp;
 
 // Note: This function returns a pointer to a substring of the original string.
@@ -49,10 +47,12 @@ char *trim_white_space(char *str)
 // Each column separated by comma in cse file
 void output_log_file()
 {
+    char buffer[BUFFER_SIZE];
     ssize_t read;
     char *line = NULL;
     size_t len = 0;
     int start_time = 1;
+    char *token;
 
     // Loop indefinitely to continuously read from the file
     while (start_time <= complete_time)
@@ -61,15 +61,14 @@ void output_log_file()
 
         // Read a line from the file
         line = fgets(buffer, BUFFER_SIZE, fp);
-        printf("Current buffer: %s \n", buffer);
+        char updated_buffer[BUFFER_SIZE] = NULL;
+        // printf("Current buffer: %s \n", buffer);
         // printf("Current line: %s \n", line);
+
         if (line != NULL)
         {
-            char *token;
             token = strtok(buffer, WHITE_SPACE);
-            
-            char updated_buffer[BUFFER_SIZE];
-            
+
             while (token != NULL)
             {
                 strcat(updated_buffer, trim_white_space(token));
