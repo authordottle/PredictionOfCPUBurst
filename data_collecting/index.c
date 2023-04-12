@@ -2,6 +2,7 @@
 // Export virtual file into actual file
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #define ACTUAL_FILE_PATH "linux_log_file.csv"
 #define PROC_FILE_PATH "/proc/log_file"
@@ -19,24 +20,26 @@ FILE *fp, *outfp;
 // that pointer with the returned value, since the original pointer must be
 // deallocated using the same allocator with which it was allocated.  The return
 // value must NOT be deallocated using free() etc.
-char *trimwhitespace(char *str)
+char *trim_white_space(char *str)
 {
-  char *end;
+    char *end;
 
-  // Trim leading space
-  while(isspace((unsigned char)*str)) str++;
+    // Trim leading space
+    while (isspace((unsigned char)*str))
+        str++;
 
-  if(*str == 0)  // All spaces?
+    if (*str == 0) // All spaces?
+        return str;
+
+    // Trim trailing space
+    end = str + strlen(str) - 1;
+    while (end > str && isspace((unsigned char)*end))
+        end--;
+
+    // Write new null terminator character
+    end[1] = '\0';
+
     return str;
-
-  // Trim trailing space
-  end = str + strlen(str) - 1;
-  while(end > str && isspace((unsigned char)*end)) end--;
-
-  // Write new null terminator character
-  end[1] = '\0';
-
-  return str;
 }
 
 // Output data into csv file
@@ -55,7 +58,7 @@ void output_log_file()
 
         while (token != NULL)
         {
-            strcat(new_line, trimwhitespace(token));
+            strcat(new_line, trim_white_space(token));
             token = strtok(NULL, WHITE_SPACE);
             if (token != NULL)
             {
