@@ -20,7 +20,7 @@ void output_log_file()
         token = strtok(buffer, WHITE_SPACE);
         
         while( token != NULL ) {
-            printf( " %s\n", token );
+            // printf( " %s\n", token );
             
             token = strtok(NULL, WHITE_SPACE);
         }
