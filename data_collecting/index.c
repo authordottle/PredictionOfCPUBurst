@@ -13,7 +13,7 @@ void output_log_file()
 {
     while ((bytes_read = fread(buffer, 1, sizeof(buffer), fp)) > 0)
     {
-        printf("%s", bytes_read);
+        printf("%s", buffer);
         //fwrite(buffer, 1, bytes_read, outfp);
     }
 }
