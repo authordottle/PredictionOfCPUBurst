@@ -13,6 +13,8 @@ char buffer[BUFFER_SIZE];
 size_t bytes_read;
 FILE *fp, *outfp;
 
+// Output data into csv file
+// Each column separated by comma in cse file
 void output_log_file()
 {
     ssize_t read;
@@ -34,7 +36,7 @@ void output_log_file()
             }
         }
 
-        fprintf(outfp, "%s", new_line);
+        fprintf(outfp, "%s \n", new_line);
 
         break;
     }
