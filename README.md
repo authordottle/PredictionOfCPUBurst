@@ -2,7 +2,7 @@
 
 ## Requirements:
 1. This project requires both linux and MacOS environments to collect data respectively.
-2. Python version >= 3.0; use pip3;
+2. Python version >= 3.0; use pip3; kernel version >= 5.6
 3. Linux enrionment dependencies:
 	```sh
 	$ sudo apt-get install build-essential
