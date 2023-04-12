@@ -118,8 +118,13 @@ int main()
         return 1;
     }
 
-    printf("Enter complete time (any positive integer): ");
+    printf("Enter complete time in seconds (any positive integer): ");
     scanf("%d", &complete_time);
+    if (complete_time <= 0)
+    {
+        perror("Invalid Input Of Number Of Process");
+        return 1;
+    }
 
     output_log_file();
 
