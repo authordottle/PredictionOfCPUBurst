@@ -26,7 +26,7 @@ def get_processes_to_csv(csv_path):
         for process in processes:
             try:
                 process_data = process.as_dict(
-                    attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent', 'nice', 'create_time'])
+                    attrs=['pid', 'name', 'username', 'memory_percent', 'cpu_percent', 'nice', 'create_time'])
                 mem_rss = process.memory_info().rss
                 mem_vms = process.memory_info().vms
                 mem_pfaults = process.memory_info().pfaults
@@ -94,8 +94,8 @@ fieldnames = [
     'pid',
     'name',
     'username',
-    'cpu_percent',
     'memory_percent',
+    'cpu_percent',
     'nice',
     'create_time',
     'mem_rss',
