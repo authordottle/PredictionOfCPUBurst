@@ -2,7 +2,6 @@
 
 import pandas as pd
 import seaborn as sns
-from math import sqrt
 
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
@@ -13,6 +12,8 @@ from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 import numpy as np
 
+# print('version: {}'.format(pd.__version__))
+
 # Load the Excel file
 dataset = pd.read_csv('../data_collecting/darwin_processes.csv')
 
@@ -20,23 +21,24 @@ dataset = pd.read_csv('../data_collecting/darwin_processes.csv')
 X = dataset.iloc[:, 3:-4]
 # Assigning the last 2 column variable to y
 y = dataset.iloc[:, -4:]
-# print(dataset.columns)
-# print(dataset.dtypes)
+print(dataset.columns)
+print(dataset.dtypes)
 # print(X)
 # print(y)
 
 objTypeCols = dataset[[
     i for i in dataset.columns if dataset[i].dtype == 'object']]
 
-#
+# To find the correlation among the columns
 corrprocessData = dataset.corr()
-print(corrprocessData)
+# print(corrprocessData)
 
 # Dropping un-necessary information
 
 # Model building
 # test_size: 25% of the data will go to the test set, whereas the remaining 75% to the training set
-# random_state: using this parameter makes sure that anyone who re-runs your code will get the exact same outputs. Popular integer random seeds are 0 and 42.
+# random_state: using this parameter makes sure that anyone who re-runs your code will get the exact same outputs.
+# Popular integer random seeds are 0 and 42.
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.25, random_state=42)
 # print(X_train)
@@ -54,6 +56,7 @@ y_lr_test_pred = lr.predict(X_test)
 
 # Model performance
 # variables contain the performance metrics MSE and R2 for models build using linear regression on the training set
+# MSE: the squared distance between actual and predicted values. Squared to avoid the cancellation of negative terms.
 lr_train_mse = mean_squared_error(y_train, y_lr_train_pred)
 lr_train_r2 = r2_score(y_train, y_lr_train_pred)
 
@@ -65,6 +68,34 @@ lr_results = pd.DataFrame(['Linear regression', lr_train_mse,
 lr_results.columns = ['Method', 'Training MSE',
                       'Training R2', 'Test MSE', 'Test R2']
 print(lr_results)
+print("Test R2 / Accuracy:", lr_test_r2*100, '%')
+print("Test RMSE: ", np.sqrt((lr_test_mse)))
+
+######################################### Random Forest ###############################################
+# build a random forest with 1000 decision trees
+rr = RandomForestRegressor(n_estimators=1000, random_state=42)
+
+rr.fit(X_train, y_train)
+
+y_rr_train_pred = rr.predict(X_train)
+y_rr_test_pred = rr.predict(X_test)
+
+# Model performance
+# variables contain the performance metrics MSE and R2 for models build using random forest on the training set
+rr_train_mse = mean_squared_error(y_train, y_rr_train_pred)
+rr_train_r2 = r2_score(y_train, y_rr_train_pred)
+
+rr_test_mse = mean_squared_error(y_test, y_rr_test_pred)
+rr_test_r2 = r2_score(y_test, y_rr_test_pred)
+
+rr_results = pd.DataFrame(['Random forest', rr_train_mse,
+                          rr_train_r2, rr_test_mse, rr_test_r2]).transpose()
+rr_results.columns = ['Method', 'Training MSE',
+                      'Training R2', 'Test MSE', 'Test R2']
+print(rr_results)
+print("Test R2 / Accuracy:", rr_test_r2*100, '%')
+print("Test RMSE: ", np.sqrt((rr_test_mse)))
+
 
 # Data visualization of prediction results
 # plt.figure(figsize=(5, 5))
@@ -78,36 +109,12 @@ print(lr_results)
 
 # y_pred = lr.predict(X_test)
 # r2_score = lr.score(X_test, y_test)
-
-# print("Accuracy1:", r2_score*100, '%')
-# print("RMSE1: ", sqrt(mean_squared_error(y_test, y_pred)))
-
-# # predicting value
-# new_prediction = lr.predict(np.array([[1100, 768, 2000, 0, 1, 1]]))
-# print("Prediction performance:", float(new_prediction))
-# new_prediction = lr.predict(np.array([[143, 512, 5000, 0, 7, 32]]))
-# print("Prediction performance:", float(new_prediction))
-# new_prediction = lr.predict(np.array([[64, 5240, 20970, 30, 12, 24]]))
-# print("Prediction performance:", float(new_prediction))
-# new_prediction = lr.predict(np.array([[700, 256, 2000, 0, 1, 1]]))
-# print("Prediction performance:", float(new_prediction))
-
-# ######################################### Random Forest ###############################################
+# df=pd.DataFrame({'Actual':y_test, 'Predicted':y_pred})
 # Rr = RandomForestRegressor(n_estimators=50, max_features=None, random_state=0)
-
-# Rr.fit(X_train, y_train)
-
-# y_pred = Rr.predict(X_test)
 # r2_score = Rr.score(X_test, y_test)
 # print("Accuracy1:", r2_score*100, '%')
 # print("RMSE1: ", sqrt(mean_squared_error(y_test, y_pred)))
 
 # # predicting value
-# new_prediction = Rr.predict(np.array([[1100, 768, 2000, 0, 1, 1]]))
-# print("Prediction performance:", float(new_prediction))
-# new_prediction = Rr.predict(np.array([[143, 512, 5000, 0, 7, 32]]))
-# print("Prediction performance:", float(new_prediction))
-# new_prediction = Rr.predict((np.array([[64, 5240, 20970, 30, 12, 24]])))
-# print("Prediction performance:", float(new_prediction))
 # new_prediction = Rr.predict((np.array([[700, 256, 2000, 0, 1, 1]])))
 # print("Prediction performance:", float(new_prediction))
