@@ -1,39 +1,3 @@
-
-
-
-
-
-static void export_virtual_file_into_actual_file(void)
-{
-	// Allocate a buffer to read data from the virtual file
-	char *buffer = (char *)kmalloc(PAGE_SIZE, GFP_KERNEL);
-	if (!buffer)
-	{
-		pr_err("Failed to allocate memory for buffer\n");
-	}
-
-	// Create the actual file on disk
-	actual_file = filp_open(ACTUAL_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (IS_ERR(actual_file))
-	{
-		pr_err("Failed to create actual file\n");
-	}
-
-	if (buffer)
-	{
-		kfree(buffer);
-	}
-	if (virtual_file)
-	{
-		filp_close(virtual_file, NULL);
-	}
-	if (actual_file)
-	{
-		filp_close(actual_file, NULL);
-	}
-}
-
-	export_virtual_file_into_actual_file();
     
     // ktime_t current_time = ktime_get();
 	// s64 current_time_ns = ktime_to_ns(current_time);
