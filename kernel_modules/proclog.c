@@ -91,7 +91,7 @@ static long get_process_elapsed_time(struct task_struct *task)
 	// whereas the utime field in the task_struct is measured in nanoseconds.
 	start_time = task->start_time;
 
-	elapsed_sec = (long long)(uptime_ms * 1000000000) - start_time;
+	elapsed_sec = (long long)(uptime_ms * 1000000) - start_time;
 
 	return elapsed_sec;
 }
@@ -106,7 +106,7 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	struct task_struct *task;
 
 	// kernel system timer
-    uptime_ms = ktime_to_ms(ktime_get_boottime());
+	uptime_ms = ktime_to_ms(ktime_get_boottime());
 
 	seq_printf(s,
 			   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
