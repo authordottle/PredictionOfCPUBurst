@@ -92,7 +92,7 @@ rr.fit(X_train, y_train)
 y_rr_train_pred = rr.predict(X_train)
 y_rr_test_pred = rr.predict(X_test)
 
-# Model performance 
+# Model performance
 # variables contain the performance metrics MSE and R2 for models build using random forest on the training set
 rr_train_mse = mean_squared_error(y_train, y_rr_train_pred)
 rr_train_r2 = r2_score(y_train, y_rr_train_pred)
