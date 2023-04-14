@@ -53,7 +53,7 @@ void output_log_file()
     char *token;
 
     // header
-    fprintf(outfp, "PID, NAME, ELAPSED_TIME, TOTAL_TIME, utime, stime, start_time, uptime");
+    fprintf(outfp, "PID, NAME, ELAPSED_TIME, TOTAL_TIME, utime, stime, start_time, uptime\n");
 
     // Loop indefinitely to continuously read from the file
     while (start_time <= complete_time)
