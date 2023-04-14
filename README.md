@@ -77,4 +77,6 @@
    $ bash ./test_cpu_usage.sh
    ``` 
 
- 
+   ```
+   $ tar -cvzf linux_log_file.tar.gz linux_log_file.csv
+   ```
