@@ -14,8 +14,18 @@ import numpy as np
 
 # print('version: {}'.format(pd.__version__))
 
+#
+input = input(
+    "Enter the data source you would like to build ML model (enter either `linux` or `macBook`): ")
+
 # Load the Excel file
-dataset = pd.read_csv('../data_collecting/darwin_processes.csv')
+if (input == "macBook"):
+    dataset = pd.read_csv('../data_collecting/darwin_processes.csv')
+    print("macBook")
+elif (input == "linux"):
+    dataset = pd.read_csv('../data_collecting/linux_log_file.csv')
+    print("linux")
+
 # print(dataset.columns)
 # print(dataset.dtypes)
 
