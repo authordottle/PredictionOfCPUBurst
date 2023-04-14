@@ -16,7 +16,7 @@ import numpy as np
 
 #
 input = input(
-    "Enter the data source you would like to build ML model (enter either `linux` or `macBook`): ")
+    "Enter the platform data to start (enter either `linux` or `macBook`): ")
 
 # Load the Excel file
 if (input == "macBook"):

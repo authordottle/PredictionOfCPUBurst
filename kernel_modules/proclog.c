@@ -131,7 +131,6 @@ static int proc_seq_show(struct seq_file *s, void *v)
 				   task->start_time,
 				   uptime_ms);
 	}
-	seq_printf(s, "%Ld\n", *spos);
 
 	return 0;
 }
