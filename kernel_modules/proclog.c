@@ -23,6 +23,7 @@
 
 long start_time_s;
 s64 uptime_ms;
+int print_header;
 
 #ifndef __KERNEL__
 #define __KERNEL__
@@ -108,8 +109,12 @@ static int proc_seq_show(struct seq_file *s, void *v)
 	// kernel system timer
 	uptime_ms = ktime_to_ms(ktime_get_boottime());
 
-	seq_printf(s,
+	if (print_header == 1) {
+seq_printf(s,
 			   "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n");
+			 print_header = 0;  
+	}
+	
 
 	for_each_process(task)
 	{
@@ -179,6 +184,8 @@ static int __init init_kernel_module(void)
 	ktime_t start_time = ktime_get();
 	s64 start_time_ns = ktime_to_ns(start_time);
 	start_time_s = start_time_ns / 1000000000;
+
+	print_header = 1;
 
 	struct proc_dir_entry *log_file;
 
