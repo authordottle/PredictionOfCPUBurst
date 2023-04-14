@@ -119,9 +119,12 @@ static int proc_seq_show(struct seq_file *s, void *v)
 		long elapsed_time = get_process_elapsed_time(task);
 
 comm = task->comm;
+printk(comm); 
 		for(int i = 0; i < strlen(comm); i++) { 
 			printk("%c", comm[i]); 
 		}
+
+
 		// "PID\t NAME\t ELAPSED_TIME\t TOTAL_TIME\t utime\t stime\t start_time\t uptime\t\n"
 		seq_printf(s,
 				   "%d\t %s\t %ld\t %lld\t %lld\t %lld\t %lld\t %lld\t\n ",
