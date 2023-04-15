@@ -103,6 +103,7 @@ static long get_process_elapsed_time(struct task_struct *task)
 // # Write the file from the kernel space.
 // ssize_t kernel_write(struct file *file, const void *buf, size_t count, loff_t *pos);
 // Also, filp_open no longer accepts user-space string, so it can be used for kernel access directly (without dance with set_fs).
+// Additionally, reading file from kernel is not recommended 
 static int proc_seq_show(struct seq_file *s, void *v)
 {
 	printk("Hit proc_seq_show");
