@@ -156,13 +156,3 @@ plt.title('Using random forest regressor', fontsize=15)
 plt.ylabel('Predicted')
 plt.xlabel('Experimental')
 plt.show()
-
-# y_pred = lr.predict(X_test)
-# r2_score = lr.score(X_test, y_test)
-# df=pd.DataFrame({'Actual':y_test, 'Predicted':y_pred})
-# Rr = RandomForestRegressor(n_estimators=50, max_features=None, random_state=0)
-# r2_score = Rr.score(X_test, y_test)
-
-# # predicting value
-# new_prediction = Rr.predict((np.array([[700, 256, 2000, 0, 1, 1]])))
-# print("Prediction performance:", float(new_prediction))
