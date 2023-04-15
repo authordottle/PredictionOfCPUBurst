@@ -20,11 +20,19 @@ input = input(
 
 # Load the Excel file
 if (input == "macBook"):
+    # pid,name,username,memory_percent,cpu_percent,nice,create_time,mem_rss,mem_vms,mem_pfaults,mem_pageins,num_ctx_switches_voluntary,num_ctx_switches_involuntary,utime,stime,cutime,cstime
     dataset = pd.read_csv('../data_collecting/darwin_processes.csv')
+    X_drop_columns = ['pid', 'name', 'username', 'stime']
+    y_column = 'stime'
     print("macBook")
 elif (input == "linux"):
+    # PID, NAME, ELAPSED_TIME, TOTAL_TIME, utime, stime, start_time, uptime
     dataset = pd.read_csv('../data_collecting/linux_log_file.csv')
+    X_drop_columns = ['PID', 'NAME', 'stime']
+    y_column = 'stime'
     print("linux")
+else:
+    print("Invalid input")
 
 # print(dataset.columns)
 # print(dataset.dtypes)
@@ -52,10 +60,10 @@ corrprocessData = dataset.corr()
 # ohe = OneHotEncoder()
 
 # Assigning columns variables to X and y
-X = dataset.drop(['pid', 'name', 'username', 'stime'], axis=1)
+X = dataset.drop(X_drop_columns, axis=1)
 # utime: CPU time spent in user code
 # stime: CPU time spent in kernel code
-y = dataset['stime']
+y = dataset[y_column]
 
 # Model building
 # test_size: 25% of the data will go to the test set, whereas the remaining 75% to the training set
