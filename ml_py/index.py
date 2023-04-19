@@ -71,12 +71,6 @@ corr = df.corr()
 # Drop un-necessary information
 #
 
-# Check for missing value
-# plt.figure(figsize=(12, 4))
-# sns.heatmap(df.isnull(), cbar=False, cmap='viridis', yticklabels=False)
-# plt.title('Missing value in the dataset')
-# plt.show()
-
 # ML algorithms cannot work with categorical data directly, categorical data must be converted to number.
 # 1. Label Encoding
 # 2. One hot encoding
@@ -105,6 +99,12 @@ X = df_encode.drop(X_drop_columns, axis=1)  # Independent variable
 # utime: CPU time spent in user code
 # stime: CPU time spent in kernel code
 y = df_encode[y_column]  # Dependent variable
+
+# Check for missing value
+# plt.figure(figsize=(12, 4))
+# sns.heatmap(df_encode.isnull(), cbar=False, cmap='viridis', yticklabels=False)
+# plt.title('Missing value in the dataset')
+# plt.show()
 
 # Train test split
 # test_size: 25% of the data will go to the test set, whereas the remaining 75% to the training set
@@ -161,6 +161,13 @@ lr_test_mse = mean_squared_error(y_test, y_lr_test_pred)
 # or lr_test_r2 = r2_score(y_test, y_lr_test_pred)
 lr_test_r2 = lr.score(X_test, y_test)
 
+# Compute the cross-validation scores
+cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
+lr_scores = cross_val_score(
+    lr, X, y, cv=cv, scoring='neg_root_mean_squared_error')
+lr_mean_scores = lr_scores.mean()
+lr_std_scores = lr_scores.std()
+
 # Data visualization of prediction results for lr
 # plt.figure(figsize=(5, 5))
 # plt.scatter(x=y_train, y=y_lr_train_pred, c="#7CAE00", alpha=0.3)
@@ -173,6 +180,27 @@ lr_test_r2 = lr.score(X_test, y_test)
 # plt.ylabel('Predicted')
 # plt.xlabel('Experimental')
 # plt.show()
+
+######################################### Lasso Regression ###############################################
+lasso = Lasso(alpha=1.0)
+lasso.fit(X_train, y_train)
+y_lasso_train_pred = lasso.predict(X_train)
+y_lasso_test_pred = lasso.predict(X_test)
+
+# Evaluation: MSE
+# variables contain the performance metrics MSE and R2 for models build using linear regression on the training set
+# MSE: the squared distance between actual and predicted values. Squared to avoid the cancellation of negative terms.
+lasso_train_mse = mean_squared_error(y_train, y_lasso_train_pred)
+lasso_train_r2 = lasso.score(X_train, y_train)
+lasso_test_mse = mean_squared_error(y_test, y_lasso_test_pred)
+lasso_test_r2 = lasso.score(X_test, y_test)
+
+# Compute the cross-validation scores
+cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
+lasso_scores = cross_val_score(
+    lasso, X, y, cv=cv, scoring='neg_root_mean_squared_error')
+lasso_mean_scores = lasso_scores.mean()
+lasso_std_scores = lasso_scores.std()
 
 ######################################### Ridge Regression ###############################################
 rr = Ridge(alpha=1.0)
@@ -190,6 +218,13 @@ rr_test_mse = mean_squared_error(y_test, y_rr_test_pred)
 # or rr_test_r2 = r2_score(y_test, y_rr_test_pred)
 rr_test_r2 = rr.score(X_test, y_test)
 
+# Compute the cross-validation scores
+cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
+rr_scores = cross_val_score(
+    rr, X, y, cv=cv, scoring='neg_root_mean_squared_error')
+rr_mean_scores = rr_scores.mean()
+rr_std_scores = rr_scores.std()
+
 # Data visualization of prediction results for rr
 # plt.figure(figsize=(5, 5))
 # plt.scatter(x=y_train, y=y_rr_train_pred, c="#7CAE00", alpha=0.3)
@@ -202,14 +237,6 @@ rr_test_r2 = rr.score(X_test, y_test)
 # plt.ylabel('Predicted')
 # plt.xlabel('Experimental')
 # plt.show()
-
-# # define model evaluation method
-# cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
-# # evaluate model
-# scores = cross_val_score(lasso, X, y, scoring='neg_mean_absolute_error', cv=cv, n_jobs=-1)
-# # force scores to be positive
-# scores = absolute(scores)
-# print('Mean MAE: %.3f (%.3f)' % (mean(scores), std(scores)))
 
 ######################################### Random Forest ###############################################
 # build a random forest with 1000 decision trees
@@ -230,6 +257,13 @@ rfr_test_mse = mean_squared_error(y_test, y_rfr_test_pred)
 # or rfr_test_r2 = r2_score(y_test, y_rfr_test_pred)
 rfr_test_r2 = rfr.score(X_test, y_test)
 
+# Compute the cross-validation scores
+cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
+rfr_scores = cross_val_score(
+    rfr, X, y, cv=cv, scoring='neg_root_mean_squared_error')
+rfr_mean_scores = rfr_scores.mean()
+rfr_std_scores = rfr_scores.std()
+
 # Data visualization of prediction results for rfr
 # plt.figure(figsize=(5, 5))
 # plt.scatter(x=y_train, y=y_rfr_train_pred, c="#7CAE00", alpha=0.3)
@@ -246,14 +280,16 @@ rfr_test_r2 = rfr.score(X_test, y_test)
 ######################################### Conclusion of Evaluation ###############################################
 data = [
     ['Linear regression', lr_train_mse, np.sqrt((lr_train_mse)),
-     lr_train_r2, lr_test_mse, np.sqrt((lr_test_mse)), lr_test_r2, lr_test_r2*100],
+     lr_train_r2, lr_test_mse, np.sqrt((lr_test_mse)), lr_test_r2, lr_test_r2*100, lr_mean_scores, lr_std_scores],
+    ['Lasso Regression', lasso_train_mse, np.sqrt((lasso_train_mse)),
+     lasso_train_r2, lasso_test_mse, np.sqrt((lasso_test_mse)), lasso_test_r2, lasso_test_r2*100, lasso_mean_scores, lasso_std_scores],
     ['Ridge regression', rr_train_mse, np.sqrt((rr_train_mse)),
-     rr_train_r2, rr_test_mse, np.sqrt((rr_test_mse)), rr_test_r2, rr_test_r2*100],
+     rr_train_r2, rr_test_mse, np.sqrt((rr_test_mse)), rr_test_r2, rr_test_r2*100, rr_mean_scores, rr_std_scores],
     ['Random forest', rfr_train_mse, np.sqrt((rfr_train_mse)),
-     rfr_train_r2, rfr_test_mse, np.sqrt((rfr_test_mse)), rfr_test_r2, rfr_test_r2*100],
+     rfr_train_r2, rfr_test_mse, np.sqrt((rfr_test_mse)), rfr_test_r2, rfr_test_r2*100, rfr_mean_scores, rfr_std_scores],
 ]
 results = pd.DataFrame(data,
                        columns=['Method', 'Training MSE', 'Training RMSE',
-                                'Training R2', 'Test MSE', 'Test RMSE', 'Test R2', 'Accuracy %']
+                                'Training R2', 'Test MSE', 'Test RMSE', 'Test R2', 'Accuracy %', 'Mean Score', 'Standard Deviation']
                        )
 print(results)
