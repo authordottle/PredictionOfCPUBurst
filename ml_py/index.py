@@ -16,10 +16,6 @@ from sklearn.model_selection import RepeatedKFold
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, StandardScaler
 
-from numpy import mean
-from numpy import std
-from numpy import absolute
-
 # print('version: {}'.format(pd.__version__))
 
 # Ask user for input
