@@ -90,9 +90,12 @@ def linear_regression(platform, updated_df):
     y = y_df.values
 
     """ Train test split """
+    # TODO: Manually determined here
+    test_size = 0.25
+    random_state = 42
     # random_state: using this parameter makes sure that anyone who re-runs your code will get the exact same outputs.
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.25, random_state=42)
+        X, y, test_size=test_size, random_state=random_state)
 
     """"""
     sc = StandardScaler()
@@ -155,8 +158,10 @@ def linear_regression(platform, updated_df):
     lr_test_r2 = lr.score(X_test_transform, y_test)
 
     """ Compute the cross-validation scores """
+    # TODO: Manually determined here
+    random_state = 42
     # n_splits, default=5; n_repeats, default=10
-    cv = RepeatedKFold(random_state=42)
+    cv = RepeatedKFold(random_state=random_state)
     lr_mse_scores = cross_val_score(
         lr, X, y, cv=cv, scoring='neg_mean_squared_error')
     lr_rmse_scores = cross_val_score(
@@ -242,11 +247,19 @@ def random_forest_regression(platform, updated_df):
     y = y_df.values
 
     """ Train test split """
+    # TODO: Manually determined here
+    test_size = 0.25
+    random_state = 42
     # random_state: using this parameter makes sure that anyone who re-runs your code will get the exact same outputs.
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.25, random_state=42)
+        X, y, test_size=test_size, random_state=random_state)
 
     """ Build a random forest with some decision trees """
+    # TODO: Manually determined here
+    random_state = 42
+    # n_splits, default=5; n_repeats, default=10
+    cv = RepeatedKFold(random_state=random_state)
+
     # Initialize
     param_grid = {
         'n_estimators': [300, 500, 1000],
@@ -255,8 +268,6 @@ def random_forest_regression(platform, updated_df):
         'random_state': [42, 18, 2017],
         'min_samples_leaf': [1]
     }
-    # n_splits, default=5; n_repeats, default=10
-    cv = RepeatedKFold(random_state=42)
     mse_scoring = "neg_mean_squared_error"
     rmse_scoring = 'neg_root_mean_squared_error'
     n_estimators = 500
@@ -286,7 +297,13 @@ def random_forest_regression(platform, updated_df):
     y_rfr_train_pred = rfr.predict(X_train)
     y_rfr_test_pred = rfr.predict(X_test)
 
-    # TODO: Show variable importances
+    # Show variable importances
+    # https://scikit-learn.org/stable/modules/feature_selection.html
+    feature_importances_df = pd.DataFrame(zip(
+        updated_rfr_df_cols, rfr.feature_importances_), columns=["Feature", "Importance"])
+    sorted_feature_importances_df = feature_importances_df.sort_values(
+        by='Importance', ascending=False)
+    # print(sorted_feature_importances_df)
 
     print("######################################### Evaluation ###############################################")
     """ MSE and R2 """
@@ -306,8 +323,6 @@ def random_forest_regression(platform, updated_df):
     rfr_rmse_mean_scores = abs(rfr_rmse_scores.mean())
     rfr_rmse_std_scores = rfr_rmse_scores.std()
 
-    # TODO: Get to know more about cross validation https://scikit-learn.org/stable/modules/cross_validation.html
-    # TODO: Apply cross_score_predict ? https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_val_predict.html#sklearn.model_selection.cross_val_predict
     print("######################################### Visualization ###############################################")
     plt.figure(figsize=(5, 5))
     plt.scatter(x=y_train, y=y_rfr_train_pred, c="#7CAE00", alpha=0.3)
