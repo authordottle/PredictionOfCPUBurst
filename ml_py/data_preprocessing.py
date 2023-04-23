@@ -1,11 +1,7 @@
 """ Import library """
-from scipy import stats
-import scipy as sp
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import statsmodels.api as sm
 from datetime import datetime
 
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, StandardScaler

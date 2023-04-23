@@ -1,13 +1,7 @@
 # /********* index.py ***********/
 
 """ Import library """
-from scipy import stats
-import scipy as sp
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import statsmodels.api as sm
 from datetime import datetime
 
 from ml_algorithms import linear_regression, random_forest_regression
