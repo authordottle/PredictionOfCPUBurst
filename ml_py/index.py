@@ -28,8 +28,12 @@ def linear_regression():
     ######################################### Linear Regression ###############################################
     updated_lr_df = updated_df
 
-    """ Initialize """
-    global multicollinearity_drop_columns
+    if (platform == "macBook"):
+        multicollinearity_drop_columns = []
+    elif (platform == "linux"):
+        # TODO: Manually determined here
+        multicollinearity_drop_columns = [
+            "ELAPSED_TIME", "TOTAL_TIME", "uptime"]
 
     """ Remove all rows that have outliers in, at least, one column """
     # For each column, it first computes the Z-score of each value in the column, relative to the column mean and standard deviation.
@@ -72,8 +76,8 @@ def linear_regression():
         vif_df = calculate_vif(updated_lr_df)
         updated_lr_df = updated_lr_df.drop(
             multicollinearity_drop_columns, axis=1)
-    # print(multicollinearity_drop_columns)
-    # print(vif_df)
+    print(multicollinearity_drop_columns)
+    print(vif_df)
     # print(updated_lr_df)
 
     """ Assign columns variables to X and y """
@@ -88,7 +92,6 @@ def linear_regression():
     y = y_df.values
 
     """ Train test split """
-    # test_size: 25% of the data will go to the test set, whereas the remaining 75% to the training set
     # random_state: using this parameter makes sure that anyone who re-runs your code will get the exact same outputs.
     # Popular integer random seeds are 0 and 42.
     X_train, X_test, y_train, y_test = train_test_split(
@@ -227,6 +230,7 @@ def linear_regression():
 def random_forest_regression():
     ######################################### Random Forest ###############################################
     updated_rfr_df = updated_df
+    updated_rfr_df_cols = updated_rfr_df.columns.values.tolist()
 
     """ Assign columns variables to X and y """
     X_df = updated_rfr_df.drop(X_drop_columns, axis=1)  # Independent variable
@@ -240,7 +244,6 @@ def random_forest_regression():
     y = y_df.values
 
     """ Train test split """
-    # test_size: 25% of the data will go to the test set, whereas the remaining 75% to the training set
     # random_state: using this parameter makes sure that anyone who re-runs your code will get the exact same outputs.
     # Popular integer random seeds are 0 and 42.
     X_train, X_test, y_train, y_test = train_test_split(
@@ -350,9 +353,6 @@ def random_forest_regression():
 platform = input(
     "Enter the platform data to start (enter either `linux` or `macBook`): ")
 
-""" Initialize """
-multicollinearity_drop_columns = []
-
 """ Load the csv file """
 if (platform == "macBook"):
     # pid,name,username,memory_percent,cpu_percent,nice,create_time,mem_rss,mem_vms,mem_pfaults,mem_pageins,num_ctx_switches_voluntary,num_ctx_switches_involuntary,utime,stime,cutime,cstime
@@ -362,11 +362,8 @@ if (platform == "macBook"):
 elif (platform == "linux"):
     # PID, NAME, ELAPSED_TIME, TOTAL_TIME, utime, stime, start_time, uptime
     df = pd.read_csv('../data_collecting/linux_log_file.csv')
-    X_drop_columns = ['stime']
-    # TODO: Manually determined here
-    multicollinearity_drop_columns = [
-        "ELAPSED_TIME", "TOTAL_TIME", "uptime"]
-    y_column = 'stime'
+    X_drop_columns = ["stime"]
+    y_column = "stime"
 else:
     print("Invalid input")
     exit()
