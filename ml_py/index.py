@@ -157,6 +157,7 @@ def linear_regression():
 
     ######################################### Evaluation ###############################################
     """ MSE and R2 """
+    # https://scikit-learn.org/stable/modules/model_evaluation.html#scoring-parameter
     lr_train_mse = mean_squared_error(y_train, y_lr_train_pred)
     lr_train_r2 = lr.score(X_train_transform, y_train)
     lr_test_mse = mean_squared_error(y_test, y_lr_test_pred)
@@ -302,6 +303,7 @@ def random_forest_regression():
 
     ######################################### Evaluation ###############################################
     """ MSE and R2 """
+    # https://scikit-learn.org/stable/modules/model_evaluation.html#scoring-parameter
     rfr_train_mse = mean_squared_error(y_train, y_rfr_train_pred)
     rfr_train_r2 = rfr.score(X_train, y_train)
     rfr_test_mse = mean_squared_error(y_test, y_rfr_test_pred)
@@ -319,7 +321,6 @@ def random_forest_regression():
 
     # TODO: Get to know more about cross validation https://scikit-learn.org/stable/modules/cross_validation.html
     # TODO: Apply cross_score_predict ? https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_val_predict.html#sklearn.model_selection.cross_val_predict
-    # TODO: Other metrics options: precision, recall, f1, etc. https://scikit-learn.org/stable/modules/model_evaluation.html#scoring-parameter
     ######################################### Visualization ###############################################
     plt.figure(figsize=(5, 5))
     plt.scatter(x=y_train, y=y_rfr_train_pred, c="#7CAE00", alpha=0.3)
